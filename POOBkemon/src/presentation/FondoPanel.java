@@ -26,4 +26,8 @@ public class FondoPanel extends JPanel {
         setOpaque(false);
         super.paint(g);
     }
+    
+    public Image getImagen() {
+        return imagen;
+    }
 }
