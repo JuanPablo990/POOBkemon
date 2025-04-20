@@ -77,6 +77,7 @@ public class VentanaInicio extends Ventana {
     }
 
     private void configurarListeners() {
+        // Listener para redimensionamiento
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -88,7 +89,22 @@ public class VentanaInicio extends Ventana {
             }
         });
 
+        // Listener para clic en cualquier parte del fondo
+        fondoPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                abrirVentanaOpciones();
+            }
+        });
+
+        // Timer para animación del fondo
         new Timer(100, e -> fondoPanel.repaint()).start();
+    }
+
+    private void abrirVentanaOpciones() {
+        this.setVisible(false);
+        VentanaOpciones ventanaOpciones = new VentanaOpciones();
+        ventanaOpciones.mostrar();
     }
 
     @Override
