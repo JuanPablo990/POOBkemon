@@ -9,6 +9,16 @@ public class VentanaOpciones extends Ventana {
     private FondoPanel fondoPanel;
     private JButton btnPvP, btnPvM, btnMvM, btnCreditos;
 
+    // Constants for image paths
+    private static final String PVP_IMAGE = "/resources/pvp.png";
+    private static final String PVM_IMAGE = "/resources/pvm.png";
+    private static final String MVM_IMAGE = "/resources/mvm.png";
+    private static final String CREDITOS_IMAGE = "/resources/creditos.png";
+    private static final String BACKGROUND_IMAGE = "/resources/opciones.gif";
+    private static final String MODO_BACKGROUND = "/resources/modo.gif";
+    private static final String NORMAL_IMAGE = "/resources/Normal.png";
+    private static final String SUPERVIVENCIA_IMAGE = "/resources/Supervivencia.png";
+
     public VentanaOpciones() {
         super("Opciones de POOBkemon");
         inicializarComponentes();
@@ -17,7 +27,7 @@ public class VentanaOpciones extends Ventana {
 
     private void inicializarComponentes() {
         // Configurar el fondo principal
-        fondoPanel = new FondoPanel("/resources/opciones.gif");
+        fondoPanel = new FondoPanel(BACKGROUND_IMAGE);
         setContentPane(fondoPanel);
         fondoPanel.setLayout(new BorderLayout());
         
@@ -25,15 +35,15 @@ public class VentanaOpciones extends Ventana {
         JPanel panelBotonesCentrales = new JPanel();
         panelBotonesCentrales.setOpaque(false);
         panelBotonesCentrales.setLayout(new GridLayout(3, 1, 0, 20));
-        panelBotonesCentrales.setBorder(new EmptyBorder(50, 0, 50, 0)); // Espacio arriba y abajo
+        panelBotonesCentrales.setBorder(new EmptyBorder(50, 0, 50, 0));
 
         // Tamaño para los botones centrales
         Dimension tamanoBotonesCentrales = new Dimension(200, 80);
         
         // Crear botones centrales con imágenes
-        btnPvP = crearBotonTransparente("/resources/pvp.png", tamanoBotonesCentrales, "PvP");
-        btnPvM = crearBotonTransparente("/resources/pvm.png", tamanoBotonesCentrales, "PvM");
-        btnMvM = crearBotonTransparente("/resources/mvm.png", tamanoBotonesCentrales, "MvM");
+        btnPvP = crearBotonTransparente(PVP_IMAGE, tamanoBotonesCentrales, "PvP");
+        btnPvM = crearBotonTransparente(PVM_IMAGE, tamanoBotonesCentrales, "PvM");
+        btnMvM = crearBotonTransparente(MVM_IMAGE, tamanoBotonesCentrales, "MvM");
         
         panelBotonesCentrales.add(btnPvP);
         panelBotonesCentrales.add(btnPvM);
@@ -48,9 +58,8 @@ public class VentanaOpciones extends Ventana {
         JPanel panelCreditos = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
         panelCreditos.setOpaque(false);
         
-        // Tamaño para el botón de créditos (más pequeño)
         Dimension tamanoCreditos = new Dimension(100, 50);
-        btnCreditos = crearBotonTransparente("/resources/creditos.png", tamanoCreditos, "Créditos");
+        btnCreditos = crearBotonTransparente(CREDITOS_IMAGE, tamanoCreditos, "Créditos");
         panelCreditos.add(btnCreditos);
 
         // Añadir componentes al layout principal
@@ -62,13 +71,13 @@ public class VentanaOpciones extends Ventana {
         JButton boton = new JButton() {
             @Override
             protected void paintComponent(Graphics g) {
-                // Dibujar la imagen escalada en todo el área del botón
                 if (getIcon() != null) {
                     ImageIcon icon = (ImageIcon) getIcon();
                     g.drawImage(icon.getImage(), 0, 0, getWidth(), getHeight(), this);
                 } else {
                     super.paintComponent(g);
-                    setText(textoAlternativo);
+                    g.setColor(Color.WHITE);
+                    g.drawString(textoAlternativo, getWidth()/2 - 30, getHeight()/2);
                 }
             }
         };
@@ -76,7 +85,6 @@ public class VentanaOpciones extends Ventana {
         boton.setPreferredSize(size);
         
         try {
-            // Cargar y escalar la imagen exactamente al tamaño del botón
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
             Image img = iconoOriginal.getImage().getScaledInstance(
                 size.width, 
@@ -84,11 +92,10 @@ public class VentanaOpciones extends Ventana {
                 Image.SCALE_SMOOTH);
             boton.setIcon(new ImageIcon(img));
         } catch (Exception e) {
-            boton.setText(textoAlternativo);
             System.err.println("Error al cargar imagen: " + imagenPath);
+            boton.setText(textoAlternativo);
         }
         
-        // Configuración para hacer el botón completamente transparente
         boton.setContentAreaFilled(false);
         boton.setBorderPainted(false);
         boton.setFocusPainted(false);
@@ -100,42 +107,131 @@ public class VentanaOpciones extends Ventana {
     }
 
     private void configurarListeners() {
-        // Listener para redimensionamiento
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                // Calcular nuevos tamaños proporcionales
                 int baseWidth = getWidth() / 6;
                 Dimension nuevoTamanoCentral = new Dimension(baseWidth, baseWidth / 2);
                 Dimension nuevoTamanoCreditos = new Dimension(baseWidth / 2, baseWidth / 4);
                 
-                // Aplicar nuevos tamaños
                 btnPvP.setPreferredSize(nuevoTamanoCentral);
                 btnPvM.setPreferredSize(nuevoTamanoCentral);
                 btnMvM.setPreferredSize(nuevoTamanoCentral);
                 btnCreditos.setPreferredSize(nuevoTamanoCreditos);
                 
-                // Re-escalar las imágenes
-                escalarImagenBoton(btnPvP, "/resources/pvp.png", nuevoTamanoCentral);
-                escalarImagenBoton(btnPvM, "/resources/pvm.png", nuevoTamanoCentral);
-                escalarImagenBoton(btnMvM, "/resources/mvm.png", nuevoTamanoCentral);
-                escalarImagenBoton(btnCreditos, "/resources/creditos.png", nuevoTamanoCreditos);
+                escalarImagenBoton(btnPvP, PVP_IMAGE, nuevoTamanoCentral);
+                escalarImagenBoton(btnPvM, PVM_IMAGE, nuevoTamanoCentral);
+                escalarImagenBoton(btnMvM, MVM_IMAGE, nuevoTamanoCentral);
+                escalarImagenBoton(btnCreditos, CREDITOS_IMAGE, nuevoTamanoCreditos);
                 
                 revalidate();
                 repaint();
             }
         });
         
-        // Listeners para los botones
-        btnPvP.addActionListener(e -> JOptionPane.showMessageDialog(this, "Player vs Player seleccionado"));
-        btnPvM.addActionListener(e -> JOptionPane.showMessageDialog(this, "Player vs Machine seleccionado"));
-        btnMvM.addActionListener(e -> JOptionPane.showMessageDialog(this, "Machine vs Machine seleccionado"));
+        btnPvP.addActionListener(e -> mostrarVentanaModo("Player vs Player"));
+        btnPvM.addActionListener(e -> mostrarVentanaModo("Player vs Machine"));
+        btnMvM.addActionListener(e -> mostrarVentanaModo("Machine vs Machine"));
         
-        // Listener modificado para el botón de créditos
         btnCreditos.addActionListener(e -> {
-            this.setVisible(false);  // Ocultar la ventana actual
-            POOBkemonGUI.mostrarVentanaCreditos();  // Mostrar la ventana de créditos
+            this.setVisible(false);
+            POOBkemonGUI.mostrarVentanaCreditos();
         });
+    }
+
+    private void mostrarVentanaModo(String titulo) {
+        JDialog dialog = new JDialog(this, titulo, true);
+        dialog.setSize(500, 300); // Tamaño más compacto del diálogo
+        dialog.setLocationRelativeTo(this);
+        dialog.setResizable(false);
+
+        FondoPanel fondoDialog = new FondoPanel(MODO_BACKGROUND);
+        fondoDialog.setLayout(new BorderLayout());
+        dialog.setContentPane(fondoDialog);
+
+        JLabel lblTitulo = new JLabel(titulo, SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
+        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setBorder(new EmptyBorder(20, 0, 10, 0));
+        fondoDialog.add(lblTitulo, BorderLayout.NORTH);
+
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+        panelBotones.setOpaque(false);
+
+        // Tamaño más pequeño y rectangular
+        Dimension tamanoBotones = new Dimension(150, 60);
+
+        JButton btnNormal = crearBotonDialogo(NORMAL_IMAGE, tamanoBotones, "Normal");
+        JButton btnSupervivencia = crearBotonDialogo(SUPERVIVENCIA_IMAGE, tamanoBotones, "Supervivencia");
+
+        btnNormal.addActionListener(e -> {
+            JOptionPane.showMessageDialog(dialog, "Modo Normal seleccionado para " + titulo);
+            dialog.dispose();
+            // lógica para iniciar modo normal...
+        });
+
+        btnSupervivencia.addActionListener(e -> {
+            JOptionPane.showMessageDialog(dialog, "Modo Supervivencia seleccionado para " + titulo);
+            dialog.dispose();
+            // lógica para iniciar modo supervivencia...
+        });
+
+        panelBotones.add(btnNormal);
+        panelBotones.add(btnSupervivencia);
+        fondoDialog.add(panelBotones, BorderLayout.CENTER);
+
+        dialog.setVisible(true);
+    }
+
+
+    private JButton crearBotonDialogo(String imagenPath, Dimension size, String textoAlternativo) {
+        JButton boton = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (getIcon() != null) {
+                    ImageIcon icon = (ImageIcon) getIcon();
+                    g.drawImage(icon.getImage(), 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    super.paintComponent(g);
+                    g.setColor(Color.WHITE);
+                    g.drawString(textoAlternativo, getWidth()/2 - 30, getHeight()/2);
+                }
+            }
+        };
+        
+        boton.setPreferredSize(size);
+        
+        try {
+            ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
+            Image img = iconoOriginal.getImage().getScaledInstance(
+                size.width, 
+                size.height, 
+                Image.SCALE_SMOOTH);
+            boton.setIcon(new ImageIcon(img));
+        } catch (Exception e) {
+            System.err.println("Error al cargar imagen: " + imagenPath);
+            boton.setText(textoAlternativo);
+        }
+        
+        boton.setContentAreaFilled(false);
+        boton.setBorderPainted(false);
+        boton.setFocusPainted(false);
+        boton.setOpaque(false);
+        boton.setBorder(null);
+        
+        boton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                boton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+        
+        return boton;
     }
 
     private void escalarImagenBoton(JButton boton, String imagenPath, Dimension size) {
@@ -151,7 +247,6 @@ public class VentanaOpciones extends Ventana {
         }
     }
 
-    // Resto de métodos de la clase Ventana...
     private void volverAVentanaInicio() {
         this.dispose();
         POOBkemonGUI.mostrarVentanaInicio();

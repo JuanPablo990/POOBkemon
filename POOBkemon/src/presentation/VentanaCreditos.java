@@ -91,6 +91,7 @@ public class VentanaCreditos extends Ventana {
                 "<p style='font-size:20px;'>Creado por:</p>" +
                 "<p style='font-size:18px;'>Tomás Felipe Ramírez Álvarez</p>" +
                 "<p style='font-size:18px;'>Juan Pablo Nieto Cortés</p><br>" +
+                "<p style='font-size:20px;'>Asignatura:</p>" +
                 "<p style='font-size:20px;'>Programación Orientada a Objetos</p>" +
                 "<p style='font-size:20px;'>Grupo 3</p>" +
                 "</center></html>";
