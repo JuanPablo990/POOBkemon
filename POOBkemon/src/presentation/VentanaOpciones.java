@@ -130,7 +130,12 @@ public class VentanaOpciones extends Ventana {
         btnPvP.addActionListener(e -> JOptionPane.showMessageDialog(this, "Player vs Player seleccionado"));
         btnPvM.addActionListener(e -> JOptionPane.showMessageDialog(this, "Player vs Machine seleccionado"));
         btnMvM.addActionListener(e -> JOptionPane.showMessageDialog(this, "Machine vs Machine seleccionado"));
-        btnCreditos.addActionListener(e -> JOptionPane.showMessageDialog(this, "Créditos del juego"));
+        
+        // Listener modificado para el botón de créditos
+        btnCreditos.addActionListener(e -> {
+            this.setVisible(false);  // Ocultar la ventana actual
+            POOBkemonGUI.mostrarVentanaCreditos();  // Mostrar la ventana de créditos
+        });
     }
 
     private void escalarImagenBoton(JButton boton, String imagenPath, Dimension size) {
