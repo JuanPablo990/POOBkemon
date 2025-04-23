@@ -141,7 +141,7 @@ public class VentanaOpciones extends Ventana {
 
     private void mostrarVentanaModo(String titulo) {
         JDialog dialog = new JDialog(this, titulo, true);
-        dialog.setSize(500, 300); // Tamaño más compacto del diálogo
+        dialog.setSize(500, 300);
         dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
 
@@ -158,16 +158,16 @@ public class VentanaOpciones extends Ventana {
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
         panelBotones.setOpaque(false);
 
-        // Tamaño más pequeño y rectangular
         Dimension tamanoBotones = new Dimension(150, 60);
 
         JButton btnNormal = crearBotonDialogo(NORMAL_IMAGE, tamanoBotones, "Normal");
         JButton btnSupervivencia = crearBotonDialogo(SUPERVIVENCIA_IMAGE, tamanoBotones, "Supervivencia");
 
+        // CAMBIO PRINCIPAL: Modificar el ActionListener del botón Normal
         btnNormal.addActionListener(e -> {
-            JOptionPane.showMessageDialog(dialog, "Modo Normal seleccionado para " + titulo);
             dialog.dispose();
-            // lógica para iniciar modo normal...
+            this.setVisible(false);  // Oculta la ventana de opciones
+            POOBkemonGUI.mostrarVentanaSeleccion();  // Muestra la nueva ventana
         });
 
         btnSupervivencia.addActionListener(e -> {
@@ -182,7 +182,6 @@ public class VentanaOpciones extends Ventana {
 
         dialog.setVisible(true);
     }
-
 
     private JButton crearBotonDialogo(String imagenPath, Dimension size, String textoAlternativo) {
         JButton boton = new JButton() {

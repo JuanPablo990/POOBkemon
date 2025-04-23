@@ -6,6 +6,7 @@ public class POOBkemonGUI {
     private static VentanaInicio ventanaInicio;
     private static VentanaOpciones ventanaOpciones;
     private static VentanaCreditos ventanaCreditos;
+    private static VentanaSeleccion ventanaSeleccion;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -26,6 +27,10 @@ public class POOBkemonGUI {
         if (ventanaCreditos != null) {
             ventanaCreditos.dispose();
             ventanaCreditos = null;
+        }
+        if (ventanaSeleccion != null) {
+            ventanaSeleccion.dispose();
+            ventanaSeleccion = null;
         }
         
         // Vuelve a mostrar la ventana de inicio
@@ -56,6 +61,14 @@ public class POOBkemonGUI {
         ventanaCreditos.mostrar();
     }
 
+    public static void mostrarVentanaSeleccion() {
+        if (ventanaSeleccion == null) {
+            ventanaSeleccion = new VentanaSeleccion();
+        }
+        ocultarOtrasVentanas(ventanaSeleccion);
+        ventanaSeleccion.mostrar();
+    }
+
     private static void ocultarOtrasVentanas(JFrame ventanaActual) {
         if (ventanaInicio != null && ventanaInicio != ventanaActual && ventanaInicio.isVisible()) {
             ventanaInicio.setVisible(false);
@@ -65,6 +78,34 @@ public class POOBkemonGUI {
         }
         if (ventanaCreditos != null && ventanaCreditos != ventanaActual && ventanaCreditos.isVisible()) {
             ventanaCreditos.setVisible(false);
+        }
+        if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual && ventanaSeleccion.isVisible()) {
+            ventanaSeleccion.setVisible(false);
+        }
+    }
+
+    // Métodos para ocultar ventanas específicas si son necesarios
+    public static void ocultarVentanaInicio() {
+        if (ventanaInicio != null) {
+            ventanaInicio.setVisible(false);
+        }
+    }
+
+    public static void ocultarVentanaOpciones() {
+        if (ventanaOpciones != null) {
+            ventanaOpciones.setVisible(false);
+        }
+    }
+
+    public static void ocultarVentanaCreditos() {
+        if (ventanaCreditos != null) {
+            ventanaCreditos.setVisible(false);
+        }
+    }
+
+    public static void ocultarVentanaSeleccion() {
+        if (ventanaSeleccion != null) {
+            ventanaSeleccion.setVisible(false);
         }
     }
 }
