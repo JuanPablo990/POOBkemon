@@ -1,6 +1,6 @@
 package presentation;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class POOBkemonGUI {
     private static VentanaInicio ventanaInicio;
@@ -13,16 +13,30 @@ public class POOBkemonGUI {
         });
     }
 
+    public static void reiniciarAplicacion() {
+        // Cierra todas las ventanas existentes
+        if (ventanaInicio != null) {
+            ventanaInicio.dispose();
+            ventanaInicio = null;
+        }
+        if (ventanaOpciones != null) {
+            ventanaOpciones.dispose();
+            ventanaOpciones = null;
+        }
+        if (ventanaCreditos != null) {
+            ventanaCreditos.dispose();
+            ventanaCreditos = null;
+        }
+        
+        // Vuelve a mostrar la ventana de inicio
+        mostrarVentanaInicio();
+    }
+
     public static void mostrarVentanaInicio() {
         if (ventanaInicio == null) {
             ventanaInicio = new VentanaInicio();
         }
-        if (ventanaOpciones != null && ventanaOpciones.isVisible()) {
-            ventanaOpciones.setVisible(false);
-        }
-        if (ventanaCreditos != null && ventanaCreditos.isVisible()) {
-            ventanaCreditos.setVisible(false);
-        }
+        ocultarOtrasVentanas(ventanaInicio);
         ventanaInicio.mostrar();
     }
 
@@ -30,12 +44,7 @@ public class POOBkemonGUI {
         if (ventanaOpciones == null) {
             ventanaOpciones = new VentanaOpciones();
         }
-        if (ventanaInicio != null && ventanaInicio.isVisible()) {
-            ventanaInicio.setVisible(false);
-        }
-        if (ventanaCreditos != null && ventanaCreditos.isVisible()) {
-            ventanaCreditos.setVisible(false);
-        }
+        ocultarOtrasVentanas(ventanaOpciones);
         ventanaOpciones.mostrar();
     }
 
@@ -43,9 +52,19 @@ public class POOBkemonGUI {
         if (ventanaCreditos == null) {
             ventanaCreditos = new VentanaCreditos();
         }
-        if (ventanaOpciones != null && ventanaOpciones.isVisible()) {
+        ocultarOtrasVentanas(ventanaCreditos);
+        ventanaCreditos.mostrar();
+    }
+
+    private static void ocultarOtrasVentanas(JFrame ventanaActual) {
+        if (ventanaInicio != null && ventanaInicio != ventanaActual && ventanaInicio.isVisible()) {
+            ventanaInicio.setVisible(false);
+        }
+        if (ventanaOpciones != null && ventanaOpciones != ventanaActual && ventanaOpciones.isVisible()) {
             ventanaOpciones.setVisible(false);
         }
-        ventanaCreditos.mostrar();
+        if (ventanaCreditos != null && ventanaCreditos != ventanaActual && ventanaCreditos.isVisible()) {
+            ventanaCreditos.setVisible(false);
+        }
     }
 }
