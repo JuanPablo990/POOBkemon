@@ -7,25 +7,24 @@ import java.awt.event.*;
 public class VentanaSeleccion extends Ventana {
     private FondoPanel fondoPanel;
     private JButton btnVolver;
-    private JPanel panelContenedorPrincipal; // Panel principal que divide la ventana
-    private JPanel panelIzquierdo; // Panel para contenido izquierdo
-    private JPanel panelDerecho; // Panel para la matriz
-    private JPanel panelAbajoIzquierda; // Para los botones de items
+    private JPanel panelContenedorPrincipal;
+    private JPanel panelIzquierdo;
+    private JPanel panelDerecho;
+    private JPanel panelAbajoIzquierda;
     private JButton[] botonesSuperiores;
     private JButton[] botonesMatriz = new JButton[36];
 
- // Constantes de diseño MODIFICADAS (valores reducidos)
     private static final int ESPACIO_MATRIZ = 2;
     private static final int NUM_COLUMNAS_MATRIZ = 6;
     private static final int NUM_FILAS_MATRIZ = 6;
-    private static final int PREF_ANCHO_BOTON_ITEM = 80;  // Reducido de 100 a 80
-    private static final int PREF_ALTO_BOTON_ITEM = 45;    // Reducido de 60 a 45
+    private static final int PREF_ANCHO_BOTON_ITEM = 80;
+    private static final int PREF_ALTO_BOTON_ITEM = 45;
     private static final int ESPACIO_BOTONES_ITEMS = 5;
-    private static final int ALTO_BOTON_VOLVER = 35;       // Reducido de 40 a 35
-    private static final int ANCHO_MIN_BOTON_VOLVER = 90;  // Reducido de 100 a 90
+    private static final int ALTO_BOTON_VOLVER = 35;    
+    private static final int ANCHO_MIN_BOTON_VOLVER = 90;
     private static final int MARGEN_IZQUIERDO = 95;
-    private static final int MIN_ANCHO_BOTON = 60;         // Reducido de 80 a 60
-    private static final int MAX_ANCHO_BOTON = 150;        // Reducido de 200 a 150
+    private static final int MIN_ANCHO_BOTON = 60;
+    private static final int MAX_ANCHO_BOTON = 150;
     private static final int RELACION_ASPECTO = 5;
     
     public VentanaSeleccion() {
@@ -42,24 +41,24 @@ public class VentanaSeleccion extends Ventana {
         fondoPanel.setLayout(new BorderLayout());
         setContentPane(fondoPanel);
 
-        // Panel contenedor principal (sin cambios)
+        // Panel contenedor principal
         panelContenedorPrincipal = new JPanel(new GridLayout(1, 2));
         panelContenedorPrincipal.setOpaque(false);
         fondoPanel.add(panelContenedorPrincipal, BorderLayout.CENTER);
         fondoPanel.setBorder(BorderFactory.createEmptyBorder(30, -95, 0, 0));
 
-        // Panel izquierdo (sin cambios)
+        // Panel izquierdo
         panelIzquierdo = new JPanel(new BorderLayout());
         panelIzquierdo.setOpaque(false);
         panelContenedorPrincipal.add(panelIzquierdo);
 
-        // Panel derecho (matriz) - sin cambios
+        // Panel derecho (matriz)
         panelDerecho = new JPanel(new BorderLayout());
         panelDerecho.setOpaque(false);
         panelDerecho.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 20));
         panelContenedorPrincipal.add(panelDerecho);
 
-        // Configuración de la matriz (sin cambios)
+        // Configuración de la matriz
         JPanel panelMatriz = new JPanel(new GridLayout(NUM_FILAS_MATRIZ, NUM_COLUMNAS_MATRIZ, ESPACIO_MATRIZ, ESPACIO_MATRIZ));
         panelMatriz.setOpaque(false);
         panelDerecho.add(panelMatriz, BorderLayout.CENTER);
@@ -70,10 +69,10 @@ public class VentanaSeleccion extends Ventana {
             panelMatriz.add(boton);
         }
 
-        // SOLUCIÓN DEFINITIVA: Contenedor intermedio para el desplazamiento
+        // Configuración de los botones de items con imágenes
         JPanel contenedorBotones = new JPanel(new BorderLayout());
         contenedorBotones.setOpaque(false);
-        contenedorBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); // Margen superior 20px aquí
+        contenedorBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         panelAbajoIzquierda = new JPanel(new GridBagLayout());
         panelAbajoIzquierda.setOpaque(false);
@@ -87,14 +86,22 @@ public class VentanaSeleccion extends Ventana {
         int anchoBoton = PREF_ANCHO_BOTON_ITEM - 10;
         int altoBoton = PREF_ALTO_BOTON_ITEM - 10;
         
-        String[] textosBotonesSuperiores = {"potion", "superpotion", "hiperpotion"};
+        // Rutas de las imágenes en el orden especificado
+        String[] rutasImagenes = {
+            "/resources/potion.png",
+            "/resources/hyperpotion.png",
+            "/resources/superpotion.png",
+            "/resources/revivir.png"
+        };
+        
+        String[] textosBotones = {"Poción", "Hiperpoción", "Superpoción", "Revivir"};
         botonesSuperiores = new JButton[4];
         
         // Fila superior (3 botones)
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 8, 0);
-        for (int i = 0; i < textosBotonesSuperiores.length; i++) {
-            JButton boton = crearBotonItem(textosBotonesSuperiores[i]);
+        for (int i = 0; i < 3; i++) {
+            JButton boton = crearBotonItem(textosBotones[i], rutasImagenes[i]);
             boton.setPreferredSize(new Dimension(anchoBoton, altoBoton));
             botonesSuperiores[i] = boton;
             
@@ -104,7 +111,7 @@ public class VentanaSeleccion extends Ventana {
         }
         
         // Botón revivir (fila inferior)
-        JButton btnRevivir = crearBotonItem("revivir");
+        JButton btnRevivir = crearBotonItem(textosBotones[3], rutasImagenes[3]);
         btnRevivir.setPreferredSize(new Dimension(anchoBoton, altoBoton));
         botonesSuperiores[3] = btnRevivir;
         
@@ -116,7 +123,7 @@ public class VentanaSeleccion extends Ventana {
         contenedorBotones.add(panelAbajoIzquierda, BorderLayout.CENTER);
         panelIzquierdo.add(contenedorBotones, BorderLayout.SOUTH);
 
-        // Panel inferior con botón Volver (sin cambios)
+        // Panel inferior con botón Volver
         JPanel panelAbajo = new JPanel(new BorderLayout());
         panelAbajo.setOpaque(false);
 
@@ -128,24 +135,42 @@ public class VentanaSeleccion extends Ventana {
 
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
     }
-    // Métodos auxiliares para crear botones (sin cambios)
+
     private JButton crearBotonMatriz(int numero) {
-        JButton boton = new JButton(String.valueOf(numero));
-        boton.setBackground(new Color(70, 130, 180, 150));
+    	JButton boton = new JButton(String.valueOf(numero));
         boton.setForeground(Color.WHITE);
         boton.setFocusPainted(false);
         boton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        boton.setOpaque(false);
+        boton.setContentAreaFilled(false);
+        boton.setBorderPainted(false);
         return boton;
     }
 
-    private JButton crearBotonItem(String texto) {
-        JButton boton = new JButton(texto);
-        boton.setPreferredSize(new Dimension(PREF_ANCHO_BOTON_ITEM, PREF_ALTO_BOTON_ITEM));
-        boton.setBackground(new Color(70, 130, 180));
-        boton.setForeground(Color.WHITE);
-        boton.setFocusPainted(false);
-        boton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
-        return boton;
+    private JButton crearBotonItem(String texto, String rutaImagen) {
+    	try {
+            ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(rutaImagen));
+            Image imagenEscalada = iconoOriginal.getImage()
+                .getScaledInstance(PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
+            JButton boton = new JButton(new ImageIcon(imagenEscalada));
+            
+            boton.setPreferredSize(new Dimension(PREF_ANCHO_BOTON_ITEM, PREF_ALTO_BOTON_ITEM));
+            boton.setFocusPainted(false);
+            boton.setToolTipText(texto);
+            boton.setOpaque(false);
+            boton.setContentAreaFilled(false);
+            boton.setBorderPainted(false);
+            return boton;
+        } catch (Exception e) {
+            JButton boton = new JButton(texto);
+            boton.setPreferredSize(new Dimension(PREF_ANCHO_BOTON_ITEM, PREF_ALTO_BOTON_ITEM));
+            boton.setForeground(Color.WHITE);
+            boton.setFocusPainted(false);
+            boton.setOpaque(false);
+            boton.setContentAreaFilled(false);
+            boton.setBorderPainted(false);
+            return boton;
+        }
     }
 
     private JButton crearBotonVolver(String texto) {
@@ -180,7 +205,7 @@ public class VentanaSeleccion extends Ventana {
             int altoPanel = panelDerecho.getHeight();
 
             int anchoBoton = Math.min(anchoPanel / NUM_COLUMNAS_MATRIZ, altoPanel / NUM_FILAS_MATRIZ) - ESPACIO_MATRIZ * 2;
-            anchoBoton = Math.max(40, anchoBoton); // Tamaño mínimo
+            anchoBoton = Math.max(40, anchoBoton);
 
             Dimension tamBoton = new Dimension(anchoBoton, anchoBoton);
             for (JButton boton : botonesMatriz) {
@@ -191,48 +216,39 @@ public class VentanaSeleccion extends Ventana {
     
     private void redimensionarBotonesItems() {
         if (panelIzquierdo != null && botonesSuperiores != null && botonesSuperiores.length > 0) {
-            // Calcular espacio disponible restando márgenes
             int anchoDisponible = panelIzquierdo.getWidth() - MARGEN_IZQUIERDO;
-            
-            // Calcular espacio total entre botones
             int espacioEntreBotones = ESPACIO_BOTONES_ITEMS * (botonesSuperiores.length - 1);
-            
-            // Calcular ancho por botón
             int anchoPorBoton = (anchoDisponible - espacioEntreBotones) / botonesSuperiores.length;
-            
-            // Aplicar límites
             anchoPorBoton = Math.max(MIN_ANCHO_BOTON, Math.min(anchoPorBoton, MAX_ANCHO_BOTON));
-            
-            // Calcular alto manteniendo relación de aspecto 5:3
             int altoPorBoton = (anchoPorBoton * 3) / RELACION_ASPECTO;
             
-            Dimension nuevoTamano = new Dimension(anchoPorBoton, altoPorBoton);
-            
-            // Aplicar a todos los botones
+            // Redimensionar imágenes
             for (JButton boton : botonesSuperiores) {
-                boton.setPreferredSize(nuevoTamano);
-                boton.setMinimumSize(nuevoTamano);
-                boton.setMaximumSize(nuevoTamano);
+                ImageIcon icono = (ImageIcon) boton.getIcon();
+                if (icono != null) {
+                    Image img = icono.getImage()
+                        .getScaledInstance(anchoPorBoton-15, altoPorBoton-10, Image.SCALE_SMOOTH);
+                    boton.setIcon(new ImageIcon(img));
+                }
+                boton.setPreferredSize(new Dimension(anchoPorBoton, altoPorBoton));
+                boton.setMinimumSize(new Dimension(anchoPorBoton, altoPorBoton));
+                boton.setMaximumSize(new Dimension(anchoPorBoton, altoPorBoton));
             }
             
-            // Forzar actualización
             panelAbajoIzquierda.revalidate();
             panelAbajoIzquierda.repaint();
         }
     }
-
-
 
     private void configurarListeners() {
         btnVolver.addActionListener(e -> {
             POOBkemonGUI.mostrarVentanaOpciones();
             this.dispose();
         });
-
         for (int i = 0; i < botonesSuperiores.length; i++) {
             final int index = i;
             botonesSuperiores[i].addActionListener(e -> {
-                JOptionPane.showMessageDialog(this, "Botón " + botonesSuperiores[index].getText() + " presionado");
+                JOptionPane.showMessageDialog(this, "Botón " + botonesSuperiores[index].getToolTipText() + " presionado");
             });
         }
     }
@@ -244,15 +260,13 @@ public class VentanaSeleccion extends Ventana {
 
     @Override
     protected void accionAbrir() {
-        mostrarFileChooser("Abrir selección de Pokémon", new String[]{"pok"},
-                "Archivos de Pokémon (*.pok)",
+        mostrarFileChooser("Abrir selección de Pokémon", new String[]{"pok"},"Archivos de Pokémon (*.pok)",
                 e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon cargada"));
     }
 
     @Override
     protected void accionGuardar() {
-        mostrarFileChooser("Guardar selección de Pokémon", new String[]{"pok"},
-                "Archivos de Pokémon (*.pok)",
+        mostrarFileChooser("Guardar selección de Pokémon", new String[]{"pok"},"Archivos de Pokémon (*.pok)",
                 e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon guardada"));
     }
 
