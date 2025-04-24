@@ -3,6 +3,9 @@ package presentation;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
 
 public class VentanaSeleccion extends Ventana {
     private FondoPanel fondoPanel;
@@ -27,11 +30,51 @@ public class VentanaSeleccion extends Ventana {
     private static final int MAX_ANCHO_BOTON = 150;
     private static final int RELACION_ASPECTO = 5;
     
+    private static final String[] RUTAS_POKEMONES = {
+        "/resources/Pokemones/Acero/Aron.gif",
+        "/resources/Pokemones/Acero/Metangross.gif",
+        "/resources/Pokemones/Agua/corphish.gif",
+        "/resources/Pokemones/Agua/magikarp.gif",
+        "/resources/Pokemones/Bicho/Scizor.gif",
+        "/resources/Pokemones/Bicho/Shedinja.gif",
+        "/resources/Pokemones/Dragon/Dratini.gif",
+        "/resources/Pokemones/Dragon/Trapinch.gif",
+        "/resources/Pokemones/Electrico/Magnemite.gif",
+        "/resources/Pokemones/Electrico/Voltorb.gif",
+        "/resources/Pokemones/Fantasma/Duskull.gif",
+        "/resources/Pokemones/Fantasma/Shuppet.gif",
+        "/resources/Pokemones/Fuego/Torchic.gif",
+        "/resources/Pokemones/Fuego/Torjoal.gif",
+        "/resources/Pokemones/Hada/Azurill.gif",
+        "/resources/Pokemones/Hada/Gardevoir.gif",
+        "/resources/Pokemones/Hielo/Snorunt.gif",
+        "/resources/Pokemones/Hielo/Spheal.gif",
+        "/resources/Pokemones/Lucha/Heracross.gif",
+        "/resources/Pokemones/Lucha/Hitmonlee.gif",
+        "/resources/Pokemones/Normal/Skitty.gif",
+        "/resources/Pokemones/Normal/Zangoose.gif",
+        "/resources/Pokemones/Planta/shroomish.gif",
+        "/resources/Pokemones/Planta/tropius.gif",
+        "/resources/Pokemones/Psiquico/Spoink.gif",
+        "/resources/Pokemones/Psiquico/Wobbuffet.gif",
+        "/resources/Pokemones/Roca/Geodude.gif",
+        "/resources/Pokemones/Roca/Nosepass.gif",
+        "/resources/Pokemones/Siniestro/Absol.gif",
+        "/resources/Pokemones/Siniestro/Poochyena.gif",
+        "/resources/Pokemones/Tierra/Numel.gif",
+        "/resources/Pokemones/Tierra/Sandshrew.gif",
+        "/resources/Pokemones/Veneno/Roselia.gif",
+        "/resources/Pokemones/Veneno/Tentacool.gif",
+        "/resources/Pokemones/Volador/Skarmory.gif",
+        "/resources/Pokemones/Volador/Zubat.gif",
+    };
+    
     public VentanaSeleccion() {
         super("Selección de POOBkemon");
         inicializarComponentes();
         configurarListeners();
         agregarResizeListener();
+        verificarCargaImagenes(); // Método de diagnóstico
     }
     
     private void inicializarComponentes() {
@@ -64,7 +107,7 @@ public class VentanaSeleccion extends Ventana {
         panelDerecho.add(panelMatriz, BorderLayout.CENTER);
 
         for (int i = 0; i < botonesMatriz.length; i++) {
-            JButton boton = crearBotonMatriz(i + 1);
+            JButton boton = crearBotonPokemon(i);
             botonesMatriz[i] = boton;
             panelMatriz.add(boton);
         }
@@ -86,7 +129,6 @@ public class VentanaSeleccion extends Ventana {
         int anchoBoton = PREF_ANCHO_BOTON_ITEM - 10;
         int altoBoton = PREF_ALTO_BOTON_ITEM - 10;
         
-        // Rutas de las imágenes en el orden especificado
         String[] rutasImagenes = {
             "/resources/potion.png",
             "/resources/hyperpotion.png",
@@ -136,19 +178,55 @@ public class VentanaSeleccion extends Ventana {
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
     }
 
-    private JButton crearBotonMatriz(int numero) {
-    	JButton boton = new JButton(String.valueOf(numero));
-        boton.setForeground(Color.WHITE);
+    private JButton crearBotonPokemon(int index) {
+        JButton boton = new JButton();
         boton.setFocusPainted(false);
         boton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         boton.setOpaque(false);
         boton.setContentAreaFilled(false);
-        boton.setBorderPainted(false);
+        
+        if (index < RUTAS_POKEMONES.length && RUTAS_POKEMONES[index] != null) {
+            try {
+                // Carga optimizada para GIFs animados
+                URL url = getClass().getResource(RUTAS_POKEMONES[index]);
+                if (url != null) {
+                    ImageIcon icono = new ImageIcon(url);
+                    boton.setIcon(icono);
+                    boton.setToolTipText(getNombrePokemonFromPath(RUTAS_POKEMONES[index]));
+                    
+                    // Forzar la actualización del componente
+                    boton.revalidate();
+                    boton.repaint();
+                } else {
+                    System.err.println("No se encontró el recurso: " + RUTAS_POKEMONES[index]);
+                    mostrarBotonError(boton, "No encontrado");
+                }
+            } catch (Exception e) {
+                System.err.println("Error cargando imagen: " + RUTAS_POKEMONES[index]);
+                e.printStackTrace();
+                mostrarBotonError(boton, "Error");
+            }
+        } else {
+            mostrarBotonError(boton, "No image");
+        }
+        
         return boton;
+    }
+    
+    private void mostrarBotonError(JButton boton, String mensaje) {
+        boton.setText(mensaje);
+        boton.setForeground(Color.RED);
+        boton.setFont(new Font("Arial", Font.BOLD, 10));
+    }
+    
+    private String getNombrePokemonFromPath(String path) {
+        String[] partes = path.split("/");
+        String nombreConExtension = partes[partes.length - 1];
+        return nombreConExtension.substring(0, nombreConExtension.lastIndexOf('.'));
     }
 
     private JButton crearBotonItem(String texto, String rutaImagen) {
-    	try {
+        try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(rutaImagen));
             Image imagenEscalada = iconoOriginal.getImage()
                 .getScaledInstance(PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
@@ -210,6 +288,19 @@ public class VentanaSeleccion extends Ventana {
             Dimension tamBoton = new Dimension(anchoBoton, anchoBoton);
             for (JButton boton : botonesMatriz) {
                 boton.setPreferredSize(tamBoton);
+                
+                if (boton.getIcon() instanceof ImageIcon) {
+                    ImageIcon originalIcon = (ImageIcon) boton.getIcon();
+                    Image originalImage = originalIcon.getImage();
+                    
+                    Image scaledImage = originalImage.getScaledInstance(
+                        anchoBoton - 4, anchoBoton - 4, Image.SCALE_DEFAULT);
+                    
+                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+                    scaledIcon.setImageObserver(boton); // El botón será el ImageObserver
+                    
+                    boton.setIcon(scaledIcon);
+                }
             }
         }
     }
@@ -222,7 +313,6 @@ public class VentanaSeleccion extends Ventana {
             anchoPorBoton = Math.max(MIN_ANCHO_BOTON, Math.min(anchoPorBoton, MAX_ANCHO_BOTON));
             int altoPorBoton = (anchoPorBoton * 3) / RELACION_ASPECTO;
             
-            // Redimensionar imágenes
             for (JButton boton : botonesSuperiores) {
                 ImageIcon icono = (ImageIcon) boton.getIcon();
                 if (icono != null) {
@@ -245,11 +335,47 @@ public class VentanaSeleccion extends Ventana {
             POOBkemonGUI.mostrarVentanaOpciones();
             this.dispose();
         });
+        
         for (int i = 0; i < botonesSuperiores.length; i++) {
             final int index = i;
             botonesSuperiores[i].addActionListener(e -> {
                 JOptionPane.showMessageDialog(this, "Botón " + botonesSuperiores[index].getToolTipText() + " presionado");
             });
+        }
+        
+        for (int i = 0; i < botonesMatriz.length; i++) {
+            final int index = i;
+            botonesMatriz[i].addActionListener(e -> {
+                String nombrePokemon = "No disponible";
+                if (index < RUTAS_POKEMONES.length && RUTAS_POKEMONES[index] != null) {
+                    nombrePokemon = getNombrePokemonFromPath(RUTAS_POKEMONES[index]);
+                }
+                JOptionPane.showMessageDialog(this, "Pokémon seleccionado: " + nombrePokemon);
+            });
+        }
+    }
+    
+    // Método de diagnóstico
+    private void verificarCargaImagenes() {
+        System.out.println("=== DIAGNÓSTICO DE CARGA DE IMÁGENES ===");
+        for (int i = 0; i < Math.min(RUTAS_POKEMONES.length, botonesMatriz.length); i++) {
+            if (RUTAS_POKEMONES[i] != null) {
+                URL url = getClass().getResource(RUTAS_POKEMONES[i]);
+                System.out.println("Índice " + i + ": " + RUTAS_POKEMONES[i]);
+                System.out.println("  URL: " + url);
+                
+                if (url == null) {
+                    System.err.println("  ¡El recurso no se encontró!");
+                } else {
+                    try {
+                        ImageIcon icon = new ImageIcon(url);
+                        System.out.println("  Dimensiones: " + icon.getIconWidth() + "x" + icon.getIconHeight());
+                        System.out.println("  Cargado: " + (icon.getImageLoadStatus() == MediaTracker.COMPLETE ? "Éxito" : "Falló"));
+                    } catch (Exception e) {
+                        System.err.println("  Error al cargar: " + e.getMessage());
+                    }
+                }
+            }
         }
     }
 
@@ -260,13 +386,13 @@ public class VentanaSeleccion extends Ventana {
 
     @Override
     protected void accionAbrir() {
-        mostrarFileChooser("Abrir selección de Pokémon", new String[]{"pok"},"Archivos de Pokémon (*.pok)",
+        mostrarFileChooser("Abrir selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)",
                 e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon cargada"));
     }
 
     @Override
     protected void accionGuardar() {
-        mostrarFileChooser("Guardar selección de Pokémon", new String[]{"pok"},"Archivos de Pokémon (*.pok)",
+        mostrarFileChooser("Guardar selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)",
                 e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon guardada"));
     }
 
