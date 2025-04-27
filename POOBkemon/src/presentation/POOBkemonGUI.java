@@ -1,6 +1,7 @@
 package presentation;
 
 import javax.swing.*;
+import java.util.List;
 
 public class POOBkemonGUI {
     private static VentanaInicio ventanaInicio;
@@ -14,6 +15,7 @@ public class POOBkemonGUI {
             mostrarVentanaInicio();
         });
     }
+
 
     public static void reiniciarAplicacion() {
         // Cierra todas las ventanas existentes
@@ -67,18 +69,17 @@ public class POOBkemonGUI {
     }
 
     public static void mostrarVentanaSeleccion() {
-        if (ventanaSeleccion == null) {
-            ventanaSeleccion = new VentanaSeleccion();
-        }
-        ocultarOtrasVentanas(ventanaSeleccion);
+    	VentanaSeleccion ventanaSeleccion = new VentanaSeleccion();
         ventanaSeleccion.mostrar();
     }
 
     public static void mostrarVentanaMovimientos() {
-        if (ventanaMovimientos == null) {
-            ventanaMovimientos = new VentanaMovimientos();
-        }
-        ocultarOtrasVentanas(ventanaMovimientos);
+        VentanaMovimientos ventanaMovimientos = new VentanaMovimientos(null);
+        ventanaMovimientos.mostrar();
+    }
+    
+    public static void mostrarVentanaMovimientos(List<String> rutasPokemonSeleccionados) {
+        VentanaMovimientos ventanaMovimientos = new VentanaMovimientos(rutasPokemonSeleccionados);
         ventanaMovimientos.mostrar();
     }
 

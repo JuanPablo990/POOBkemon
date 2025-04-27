@@ -2,66 +2,111 @@ package presentation;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.net.URL;
+import java.util.List;
 
 public class VentanaMovimientos extends Ventana {
     private FondoPanel fondoPanel;
+    private List<String> rutasPokemonSeleccionados;
+    private JLabel[] etiquetasImagenes; // Para mantener referencia a las imágenes
+    
+    private static final int IMG_WIDTH_DEFAULT = 50;  // Reducido de 80 a 60
+    private static final int IMG_HEIGHT_DEFAULT = 50; // Reducido de 80 a 60
+    private static final int MAX_IMG_SIZE = 60;       // Tamaño máximo permitido al redimensionar
+    private static final int MIN_IMG_SIZE = 30;     
 
-    public VentanaMovimientos() {
+    public VentanaMovimientos(List<String> rutasPokemonSeleccionados) {
         super("Movimientos de POOBkemon");
+        this.rutasPokemonSeleccionados = rutasPokemonSeleccionados;
+        if (rutasPokemonSeleccionados != null) {
+            etiquetasImagenes = new JLabel[rutasPokemonSeleccionados.size()];
+        }
         inicializarComponentes();
         configurarVentana();
+        agregarResizeListener();
     }
 
     private void inicializarComponentes() {
-        fondoPanel = new FondoPanel("/resources/movimientos.gif");
+    	fondoPanel = new FondoPanel("/resources/movimientos.gif");
         fondoPanel.setLayout(new BorderLayout());
 
-        // Panel principal 2x3
-        JPanel gridPrincipal = new JPanel(new GridLayout(2, 3, 10, 10));
+        JPanel gridPrincipal = new JPanel(new GridLayout(2, 3, 5, 5)); // Espaciado reducido
         gridPrincipal.setOpaque(false);
 
-        // Crear 6 celdas (2 filas x 3 columnas)
+        int numPokemonesSeleccionados = rutasPokemonSeleccionados != null ? rutasPokemonSeleccionados.size() : 0;
+
+        int pokemonIndex = 0;
         for (int fila = 0; fila < 2; fila++) {
             for (int col = 0; col < 3; col++) {
                 JPanel celda = new JPanel(new BorderLayout());
                 celda.setOpaque(false);
-                celda.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                celda.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1)); // Borde más delgado
 
-                // --- Panel combinado: Imagen arriba + Botones abajo ---
                 JPanel contenidoCelda = new JPanel();
                 contenidoCelda.setLayout(new BorderLayout());
                 contenidoCelda.setOpaque(false);
 
-                // Parte de la imagen (arriba)
-                JPanel panelImagen = new JPanel();
+                // Panel para la imagen (más compacto)
+                JPanel panelImagen = new JPanel(new BorderLayout());
                 panelImagen.setOpaque(false);
-                panelImagen.setPreferredSize(new Dimension(0, 100)); // Altura reservada
-                panelImagen.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY)); // Para que veas el espacio reservado
+                panelImagen.setPreferredSize(new Dimension(0, 60)); // Altura reducida de 100 a 80
+                
+                if (rutasPokemonSeleccionados != null && pokemonIndex < numPokemonesSeleccionados) {
+                    try {
+                        String rutaImagen = rutasPokemonSeleccionados.get(pokemonIndex);
+                        URL url = getClass().getResource(rutaImagen);
+                        if (url != null) {
+                            ImageIcon iconoOriginal = new ImageIcon(url);
+                            
+                            JLabel labelImagen = new JLabel(iconoOriginal, JLabel.CENTER);
+                            labelImagen.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2)); // Padding reducido
+                            
+                            // Configurar tamaño inicial más pequeño
+                            labelImagen.setPreferredSize(new Dimension(IMG_WIDTH_DEFAULT, IMG_HEIGHT_DEFAULT));
+                            etiquetasImagenes[pokemonIndex] = labelImagen;
+                            
+                            panelImagen.add(labelImagen, BorderLayout.CENTER);
+                            
+                            // Nombre más compacto
+                            String nombrePokemon = getNombrePokemonFromPath(rutaImagen);
+                            JLabel labelNombre = new JLabel("<html><center>" + nombrePokemon + "</center></html>", JLabel.CENTER);
+                            labelNombre.setForeground(Color.WHITE);
+                            labelNombre.setFont(labelNombre.getFont().deriveFont(10f)); // Fuente más pequeña
+                            panelImagen.add(labelNombre, BorderLayout.SOUTH);
+                        }
+                    } catch (Exception e) {
+                        // Manejo de errores...
+                    }
+                }
+                
                 contenidoCelda.add(panelImagen, BorderLayout.NORTH);
 
-                // Parte inferior: botones VERTICALES y GRANDES
+                // Panel de botones más compacto
                 JPanel panelBotones = new JPanel(new GridBagLayout());
                 panelBotones.setOpaque(false);
 
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.gridwidth = GridBagConstraints.REMAINDER;
                 gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.insets = new Insets(5, 10, 5, 10);
+                gbc.insets = new Insets(2, 5, 2, 5); // Espaciado reducido
                 gbc.weightx = 1;
 
-                for (int i = 0; i < 4; i++) {
-                    JButton boton = new JButton("Btn " + (i+1));
-                    boton.setBackground(new Color(255, 255, 255, 100));
-                    boton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                    boton.setFocusable(false);
-                    boton.setPreferredSize(new Dimension(0, 30));
-                    panelBotones.add(boton, gbc);
+                if (rutasPokemonSeleccionados != null && pokemonIndex < numPokemonesSeleccionados) {
+                    for (int i = 0; i < 4; i++) {
+                        JButton boton = new JButton("Mov " + (i+1)); // Texto más corto
+                        boton.setBackground(new Color(255, 255, 255, 100));
+                        boton.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+                        boton.setPreferredSize(new Dimension(0, 25)); // Botones más delgados
+                        boton.setFont(boton.getFont().deriveFont(10f)); // Fuente más pequeña
+                        panelBotones.add(boton, gbc);
+                    }
                 }
 
                 contenidoCelda.add(panelBotones, BorderLayout.CENTER);
-
                 celda.add(contenidoCelda, BorderLayout.CENTER);
                 gridPrincipal.add(celda);
+                pokemonIndex++;
             }
         }
 
@@ -69,19 +114,54 @@ public class VentanaMovimientos extends Ventana {
         JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBoton.setOpaque(false);
         JButton btnSiguiente = new JButton("Siguiente");
-        btnSiguiente.setPreferredSize(new Dimension(120, 40));
+        btnSiguiente.setPreferredSize(new Dimension(100, 30));
+        btnSiguiente.setFont(btnSiguiente.getFont().deriveFont(12f));
+        btnSiguiente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Aquí se podría navegar a la siguiente ventana
+                JOptionPane.showMessageDialog(VentanaMovimientos.this, 
+                    "¡Configuración completada!\nPokémon seleccionados: " + numPokemonesSeleccionados);
+            }
+        });
         panelBoton.add(btnSiguiente);
-
-        // Agregar componentes al fondo
         fondoPanel.add(gridPrincipal, BorderLayout.CENTER);
         fondoPanel.add(panelBoton, BorderLayout.SOUTH);
         setContentPane(fondoPanel);
+    }
+
+    private String getNombrePokemonFromPath(String path) {
+        String[] partes = path.split("/");
+        String nombreConExtension = partes[partes.length - 1];
+        return nombreConExtension.substring(0, nombreConExtension.lastIndexOf('.'));
     }
 
     private void configurarVentana() {
         setSize(1100, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    
+    // Agregar listener para redimensionar imágenes cuando cambia el tamaño de la ventana
+    private void agregarResizeListener() {
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                redimensionarImagenes();
+            }
+        });
+    }
+    
+    private void redimensionarImagenes() {
+    	if (etiquetasImagenes == null) return;
+        int anchoImagen = Math.min(getWidth() / 15, MAX_IMG_SIZE);
+        anchoImagen = Math.max(MIN_IMG_SIZE, anchoImagen);
+        for (int i = 0; i < etiquetasImagenes.length; i++) {
+            if (etiquetasImagenes[i] != null) {
+                etiquetasImagenes[i].setPreferredSize(new Dimension(anchoImagen, anchoImagen));
+                etiquetasImagenes[i].revalidate();
+            }
+        }
     }
 
     @Override protected void accionNuevo() {}
@@ -94,5 +174,7 @@ public class VentanaMovimientos extends Ventana {
         revalidate();
         repaint();
         setVisible(true);
+        // Redimensionar imágenes al mostrar
+        SwingUtilities.invokeLater(this::redimensionarImagenes);
     }
 }

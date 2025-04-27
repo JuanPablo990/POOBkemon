@@ -4,13 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class VentanaSeleccion extends Ventana {
     // Componentes de la interfaz
     private FondoPanel fondoPanel;
-    private JButton btnSiguiente; // Cambiado de btnVolver a btnSiguiente
+    private JButton btnSiguiente;
     private JPanel panelContenedorPrincipal;
     private JPanel panelIzquierdo;
     private JPanel panelDerecho;
@@ -37,13 +40,13 @@ public class VentanaSeleccion extends Ventana {
     private static final int MAX_POKEMON_SELECTED = 6;
     private static final int MAX_POTIONS_SELECTED = 2;
     private static final int MAX_REVIVE_SELECTED = 1;
-    
     // Contadores de selección
     private int pokemonSelectedCount = 0;
     private int potionsSelectedCount = 0;
     private int reviveSelectedCount = 0;
     private Set<JButton> selectedPokemonButtons = new HashSet<>();
     private Set<JButton> selectedItemButtons = new HashSet<>();
+    private List<String> rutasPokemonSeleccionados = new ArrayList<>();
     
     // Rutas de imágenes de Pokémon
     private static final String[] RUTAS_POKEMONES = {
@@ -334,32 +337,27 @@ public class VentanaSeleccion extends Ventana {
 
 	private void configurarListeners() {
 	    btnSiguiente.addActionListener(e -> {
-	        // Validar que se haya seleccionado al menos 1 Pokémon
-	        if (pokemonSelectedCount < 1) {
-	            JOptionPane.showMessageDialog(this, 
-	                "Debes seleccionar al menos 1 Pokémon para continuar", 
-	                "Selección incompleta", JOptionPane.WARNING_MESSAGE);
-	            return;
-	        }
-	        
-	        // Validación opcional de items (puedes eliminar este bloque si no lo necesitas)
-	        if (potionsSelectedCount > MAX_POTIONS_SELECTED) {
-	            JOptionPane.showMessageDialog(this,
-	                "Solo puedes seleccionar máximo " + MAX_POTIONS_SELECTED + " pociones",
-	                "Límite excedido", JOptionPane.WARNING_MESSAGE);
-	            return;
-	        }
-	        
-	        if (reviveSelectedCount > MAX_REVIVE_SELECTED) {
-	            JOptionPane.showMessageDialog(this,
-	                "Solo puedes seleccionar máximo " + MAX_REVIVE_SELECTED + " revivir",
-	                "Límite excedido", JOptionPane.WARNING_MESSAGE);
-	            return;
-	        }
-	        
-	        // Si todo está correcto, avanzar a la siguiente ventana
-	        POOBkemonGUI.mostrarVentanaMovimientos();
-	        this.dispose();
+	    	if (pokemonSelectedCount < 1) {
+                JOptionPane.showMessageDialog(this, 
+                    "Debes seleccionar al menos 1 Pokémon para continuar", 
+                    "Selección incompleta", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+	    	if (potionsSelectedCount > MAX_POTIONS_SELECTED) {
+                JOptionPane.showMessageDialog(this,
+                    "Solo puedes seleccionar máximo " + MAX_POTIONS_SELECTED + " pociones",
+                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            if (reviveSelectedCount > MAX_REVIVE_SELECTED) {
+                JOptionPane.showMessageDialog(this,
+                    "Solo puedes seleccionar máximo " + MAX_REVIVE_SELECTED + " revivir",
+                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            POOBkemonGUI.mostrarVentanaMovimientos(rutasPokemonSeleccionados);
+            this.dispose();
 	    });
 	    
 	    // Listeners para botones de items
@@ -374,29 +372,41 @@ public class VentanaSeleccion extends Ventana {
 	}
 	    
 	private void manejarSeleccionPokemon(JButton boton) {
-	    if (selectedPokemonButtons.contains(boton)) {
-	        // Deseleccionar
-	        boton.setBackground(null);
-	        boton.setOpaque(false);
-	        selectedPokemonButtons.remove(boton);
-	        pokemonSelectedCount--;
-	    } else {
-	        // Verificar límite máximo (6)
-	        if (pokemonSelectedCount >= MAX_POKEMON_SELECTED) {
-	            JOptionPane.showMessageDialog(this,
-	                "Puedes seleccionar máximo " + MAX_POKEMON_SELECTED + " Pokémon",
-	                "Límite alcanzado", JOptionPane.INFORMATION_MESSAGE);
-	            return;
+		 if (selectedPokemonButtons.contains(boton)) {
+	            // Deseleccionar
+	            boton.setBackground(null);
+	            boton.setOpaque(false);
+	            selectedPokemonButtons.remove(boton);
+	            pokemonSelectedCount--;
+	            
+	            // Eliminar la ruta de la lista de seleccionados
+	            int index = Arrays.asList(botonesMatriz).indexOf(boton);
+	            if (index >= 0 && index < RUTAS_POKEMONES.length) {
+	                rutasPokemonSeleccionados.remove(RUTAS_POKEMONES[index]);
+	            }
+	        } else {
+	            // Verificar límite máximo (6)
+	            if (pokemonSelectedCount >= MAX_POKEMON_SELECTED) {
+	                JOptionPane.showMessageDialog(this,
+	                    "Puedes seleccionar máximo " + MAX_POKEMON_SELECTED + " Pokémon",
+	                    "Límite alcanzado", JOptionPane.INFORMATION_MESSAGE);
+	                return;
+	            }
+	            
+	            // Seleccionar
+	            boton.setBackground(SELECTED_COLOR);
+	            boton.setOpaque(true);
+	            selectedPokemonButtons.add(boton);
+	            pokemonSelectedCount++;
+	            
+	            // Agregar la ruta a la lista de seleccionados
+	            int index = Arrays.asList(botonesMatriz).indexOf(boton);
+	            if (index >= 0 && index < RUTAS_POKEMONES.length) {
+	                rutasPokemonSeleccionados.add(RUTAS_POKEMONES[index]);
+	            }
 	        }
-	        
-	        // Seleccionar
-	        boton.setBackground(SELECTED_COLOR);
-	        boton.setOpaque(true);
-	        selectedPokemonButtons.add(boton);
-	        pokemonSelectedCount++;
+	        boton.repaint();
 	    }
-	    boton.repaint();
-	}
     
     private void manejarSeleccionItem(JButton boton) {
         String tipoItem = boton.getToolTipText();
