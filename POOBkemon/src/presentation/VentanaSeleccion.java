@@ -10,7 +10,7 @@ import java.util.Set;
 public class VentanaSeleccion extends Ventana {
     // Componentes de la interfaz
     private FondoPanel fondoPanel;
-    private JButton btnVolver;
+    private JButton btnSiguiente; // Cambiado de btnVolver a btnSiguiente
     private JPanel panelContenedorPrincipal;
     private JPanel panelIzquierdo;
     private JPanel panelDerecho;
@@ -180,15 +180,15 @@ public class VentanaSeleccion extends Ventana {
         contenedorBotones.add(panelAbajoIzquierda, BorderLayout.CENTER);
         panelIzquierdo.add(contenedorBotones, BorderLayout.SOUTH);
 
-        // Panel inferior con botón Volver
+        // Panel inferior con botón Siguiente
         JPanel panelAbajo = new JPanel(new BorderLayout());
         panelAbajo.setOpaque(false);
 
-        JPanel panelBotonVolver = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelBotonVolver.setOpaque(false);
-        btnVolver = crearBotonVolver("Volver");
-        panelBotonVolver.add(btnVolver);
-        panelAbajo.add(panelBotonVolver, BorderLayout.EAST);
+        JPanel panelBotonSiguiente = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelBotonSiguiente.setOpaque(false);
+        btnSiguiente = crearBotonSiguiente("Siguiente");
+        panelBotonSiguiente.add(btnSiguiente);
+        panelAbajo.add(panelBotonSiguiente, BorderLayout.EAST);
 
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
     }
@@ -258,10 +258,10 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
-    private JButton crearBotonVolver(String texto) {
+    private JButton crearBotonSiguiente(String texto) {
         JButton boton = new JButton(texto);
         boton.setFont(new Font("Arial", Font.BOLD, 14));
-        boton.setBackground(new Color(70, 130, 180));
+        boton.setBackground(new Color(70, 180, 130)); // Cambio de color a verde
         boton.setForeground(Color.WHITE);
         boton.setFocusPainted(false);
         boton.setPreferredSize(new Dimension(ANCHO_MIN_BOTON_VOLVER, ALTO_BOTON_VOLVER));
@@ -332,44 +332,71 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
-    private void configurarListeners() {
-        btnVolver.addActionListener(e -> {
-            POOBkemonGUI.mostrarVentanaOpciones();
-            this.dispose();
-        });
-        
-        // Listeners para botones de items
-        for (JButton boton : botonesSuperiores) {
-            boton.addActionListener(e -> manejarSeleccionItem((JButton) e.getSource()));
-        }
-        
-        // Listeners para botones de Pokémon
-        for (JButton boton : botonesMatriz) {
-            boton.addActionListener(e -> manejarSeleccionPokemon((JButton) e.getSource()));
-        }
-    }
-    
-    private void manejarSeleccionPokemon(JButton boton) {
-        if (selectedPokemonButtons.contains(boton)) {
-            // Deseleccionar
-            boton.setBackground(null);
-            boton.setOpaque(false);
-            selectedPokemonButtons.remove(boton);
-            pokemonSelectedCount--;
-        } else {
-            // Verificar límite - Solo regresar si ya se alcanzó el máximo
-            if (pokemonSelectedCount >= MAX_POKEMON_SELECTED) {
-                return; // Simplemente no hacer nada si ya hay 6 seleccionados
-            }
-            
-            // Seleccionar
-            boton.setBackground(SELECTED_COLOR);
-            boton.setOpaque(true);
-            selectedPokemonButtons.add(boton);
-            pokemonSelectedCount++;
-        }
-        boton.repaint();
-    }
+	private void configurarListeners() {
+	    btnSiguiente.addActionListener(e -> {
+	        // Validar que se haya seleccionado al menos 1 Pokémon
+	        if (pokemonSelectedCount < 1) {
+	            JOptionPane.showMessageDialog(this, 
+	                "Debes seleccionar al menos 1 Pokémon para continuar", 
+	                "Selección incompleta", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+	        
+	        // Validación opcional de items (puedes eliminar este bloque si no lo necesitas)
+	        if (potionsSelectedCount > MAX_POTIONS_SELECTED) {
+	            JOptionPane.showMessageDialog(this,
+	                "Solo puedes seleccionar máximo " + MAX_POTIONS_SELECTED + " pociones",
+	                "Límite excedido", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+	        
+	        if (reviveSelectedCount > MAX_REVIVE_SELECTED) {
+	            JOptionPane.showMessageDialog(this,
+	                "Solo puedes seleccionar máximo " + MAX_REVIVE_SELECTED + " revivir",
+	                "Límite excedido", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+	        
+	        // Si todo está correcto, avanzar a la siguiente ventana
+	        POOBkemonGUI.mostrarVentanaMovimientos();
+	        this.dispose();
+	    });
+	    
+	    // Listeners para botones de items
+	    for (JButton boton : botonesSuperiores) {
+	        boton.addActionListener(e -> manejarSeleccionItem((JButton) e.getSource()));
+	    }
+	    
+	    // Listeners para botones de Pokémon
+	    for (JButton boton : botonesMatriz) {
+	        boton.addActionListener(e -> manejarSeleccionPokemon((JButton) e.getSource()));
+	    }
+	}
+	    
+	private void manejarSeleccionPokemon(JButton boton) {
+	    if (selectedPokemonButtons.contains(boton)) {
+	        // Deseleccionar
+	        boton.setBackground(null);
+	        boton.setOpaque(false);
+	        selectedPokemonButtons.remove(boton);
+	        pokemonSelectedCount--;
+	    } else {
+	        // Verificar límite máximo (6)
+	        if (pokemonSelectedCount >= MAX_POKEMON_SELECTED) {
+	            JOptionPane.showMessageDialog(this,
+	                "Puedes seleccionar máximo " + MAX_POKEMON_SELECTED + " Pokémon",
+	                "Límite alcanzado", JOptionPane.INFORMATION_MESSAGE);
+	            return;
+	        }
+	        
+	        // Seleccionar
+	        boton.setBackground(SELECTED_COLOR);
+	        boton.setOpaque(true);
+	        selectedPokemonButtons.add(boton);
+	        pokemonSelectedCount++;
+	    }
+	    boton.repaint();
+	}
     
     private void manejarSeleccionItem(JButton boton) {
         String tipoItem = boton.getToolTipText();
@@ -409,9 +436,7 @@ public class VentanaSeleccion extends Ventana {
         }
         boton.repaint();
     }
-    
 
-    // Resto de métodos de la clase (accionNuevo, accionAbrir, etc.)
     @Override
     protected void accionNuevo() {
         JOptionPane.showMessageDialog(this, "Nueva selección de Pokémon iniciada");

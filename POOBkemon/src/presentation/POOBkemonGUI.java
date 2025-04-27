@@ -7,6 +7,7 @@ public class POOBkemonGUI {
     private static VentanaOpciones ventanaOpciones;
     private static VentanaCreditos ventanaCreditos;
     private static VentanaSeleccion ventanaSeleccion;
+    private static VentanaMovimientos ventanaMovimientos;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -31,6 +32,10 @@ public class POOBkemonGUI {
         if (ventanaSeleccion != null) {
             ventanaSeleccion.dispose();
             ventanaSeleccion = null;
+        }
+        if (ventanaMovimientos != null) {
+            ventanaMovimientos.dispose();
+            ventanaMovimientos = null;
         }
         
         // Vuelve a mostrar la ventana de inicio
@@ -69,6 +74,14 @@ public class POOBkemonGUI {
         ventanaSeleccion.mostrar();
     }
 
+    public static void mostrarVentanaMovimientos() {
+        if (ventanaMovimientos == null) {
+            ventanaMovimientos = new VentanaMovimientos();
+        }
+        ocultarOtrasVentanas(ventanaMovimientos);
+        ventanaMovimientos.mostrar();
+    }
+
     private static void ocultarOtrasVentanas(JFrame ventanaActual) {
         if (ventanaInicio != null && ventanaInicio != ventanaActual && ventanaInicio.isVisible()) {
             ventanaInicio.setVisible(false);
@@ -81,6 +94,9 @@ public class POOBkemonGUI {
         }
         if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual && ventanaSeleccion.isVisible()) {
             ventanaSeleccion.setVisible(false);
+        }
+        if (ventanaMovimientos != null && ventanaMovimientos != ventanaActual && ventanaMovimientos.isVisible()) {
+            ventanaMovimientos.setVisible(false);
         }
     }
 
@@ -106,6 +122,12 @@ public class POOBkemonGUI {
     public static void ocultarVentanaSeleccion() {
         if (ventanaSeleccion != null) {
             ventanaSeleccion.setVisible(false);
+        }
+    }
+
+    public static void ocultarVentanaMovimientos() {
+        if (ventanaMovimientos != null) {
+            ventanaMovimientos.setVisible(false);
         }
     }
 }
