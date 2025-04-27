@@ -16,13 +16,13 @@ public class VentanaMovimientos extends Ventana {
         fondoPanel = new FondoPanel("/resources/movimientos.gif");
         fondoPanel.setLayout(new BorderLayout());
 
-        // Panel principal 2x6
-        JPanel gridPrincipal = new JPanel(new GridLayout(2, 6, 10, 10));
+        // Panel principal 2x3
+        JPanel gridPrincipal = new JPanel(new GridLayout(2, 3, 10, 10));
         gridPrincipal.setOpaque(false);
 
-        // Crear 12 celdas (2 filas x 6 columnas)
+        // Crear 6 celdas (2 filas x 3 columnas)
         for (int fila = 0; fila < 2; fila++) {
-            for (int col = 0; col < 6; col++) {
+            for (int col = 0; col < 3; col++) {
                 JPanel celda = new JPanel(new BorderLayout());
                 celda.setOpaque(false);
                 celda.setBorder(BorderFactory.createLineBorder(Color.WHITE));
@@ -65,7 +65,16 @@ public class VentanaMovimientos extends Ventana {
             }
         }
 
+        // Panel para el botón Siguiente
+        JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelBoton.setOpaque(false);
+        JButton btnSiguiente = new JButton("Siguiente");
+        btnSiguiente.setPreferredSize(new Dimension(120, 40));
+        panelBoton.add(btnSiguiente);
+
+        // Agregar componentes al fondo
         fondoPanel.add(gridPrincipal, BorderLayout.CENTER);
+        fondoPanel.add(panelBoton, BorderLayout.SOUTH);
         setContentPane(fondoPanel);
     }
 
