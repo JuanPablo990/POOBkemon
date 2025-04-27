@@ -3,11 +3,12 @@ package presentation;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 public class VentanaSeleccion extends Ventana {
+    // Componentes de la interfaz
     private FondoPanel fondoPanel;
     private JButton btnVolver;
     private JPanel panelContenedorPrincipal;
@@ -17,6 +18,7 @@ public class VentanaSeleccion extends Ventana {
     private JButton[] botonesSuperiores;
     private JButton[] botonesMatriz = new JButton[36];
 
+    // Constantes de diseño
     private static final int ESPACIO_MATRIZ = 2;
     private static final int NUM_COLUMNAS_MATRIZ = 6;
     private static final int NUM_FILAS_MATRIZ = 6;
@@ -30,6 +32,20 @@ public class VentanaSeleccion extends Ventana {
     private static final int MAX_ANCHO_BOTON = 150;
     private static final int RELACION_ASPECTO = 5;
     
+    // Constantes para selección
+    private static final Color SELECTED_COLOR = new Color(0, 255, 0, 100); // Verde transparente
+    private static final int MAX_POKEMON_SELECTED = 6;
+    private static final int MAX_POTIONS_SELECTED = 2;
+    private static final int MAX_REVIVE_SELECTED = 1;
+    
+    // Contadores de selección
+    private int pokemonSelectedCount = 0;
+    private int potionsSelectedCount = 0;
+    private int reviveSelectedCount = 0;
+    private Set<JButton> selectedPokemonButtons = new HashSet<>();
+    private Set<JButton> selectedItemButtons = new HashSet<>();
+    
+    // Rutas de imágenes de Pokémon
     private static final String[] RUTAS_POKEMONES = {
         "/resources/Pokemones/Acero/Aron.gif",
         "/resources/Pokemones/Acero/Metangross.gif",
@@ -74,7 +90,6 @@ public class VentanaSeleccion extends Ventana {
         inicializarComponentes();
         configurarListeners();
         agregarResizeListener();
-        verificarCargaImagenes(); // Método de diagnóstico
     }
     
     private void inicializarComponentes() {
@@ -112,7 +127,7 @@ public class VentanaSeleccion extends Ventana {
             panelMatriz.add(boton);
         }
 
-        // Configuración de los botones de items con imágenes
+        // Configuración de los botones de items
         JPanel contenedorBotones = new JPanel(new BorderLayout());
         contenedorBotones.setOpaque(false);
         contenedorBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
@@ -187,23 +202,15 @@ public class VentanaSeleccion extends Ventana {
         
         if (index < RUTAS_POKEMONES.length && RUTAS_POKEMONES[index] != null) {
             try {
-                // Carga optimizada para GIFs animados
                 URL url = getClass().getResource(RUTAS_POKEMONES[index]);
                 if (url != null) {
                     ImageIcon icono = new ImageIcon(url);
                     boton.setIcon(icono);
                     boton.setToolTipText(getNombrePokemonFromPath(RUTAS_POKEMONES[index]));
-                    
-                    // Forzar la actualización del componente
-                    boton.revalidate();
-                    boton.repaint();
                 } else {
-                    System.err.println("No se encontró el recurso: " + RUTAS_POKEMONES[index]);
                     mostrarBotonError(boton, "No encontrado");
                 }
             } catch (Exception e) {
-                System.err.println("Error cargando imagen: " + RUTAS_POKEMONES[index]);
-                e.printStackTrace();
                 mostrarBotonError(boton, "Error");
             }
         } else {
@@ -297,7 +304,7 @@ public class VentanaSeleccion extends Ventana {
                         anchoBoton - 4, anchoBoton - 4, Image.SCALE_DEFAULT);
                     
                     ImageIcon scaledIcon = new ImageIcon(scaledImage);
-                    scaledIcon.setImageObserver(boton); // El botón será el ImageObserver
+                    scaledIcon.setImageObserver(boton);
                     
                     boton.setIcon(scaledIcon);
                 }
@@ -321,12 +328,7 @@ public class VentanaSeleccion extends Ventana {
                     boton.setIcon(new ImageIcon(img));
                 }
                 boton.setPreferredSize(new Dimension(anchoPorBoton, altoPorBoton));
-                boton.setMinimumSize(new Dimension(anchoPorBoton, altoPorBoton));
-                boton.setMaximumSize(new Dimension(anchoPorBoton, altoPorBoton));
             }
-            
-            panelAbajoIzquierda.revalidate();
-            panelAbajoIzquierda.repaint();
         }
     }
 
@@ -336,49 +338,80 @@ public class VentanaSeleccion extends Ventana {
             this.dispose();
         });
         
-        for (int i = 0; i < botonesSuperiores.length; i++) {
-            final int index = i;
-            botonesSuperiores[i].addActionListener(e -> {
-                JOptionPane.showMessageDialog(this, "Botón " + botonesSuperiores[index].getToolTipText() + " presionado");
-            });
+        // Listeners para botones de items
+        for (JButton boton : botonesSuperiores) {
+            boton.addActionListener(e -> manejarSeleccionItem((JButton) e.getSource()));
         }
         
-        for (int i = 0; i < botonesMatriz.length; i++) {
-            final int index = i;
-            botonesMatriz[i].addActionListener(e -> {
-                String nombrePokemon = "No disponible";
-                if (index < RUTAS_POKEMONES.length && RUTAS_POKEMONES[index] != null) {
-                    nombrePokemon = getNombrePokemonFromPath(RUTAS_POKEMONES[index]);
-                }
-                JOptionPane.showMessageDialog(this, "Pokémon seleccionado: " + nombrePokemon);
-            });
+        // Listeners para botones de Pokémon
+        for (JButton boton : botonesMatriz) {
+            boton.addActionListener(e -> manejarSeleccionPokemon((JButton) e.getSource()));
         }
     }
     
-    // Método de diagnóstico
-    private void verificarCargaImagenes() {
-        System.out.println("=== DIAGNÓSTICO DE CARGA DE IMÁGENES ===");
-        for (int i = 0; i < Math.min(RUTAS_POKEMONES.length, botonesMatriz.length); i++) {
-            if (RUTAS_POKEMONES[i] != null) {
-                URL url = getClass().getResource(RUTAS_POKEMONES[i]);
-                System.out.println("Índice " + i + ": " + RUTAS_POKEMONES[i]);
-                System.out.println("  URL: " + url);
-                
-                if (url == null) {
-                    System.err.println("  ¡El recurso no se encontró!");
-                } else {
-                    try {
-                        ImageIcon icon = new ImageIcon(url);
-                        System.out.println("  Dimensiones: " + icon.getIconWidth() + "x" + icon.getIconHeight());
-                        System.out.println("  Cargado: " + (icon.getImageLoadStatus() == MediaTracker.COMPLETE ? "Éxito" : "Falló"));
-                    } catch (Exception e) {
-                        System.err.println("  Error al cargar: " + e.getMessage());
-                    }
-                }
+    private void manejarSeleccionPokemon(JButton boton) {
+        if (selectedPokemonButtons.contains(boton)) {
+            // Deseleccionar
+            boton.setBackground(null);
+            boton.setOpaque(false);
+            selectedPokemonButtons.remove(boton);
+            pokemonSelectedCount--;
+        } else {
+            // Verificar límite - Solo regresar si ya se alcanzó el máximo
+            if (pokemonSelectedCount >= MAX_POKEMON_SELECTED) {
+                return; // Simplemente no hacer nada si ya hay 6 seleccionados
+            }
+            
+            // Seleccionar
+            boton.setBackground(SELECTED_COLOR);
+            boton.setOpaque(true);
+            selectedPokemonButtons.add(boton);
+            pokemonSelectedCount++;
+        }
+        boton.repaint();
+    }
+    
+    private void manejarSeleccionItem(JButton boton) {
+        String tipoItem = boton.getToolTipText();
+        boolean esRevivir = tipoItem.equals("Revivir");
+        
+        if (selectedItemButtons.contains(boton)) {
+            // Deseleccionar
+            boton.setBackground(null);
+            boton.setOpaque(false);
+            selectedItemButtons.remove(boton);
+            
+            if (esRevivir) {
+                reviveSelectedCount--;
+            } else {
+                potionsSelectedCount--;
+            }
+        } else {
+            // Verificar límites - Solo regresar si ya se alcanzó el máximo
+            if (esRevivir && reviveSelectedCount >= MAX_REVIVE_SELECTED) {
+                return; // No hacer nada si ya hay 1 revivir seleccionado
+            }
+            
+            if (!esRevivir && potionsSelectedCount >= MAX_POTIONS_SELECTED) {
+                return; // No hacer nada si ya hay 2 pociones seleccionadas
+            }
+            
+            // Seleccionar
+            boton.setBackground(SELECTED_COLOR);
+            boton.setOpaque(true);
+            selectedItemButtons.add(boton);
+            
+            if (esRevivir) {
+                reviveSelectedCount++;
+            } else {
+                potionsSelectedCount++;
             }
         }
+        boton.repaint();
     }
+    
 
+    // Resto de métodos de la clase (accionNuevo, accionAbrir, etc.)
     @Override
     protected void accionNuevo() {
         JOptionPane.showMessageDialog(this, "Nueva selección de Pokémon iniciada");
