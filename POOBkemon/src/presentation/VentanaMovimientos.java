@@ -9,40 +9,73 @@ public class VentanaMovimientos extends Ventana {
     public VentanaMovimientos() {
         super("Movimientos de POOBkemon");
         inicializarComponentes();
+        configurarVentana();
     }
 
     private void inicializarComponentes() {
         fondoPanel = new FondoPanel("/resources/movimientos.gif");
         fondoPanel.setLayout(new BorderLayout());
+        
+        // Panel principal 2x6
+        JPanel gridPrincipal = new JPanel(new GridLayout(2, 6, 10, 10));
+        gridPrincipal.setOpaque(false);
+        
+        // Crear 12 celdas (2 filas x 6 columnas)
+        for (int fila = 0; fila < 2; fila++) {
+            for (int col = 0; col < 6; col++) {
+                JPanel celda = new JPanel(new BorderLayout());
+                celda.setOpaque(false);
+                celda.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                
+                // Parte superior de la celda
+                JPanel parteSuperior = new JPanel();
+                parteSuperior.setOpaque(false);
+                celda.add(parteSuperior, BorderLayout.CENTER);
+                
+                // Parte inferior: botones VERTICALES y GRANDES
+                JPanel panelBotones = new JPanel(new GridBagLayout());
+                panelBotones.setOpaque(false);
+
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridwidth = GridBagConstraints.REMAINDER;
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.insets = new Insets(5, 10, 5, 10);
+                gbc.weightx = 1; // <--- Importantísimo para que crezcan horizontalmente
+                gbc.weighty = 1; // <--- Opcional para que también crezcan en altura si quieres
+
+                for (int i = 0; i < 4; i++) {
+                    JButton boton = new JButton("Btn " + (i+1));
+                    boton.setBackground(new Color(255, 255, 255, 100)); // Un poco más visible
+                    boton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                    boton.setFocusable(false);
+                    boton.setPreferredSize(new Dimension(0, 30)); // <--- altura mínima razonable
+                    panelBotones.add(boton, gbc);
+                }
+                
+                celda.add(panelBotones, BorderLayout.SOUTH);
+                gridPrincipal.add(celda);
+            }
+        }
+        
+        fondoPanel.add(gridPrincipal, BorderLayout.CENTER);
         setContentPane(fondoPanel);
     }
 
-    @Override
-    protected void accionNuevo() {
-        // Implementación necesaria
+    private void configurarVentana() {
+        setSize(1100, 500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    @Override
-    protected void accionAbrir() {
-        // Implementación necesaria
-    }
-
-    @Override
-    protected void accionGuardar() {
-        // Implementación necesaria
-    }
-
-    @Override
-    protected void accionExportar() {
-        // Implementación necesaria
-    }
-
-    @Override
-    protected void accionImportar() {
-        // Implementación necesaria
-    }
+    @Override protected void accionNuevo() {}
+    @Override protected void accionAbrir() {}
+    @Override protected void accionGuardar() {}
+    @Override protected void accionExportar() {}
+    @Override protected void accionImportar() {}
 
     public void mostrar() {
+        revalidate();
+        repaint();
         setVisible(true);
     }
 }
