@@ -88,7 +88,7 @@ public class VentanaMovimientos extends Ventana {
                             panelImagen.add(contenedorImagen, BorderLayout.CENTER);
 
                             JLabel labelNombre = new JLabel(nombrePokemon, JLabel.CENTER);
-                            labelNombre.setForeground(Color.WHITE);
+                            labelNombre.setForeground(Color.BLACK);
                             labelNombre.setFont(new Font("Arial", Font.BOLD, 12));
                             panelImagen.add(labelNombre, BorderLayout.SOUTH);
                         } else {
@@ -115,7 +115,7 @@ public class VentanaMovimientos extends Ventana {
                     for (int i = 0; i < 4; i++) {
                         JButton boton = new JButton("Mov " + (i + 1));
                         boton.setBackground(new Color(70, 180, 130, 150));
-                        boton.setForeground(Color.WHITE);
+                        boton.setForeground(Color.BLACK);
                         boton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                         boton.setPreferredSize(new Dimension(0, 30));
                         boton.setFont(new Font("Arial", Font.BOLD, 12));
