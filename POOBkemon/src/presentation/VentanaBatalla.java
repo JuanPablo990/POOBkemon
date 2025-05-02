@@ -124,9 +124,9 @@ public class VentanaBatalla extends Ventana {
     private JButton crearBotonConImagen(String rutaImagen, String textoAlternativo) {
         try {
             ImageIcon icono = new ImageIcon(getClass().getResource(rutaImagen));
-            Image img = icono.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+            Image img = icono.getImage().getScaledInstance(110, 60, Image.SCALE_SMOOTH);
             JButton boton = new JButton(new ImageIcon(img));
-            boton.setPreferredSize(new Dimension(80, 80));
+            boton.setPreferredSize(new Dimension(100, 90));
             boton.setToolTipText(textoAlternativo);
             boton.setBorder(BorderFactory.createEmptyBorder());
             boton.setContentAreaFilled(false);
