@@ -2,11 +2,16 @@ package presentation;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.List;
 
 public class VentanaBatalla extends Ventana {
     
-    private JPanel panelImagenPokemon; // Panel para tu imagen (200x200)
+    private JPanel panelImagenPokemon;
+    private final int ANCHO_PANEL = 200;
+    private final int ALTO_PANEL = 200;
+    private FondoPanel panelGif; // Lo moví a nivel de clase para poder accederlo
     
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
@@ -15,56 +20,70 @@ public class VentanaBatalla extends Ventana {
     }
 
     private void inicializarComponentes() {
-        // Panel principal con BorderLayout
         JPanel panelPrincipal = new JPanel(new BorderLayout());
         
-        // 1. Panel superior con el GIF de fondo y tu área de imagen
-        FondoPanel panelGif = new FondoPanel("/resources/pelea.gif");
-        panelGif.setLayout(null); // Usamos layout absoluto para posicionar libremente
+        // 1. Panel superior con el GIF
+        panelGif = new FondoPanel("/resources/pelea.gif");
+        panelGif.setLayout(null);
         
-        // Configurar el panel para tu imagen (200x200)
         panelImagenPokemon = new JPanel();
-        panelImagenPokemon.setSize(200, 200);
-        
-        // Posición ajustada: 165px desde derecha (35px más a la derecha que la posición original)
-        int xPos = getWidth() - 200 - 150; // 800 - 200 - 165 = 435 (35px más a la derecha que 400)
-        int yPos = 30;
-        panelImagenPokemon.setLocation(xPos, yPos);
+        panelImagenPokemon.setSize(ANCHO_PANEL, ALTO_PANEL);
+        actualizarPosicionPanelImagen();
         
         panelImagenPokemon.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
         panelImagenPokemon.setOpaque(false);
-        
-        // Añadir el panel de imagen sobre el GIF
         panelGif.add(panelImagenPokemon);
-        panelGif.setPreferredSize(new Dimension(getWidth(), (int)(getHeight() * 0.8)));
         
-        // 2. Panel inferior con los botones
+        // 2. Panel inferior con botones
         JPanel panelInferior = new JPanel(new BorderLayout());
         FondoPanel panelArena = new FondoPanel("/resources/abajo.png");
         panelArena.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        panelArena.setPreferredSize(new Dimension(getWidth(), (int)(getHeight() * 0.2)));
 
-        // Crear botones con imágenes
+        // Botones (igual que antes)
         JButton btnAtaque = crearBotonConImagen("/resources/ataque.png", "Ataque");
         JButton btnCambio = crearBotonConImagen("/resources/cambio.png", "Cambio");
         JButton btnItem = crearBotonConImagen("/resources/item.png", "Item");
         JButton btnHuida = crearBotonConImagen("/resources/huida.png", "Huida");
 
-        // Agregar botones
         panelArena.add(btnAtaque);
         panelArena.add(btnCambio);
         panelArena.add(btnItem);
         panelArena.add(btnHuida);
 
         panelInferior.add(panelArena, BorderLayout.CENTER);
-
-        // Ensamblar la ventana
         panelPrincipal.add(panelGif, BorderLayout.CENTER);
         panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
         
         setContentPane(panelPrincipal);
+        
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                actualizarPosicionPanelImagen();
+            }
+        });
     }
 
+    private void actualizarPosicionPanelImagen() {
+        // Calculamos posición relativa al área del panelGif
+        int panelWidth = panelGif.getWidth();
+        int panelHeight = panelGif.getHeight();
+        
+        // Posición X: 70% del ancho del panel (para que no quede pegado a la derecha)
+        int xPos = (int)(panelWidth * 0.7) - (ANCHO_PANEL / 2);
+        // Posición Y: 20% del alto del panel
+        int yPos = (int)(panelHeight * 0.2);
+        
+        // Aseguramos que no se salga de los bordes
+        xPos = Math.min(xPos, panelWidth - ANCHO_PANEL - 20); // -20 para margen mínimo
+        xPos = Math.max(xPos, 20); // Margen izquierdo mínimo
+        yPos = Math.min(yPos, panelHeight - ALTO_PANEL - 20); // Margen inferior mínimo
+        yPos = Math.max(yPos, 20); // Margen superior mínimo
+        
+        panelImagenPokemon.setLocation(xPos, yPos);
+    }
+
+    // ... (los demás métodos se mantienen igual que en tu versión original)
     public void setImagenPokemon(ImageIcon imagen) {
         panelImagenPokemon.removeAll();
         JLabel label = new JLabel(imagen);
