@@ -9,6 +9,7 @@ public class POOBkemonGUI {
     private static VentanaCreditos ventanaCreditos;
     private static VentanaSeleccion ventanaSeleccion;
     private static VentanaMovimientos ventanaMovimientos;
+    private static VentanaBatalla ventanaBatalla;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -16,9 +17,12 @@ public class POOBkemonGUI {
         });
     }
 
-
     public static void reiniciarAplicacion() {
-        // Cierra todas las ventanas existentes
+        cerrarTodasLasVentanas();
+        mostrarVentanaInicio();
+    }
+
+    private static void cerrarTodasLasVentanas() {
         if (ventanaInicio != null) {
             ventanaInicio.dispose();
             ventanaInicio = null;
@@ -39,96 +43,78 @@ public class POOBkemonGUI {
             ventanaMovimientos.dispose();
             ventanaMovimientos = null;
         }
-        
-        // Vuelve a mostrar la ventana de inicio
-        mostrarVentanaInicio();
+        if (ventanaBatalla != null) {
+            ventanaBatalla.dispose();
+            ventanaBatalla = null;
+        }
     }
 
     public static void mostrarVentanaInicio() {
-        if (ventanaInicio == null) {
-            ventanaInicio = new VentanaInicio();
-        }
-        ocultarOtrasVentanas(ventanaInicio);
+        cerrarOtrasVentanas(null);
+        ventanaInicio = new VentanaInicio();
         ventanaInicio.mostrar();
     }
 
     public static void mostrarVentanaOpciones() {
-        if (ventanaOpciones == null) {
-            ventanaOpciones = new VentanaOpciones();
-        }
-        ocultarOtrasVentanas(ventanaOpciones);
+        cerrarOtrasVentanas(null);
+        ventanaOpciones = new VentanaOpciones();
         ventanaOpciones.mostrar();
     }
 
     public static void mostrarVentanaCreditos() {
-        if (ventanaCreditos == null) {
-            ventanaCreditos = new VentanaCreditos();
-        }
-        ocultarOtrasVentanas(ventanaCreditos);
+        cerrarOtrasVentanas(null);
+        ventanaCreditos = new VentanaCreditos();
         ventanaCreditos.mostrar();
     }
 
     public static void mostrarVentanaSeleccion() {
-    	VentanaSeleccion ventanaSeleccion = new VentanaSeleccion();
+        cerrarOtrasVentanas(null);
+        ventanaSeleccion = new VentanaSeleccion();
         ventanaSeleccion.mostrar();
     }
 
     public static void mostrarVentanaMovimientos() {
-        VentanaMovimientos ventanaMovimientos = new VentanaMovimientos(null);
+        cerrarOtrasVentanas(null);
+        ventanaMovimientos = new VentanaMovimientos(null);
         ventanaMovimientos.mostrar();
     }
-    
+
     public static void mostrarVentanaMovimientos(List<String> rutasPokemonSeleccionados) {
-        VentanaMovimientos ventanaMovimientos = new VentanaMovimientos(rutasPokemonSeleccionados);
+        cerrarOtrasVentanas(null);
+        ventanaMovimientos = new VentanaMovimientos(rutasPokemonSeleccionados);
         ventanaMovimientos.mostrar();
     }
 
-    private static void ocultarOtrasVentanas(JFrame ventanaActual) {
-        if (ventanaInicio != null && ventanaInicio != ventanaActual && ventanaInicio.isVisible()) {
-            ventanaInicio.setVisible(false);
-        }
-        if (ventanaOpciones != null && ventanaOpciones != ventanaActual && ventanaOpciones.isVisible()) {
-            ventanaOpciones.setVisible(false);
-        }
-        if (ventanaCreditos != null && ventanaCreditos != ventanaActual && ventanaCreditos.isVisible()) {
-            ventanaCreditos.setVisible(false);
-        }
-        if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual && ventanaSeleccion.isVisible()) {
-            ventanaSeleccion.setVisible(false);
-        }
-        if (ventanaMovimientos != null && ventanaMovimientos != ventanaActual && ventanaMovimientos.isVisible()) {
-            ventanaMovimientos.setVisible(false);
-        }
+    public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
+        cerrarOtrasVentanas(null);
+        ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
+        ventanaBatalla.mostrar();
     }
 
-    // Métodos para ocultar ventanas específicas si son necesarios
-    public static void ocultarVentanaInicio() {
-        if (ventanaInicio != null) {
-            ventanaInicio.setVisible(false);
+    private static void cerrarOtrasVentanas(JFrame ventanaActual) {
+        if (ventanaInicio != null && ventanaInicio != ventanaActual) {
+            ventanaInicio.dispose();
+            ventanaInicio = null;
         }
-    }
-
-    public static void ocultarVentanaOpciones() {
-        if (ventanaOpciones != null) {
-            ventanaOpciones.setVisible(false);
+        if (ventanaOpciones != null && ventanaOpciones != ventanaActual) {
+            ventanaOpciones.dispose();
+            ventanaOpciones = null;
         }
-    }
-
-    public static void ocultarVentanaCreditos() {
-        if (ventanaCreditos != null) {
-            ventanaCreditos.setVisible(false);
+        if (ventanaCreditos != null && ventanaCreditos != ventanaActual) {
+            ventanaCreditos.dispose();
+            ventanaCreditos = null;
         }
-    }
-
-    public static void ocultarVentanaSeleccion() {
-        if (ventanaSeleccion != null) {
-            ventanaSeleccion.setVisible(false);
+        if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual) {
+            ventanaSeleccion.dispose();
+            ventanaSeleccion = null;
         }
-    }
-
-    public static void ocultarVentanaMovimientos() {
-        if (ventanaMovimientos != null) {
-            ventanaMovimientos.setVisible(false);
+        if (ventanaMovimientos != null && ventanaMovimientos != ventanaActual) {
+            ventanaMovimientos.dispose();
+            ventanaMovimientos = null;
+        }
+        if (ventanaBatalla != null && ventanaBatalla != ventanaActual) {
+            ventanaBatalla.dispose();
+            ventanaBatalla = null;
         }
     }
 }

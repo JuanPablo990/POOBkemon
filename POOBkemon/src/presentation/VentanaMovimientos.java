@@ -139,8 +139,15 @@ public class VentanaMovimientos extends Ventana {
         btnSiguiente.setBackground(new Color(70, 180, 130));
         btnSiguiente.setForeground(Color.WHITE);
         btnSiguiente.addActionListener(e -> {
-            JOptionPane.showMessageDialog(VentanaMovimientos.this,
-                    "¡Configuración completada!\nPokémon seleccionados: " + numPokemonesSeleccionados);
+            // Cambio realizado aquí: Ahora abre la VentanaBatalla
+            if (nombresPokemonSeleccionados != null && !nombresPokemonSeleccionados.isEmpty()) {
+                POOBkemonGUI.mostrarVentanaBatalla(nombresPokemonSeleccionados);
+            } else {
+                JOptionPane.showMessageDialog(VentanaMovimientos.this,
+                    "No hay Pokémon seleccionados",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         });
         panelBoton.add(btnSiguiente);
 
