@@ -8,8 +8,8 @@ import javax.swing.border.EmptyBorder;
 public class VentanaOpciones extends Ventana {
     private FondoPanel fondoPanel;
     private JButton btnPvP, btnPvM, btnMvM, btnCreditos;
+    private JTextField txtPlayer1, txtPlayer2;
 
-    // Constants for image paths
     private static final String PVP_IMAGE = "/resources/pvp.png";
     private static final String PVM_IMAGE = "/resources/pvm.png";
     private static final String MVM_IMAGE = "/resources/mvm.png";
@@ -26,43 +26,36 @@ public class VentanaOpciones extends Ventana {
     }
 
     private void inicializarComponentes() {
-        // Configurar el fondo principal
         fondoPanel = new FondoPanel(BACKGROUND_IMAGE);
         setContentPane(fondoPanel);
         fondoPanel.setLayout(new BorderLayout());
-        
-        // Panel para los botones centrales (PvP, PvM, MvM)
+
         JPanel panelBotonesCentrales = new JPanel();
         panelBotonesCentrales.setOpaque(false);
         panelBotonesCentrales.setLayout(new GridLayout(3, 1, 0, 20));
         panelBotonesCentrales.setBorder(new EmptyBorder(50, 0, 50, 0));
 
-        // Tamaño para los botones centrales
         Dimension tamanoBotonesCentrales = new Dimension(200, 80);
-        
-        // Crear botones centrales con imágenes
+
         btnPvP = crearBotonTransparente(PVP_IMAGE, tamanoBotonesCentrales, "PvP");
         btnPvM = crearBotonTransparente(PVM_IMAGE, tamanoBotonesCentrales, "PvM");
         btnMvM = crearBotonTransparente(MVM_IMAGE, tamanoBotonesCentrales, "MvM");
-        
+
         panelBotonesCentrales.add(btnPvP);
         panelBotonesCentrales.add(btnPvM);
         panelBotonesCentrales.add(btnMvM);
 
-        // Panel para centrar los botones centrales
         JPanel panelCentro = new JPanel(new GridBagLayout());
         panelCentro.setOpaque(false);
         panelCentro.add(panelBotonesCentrales);
 
-        // Panel para el botón de créditos (abajo a la izquierda)
         JPanel panelCreditos = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20));
         panelCreditos.setOpaque(false);
-        
+
         Dimension tamanoCreditos = new Dimension(100, 50);
         btnCreditos = crearBotonTransparente(CREDITOS_IMAGE, tamanoCreditos, "Créditos");
         panelCreditos.add(btnCreditos);
 
-        // Añadir componentes al layout principal
         fondoPanel.add(panelCentro, BorderLayout.CENTER);
         fondoPanel.add(panelCreditos, BorderLayout.SOUTH);
     }
@@ -81,28 +74,23 @@ public class VentanaOpciones extends Ventana {
                 }
             }
         };
-        
         boton.setPreferredSize(size);
-        
         try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
-            Image img = iconoOriginal.getImage().getScaledInstance(
-                size.width, 
-                size.height, 
-                Image.SCALE_SMOOTH);
+            Image img = iconoOriginal.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
             boton.setIcon(new ImageIcon(img));
         } catch (Exception e) {
             System.err.println("Error al cargar imagen: " + imagenPath);
             boton.setText(textoAlternativo);
         }
-        
+
         boton.setContentAreaFilled(false);
         boton.setBorderPainted(false);
         boton.setFocusPainted(false);
         boton.setOpaque(false);
         boton.setBorder(null);
         boton.setMargin(new Insets(0, 0, 0, 0));
-        
+
         return boton;
     }
 
@@ -113,35 +101,31 @@ public class VentanaOpciones extends Ventana {
                 int baseWidth = getWidth() / 6;
                 Dimension nuevoTamanoCentral = new Dimension(baseWidth, baseWidth / 2);
                 Dimension nuevoTamanoCreditos = new Dimension(baseWidth / 2, baseWidth / 4);
-                
                 btnPvP.setPreferredSize(nuevoTamanoCentral);
                 btnPvM.setPreferredSize(nuevoTamanoCentral);
                 btnMvM.setPreferredSize(nuevoTamanoCentral);
                 btnCreditos.setPreferredSize(nuevoTamanoCreditos);
-                
                 escalarImagenBoton(btnPvP, PVP_IMAGE, nuevoTamanoCentral);
                 escalarImagenBoton(btnPvM, PVM_IMAGE, nuevoTamanoCentral);
                 escalarImagenBoton(btnMvM, MVM_IMAGE, nuevoTamanoCentral);
                 escalarImagenBoton(btnCreditos, CREDITOS_IMAGE, nuevoTamanoCreditos);
-                
                 revalidate();
                 repaint();
             }
         });
-        
-        btnPvP.addActionListener(e -> mostrarVentanaModo("Player vs Player"));
-        btnPvM.addActionListener(e -> mostrarVentanaModo("Player vs Machine"));
-        btnMvM.addActionListener(e -> mostrarVentanaModo("Machine vs Machine"));
-        
+
+        btnPvP.addActionListener(e -> mostrarVentanaModo("Player vs Player", true, true));
+        btnPvM.addActionListener(e -> mostrarVentanaModo("Player vs Machine", true, false));
+        btnMvM.addActionListener(e -> mostrarVentanaModo("Machine vs Machine", false, false));
         btnCreditos.addActionListener(e -> {
             this.setVisible(false);
             POOBkemonGUI.mostrarVentanaCreditos();
         });
     }
 
-    private void mostrarVentanaModo(String titulo) {
+    private void mostrarVentanaModo(String titulo, boolean mostrarPlayer1, boolean mostrarPlayer2) {
         JDialog dialog = new JDialog(this, titulo, true);
-        dialog.setSize(500, 300);
+        dialog.setSize(500, mostrarPlayer1 || mostrarPlayer2 ? 400 : 300);
         dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
 
@@ -155,32 +139,95 @@ public class VentanaOpciones extends Ventana {
         lblTitulo.setBorder(new EmptyBorder(20, 0, 10, 0));
         fondoDialog.add(lblTitulo, BorderLayout.NORTH);
 
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
+        panelPrincipal.setOpaque(false);
+
+        if (mostrarPlayer1 || mostrarPlayer2) {
+            JPanel panelNombres = new JPanel();
+            panelNombres.setLayout(new GridLayout(mostrarPlayer1 && mostrarPlayer2 ? 2 : 1, 2, 10, 10));
+            panelNombres.setBorder(new EmptyBorder(10, 50, 20, 50));
+            panelNombres.setOpaque(false);
+
+            if (mostrarPlayer1) {
+                JLabel lblPlayer1 = new JLabel("Player 1:");
+                lblPlayer1.setForeground(Color.WHITE);
+                lblPlayer1.setFont(new Font("Arial", Font.BOLD, 16));
+                txtPlayer1 = new JTextField(15);
+                txtPlayer1.setPreferredSize(new Dimension(200, 30));
+                txtPlayer1.setFont(new Font("Arial", Font.PLAIN, 14));
+                panelNombres.add(lblPlayer1);
+                panelNombres.add(txtPlayer1);
+            }
+
+            if (mostrarPlayer2) {
+                JLabel lblPlayer2 = new JLabel("Player 2:");
+                lblPlayer2.setForeground(Color.WHITE);
+                lblPlayer2.setFont(new Font("Arial", Font.BOLD, 16));
+                txtPlayer2 = new JTextField(15);
+                txtPlayer2.setPreferredSize(new Dimension(120, 25));
+                txtPlayer2.setFont(new Font("Arial", Font.PLAIN, 14));
+                panelNombres.add(lblPlayer2);
+                panelNombres.add(txtPlayer2);
+            }
+
+            panelPrincipal.add(panelNombres);
+        }
+
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
         panelBotones.setOpaque(false);
-
         Dimension tamanoBotones = new Dimension(150, 60);
-
         JButton btnNormal = crearBotonDialogo(NORMAL_IMAGE, tamanoBotones, "Normal");
         JButton btnSupervivencia = crearBotonDialogo(SUPERVIVENCIA_IMAGE, tamanoBotones, "Supervivencia");
-
-        // CAMBIO PRINCIPAL: Modificar el ActionListener del botón Normal
         btnNormal.addActionListener(e -> {
-            dialog.dispose();
-            this.setVisible(false);  // Oculta la ventana de opciones
-            POOBkemonGUI.mostrarVentanaSeleccion();  // Muestra la nueva ventana
+            boolean nombresValidos = true;
+            if (mostrarPlayer1 && txtPlayer1.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                nombresValidos = false;
+            }
+            if (mostrarPlayer2 && txtPlayer2.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                nombresValidos = false;
+            }
+            if (nombresValidos) {
+                String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
+                String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
+                storePlayerNames(player1Name, player2Name);
+                dialog.dispose();
+                this.setVisible(false);
+                POOBkemonGUI.mostrarVentanaSeleccion();
+            }
         });
 
         btnSupervivencia.addActionListener(e -> {
-            JOptionPane.showMessageDialog(dialog, "Modo Supervivencia seleccionado para " + titulo);
-            dialog.dispose();
-            // lógica para iniciar modo supervivencia...
+            boolean nombresValidos = true;
+            if (mostrarPlayer1 && txtPlayer1.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                nombresValidos = false;
+            }
+            if (mostrarPlayer2 && txtPlayer2.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                nombresValidos = false;
+            }
+            if (nombresValidos) {
+                String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
+                String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
+                JOptionPane.showMessageDialog(dialog,"Modo Supervivencia seleccionado para " + titulo +
+                        "\nJugador 1: " + player1Name +(mostrarPlayer2 ? "\nJugador 2: " + player2Name : ""));
+                dialog.dispose();
+            }
         });
 
         panelBotones.add(btnNormal);
         panelBotones.add(btnSupervivencia);
-        fondoDialog.add(panelBotones, BorderLayout.CENTER);
-
+        panelPrincipal.add(panelBotones);
+        fondoDialog.add(panelPrincipal, BorderLayout.CENTER);
         dialog.setVisible(true);
+    }
+
+    private void storePlayerNames(String player1Name, String player2Name) {
+        System.setProperty("poobkemon.player1", player1Name);
+        System.setProperty("poobkemon.player2", player2Name);
     }
 
     private JButton crearBotonDialogo(String imagenPath, Dimension size, String textoAlternativo) {
@@ -197,49 +244,38 @@ public class VentanaOpciones extends Ventana {
                 }
             }
         };
-        
         boton.setPreferredSize(size);
-        
         try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
-            Image img = iconoOriginal.getImage().getScaledInstance(
-                size.width, 
-                size.height, 
-                Image.SCALE_SMOOTH);
+            Image img = iconoOriginal.getImage().getScaledInstance(size.width,size.height,Image.SCALE_SMOOTH);
             boton.setIcon(new ImageIcon(img));
-        } catch (Exception e) {
-            System.err.println("Error al cargar imagen: " + imagenPath);
+        } catch (Exception e) {System.err.println("Error al cargar imagen: " + imagenPath);
             boton.setText(textoAlternativo);
         }
-        
+
         boton.setContentAreaFilled(false);
         boton.setBorderPainted(false);
         boton.setFocusPainted(false);
         boton.setOpaque(false);
         boton.setBorder(null);
-        
         boton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
-            
+
             @Override
             public void mouseExited(MouseEvent e) {
                 boton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
-        
         return boton;
     }
 
     private void escalarImagenBoton(JButton boton, String imagenPath, Dimension size) {
         try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
-            Image img = iconoOriginal.getImage().getScaledInstance(
-                size.width,
-                size.height,
-                Image.SCALE_SMOOTH);
+            Image img = iconoOriginal.getImage().getScaledInstance(size.width,size.height,Image.SCALE_SMOOTH);
             boton.setIcon(new ImageIcon(img));
         } catch (Exception e) {
             System.err.println("Error al escalar imagen: " + imagenPath);
@@ -258,34 +294,25 @@ public class VentanaOpciones extends Ventana {
 
     @Override
     protected void accionAbrir() {
-        mostrarFileChooser("Abrir configuración", 
-                         new String[]{"cfg"}, 
-                         "Archivos de configuración (*.cfg)",
-                         e -> JOptionPane.showMessageDialog(this, "Configuración cargada"));
+        mostrarFileChooser("Abrir configuración",new String[]{"cfg"},"Archivos de configuración (*.cfg)",
+                e -> JOptionPane.showMessageDialog(this, "Configuración cargada"));
     }
 
     @Override
     protected void accionGuardar() {
-        mostrarFileChooser("Guardar configuración", 
-                         new String[]{"cfg"}, 
-                         "Archivos de configuración (*.cfg)",
-                         e -> JOptionPane.showMessageDialog(this, "Configuración guardada"));
+        mostrarFileChooser("Guardar configuración",new String[]{"cfg"},"Archivos de configuración (*.cfg)",
+                e -> JOptionPane.showMessageDialog(this, "Configuración guardada"));
     }
 
     @Override
-    protected void accionExportar() {
-        mostrarFileChooser("Exportar opciones", 
-                         new String[]{"opt"}, 
-                         "Archivos de opciones (*.opt)",
-                         e -> JOptionPane.showMessageDialog(this, "Opciones exportadas"));
+    protected void accionExportar() {mostrarFileChooser("Exportar opciones", new String[]{"opt"},"Archivos de opciones (*.opt)",
+    		e -> JOptionPane.showMessageDialog(this, "Opciones exportadas"));
     }
 
     @Override
     protected void accionImportar() {
-        mostrarFileChooser("Importar opciones", 
-                         new String[]{"opt"}, 
-                         "Archivos de opciones (*.opt)",
-                         e -> JOptionPane.showMessageDialog(this, "Opciones importadas"));
+        mostrarFileChooser("Importar opciones",new String[]{"opt"}, "Archivos de opciones (*.opt)",
+                e -> JOptionPane.showMessageDialog(this, "Opciones importadas"));
     }
 
     public void mostrar() {
