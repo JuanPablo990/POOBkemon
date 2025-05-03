@@ -16,6 +16,9 @@ public class POOBkemonGUI {
     private static POOBkemon poobkemon;
     private static Entrenador jugador1;
     private static Entrenador jugador2;
+    
+    // Lista para almacenar las selecciones del jugador 1
+    private static List<String> seleccionPokemonJugador1;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -47,6 +50,16 @@ public class POOBkemonGUI {
     public static void setJugador2(Entrenador jugador) {
         jugador2 = jugador;
     }
+    
+    // Método para establecer la selección del jugador 1
+    public static void setSeleccionPokemonJugador1(List<String> seleccion) {
+        seleccionPokemonJugador1 = seleccion;
+    }
+    
+    // Método para obtener la selección del jugador 1
+    public static List<String> getSeleccionPokemonJugador1() {
+        return seleccionPokemonJugador1;
+    }
 
     public static void reiniciarAplicacion() {
         cerrarTodasLasVentanas();
@@ -54,6 +67,7 @@ public class POOBkemonGUI {
         poobkemon = null;
         jugador1 = null;
         jugador2 = null;
+        seleccionPokemonJugador1 = null;
         mostrarVentanaInicio();
     }
 
@@ -104,7 +118,15 @@ public class POOBkemonGUI {
 
     public static void mostrarVentanaSeleccion() {
         cerrarOtrasVentanas(null);
-        ventanaSeleccion = new VentanaSeleccion();
+        // Mostrar ventana para el jugador 1 (por defecto)
+        ventanaSeleccion = new VentanaSeleccion(true);
+        ventanaSeleccion.mostrar();
+    }
+    
+    // Método para mostrar la ventana de selección especificando el jugador
+    public static void mostrarVentanaSeleccion(boolean esJugador1) {
+        cerrarOtrasVentanas(null);
+        ventanaSeleccion = new VentanaSeleccion(esJugador1);
         ventanaSeleccion.mostrar();
     }
 

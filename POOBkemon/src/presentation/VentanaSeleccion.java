@@ -20,6 +20,10 @@ public class VentanaSeleccion extends Ventana {
     private JPanel panelAbajoIzquierda;
     private JButton[] botonesSuperiores;
     private JButton[] botonesMatriz = new JButton[36];
+    private JLabel lblEntrenador; // Nueva etiqueta para mostrar el nombre del entrenador actual
+    
+    // Flag para saber qué jugador está seleccionando
+    private boolean esJugador1 = true;
 
     // Constantes de diseño
     private static final int ESPACIO_MATRIZ = 2;
@@ -49,11 +53,28 @@ public class VentanaSeleccion extends Ventana {
     private Set<JButton> selectedItemButtons = new HashSet<>();
     private List<String> nombresPokemonSeleccionados = new ArrayList<>();
     
+    // Almacenamiento para las selecciones de ambos jugadores
+    private List<String> nombresPokemonJugador1 = new ArrayList<>();
+    private List<String> nombresPokemonJugador2 = new ArrayList<>();
+    
+    // Constructor principal
     public VentanaSeleccion() {
         super("Selección de POOBkemon");
+        this.esJugador1 = true;
         inicializarComponentes();
         configurarListeners();
         agregarResizeListener();
+        actualizarEtiquetaEntrenador();
+    }
+    
+    // Constructor con parámetro para indicar el jugador
+    public VentanaSeleccion(boolean esJugador1) {
+        super("Selección de POOBkemon");
+        this.esJugador1 = esJugador1;
+        inicializarComponentes();
+        configurarListeners();
+        agregarResizeListener();
+        actualizarEtiquetaEntrenador();
     }
     
     private void inicializarComponentes() {
@@ -73,6 +94,14 @@ public class VentanaSeleccion extends Ventana {
         panelIzquierdo = new JPanel(new BorderLayout());
         panelIzquierdo.setOpaque(false);
         panelContenedorPrincipal.add(panelIzquierdo);
+        
+        // Etiqueta para mostrar el entrenador actual
+        lblEntrenador = new JLabel();
+        lblEntrenador.setFont(new Font("Arial", Font.BOLD, 18));
+        lblEntrenador.setForeground(Color.WHITE);
+        lblEntrenador.setHorizontalAlignment(SwingConstants.CENTER);
+        lblEntrenador.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panelIzquierdo.add(lblEntrenador, BorderLayout.NORTH);
 
         // Panel derecho (matriz)
         panelDerecho = new JPanel(new BorderLayout());
@@ -152,6 +181,16 @@ public class VentanaSeleccion extends Ventana {
         panelAbajo.add(panelBotonSiguiente, BorderLayout.EAST);
 
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
+    }
+
+    private void actualizarEtiquetaEntrenador() {
+        if (esJugador1) {
+            String nombreJugador1 = POOBkemonGUI.getJugador1() != null ? POOBkemonGUI.getJugador1().getNombre() : "Jugador 1";
+            lblEntrenador.setText("Selección para: " + nombreJugador1);
+        } else {
+            String nombreJugador2 = POOBkemonGUI.getJugador2() != null ? POOBkemonGUI.getJugador2().getNombre() : "Jugador 2";
+            lblEntrenador.setText("Selección para: " + nombreJugador2);
+        }
     }
 
     private JButton crearBotonPokemon(String nombrePokemon) {
@@ -310,8 +349,37 @@ public class VentanaSeleccion extends Ventana {
                     "Límite excedido", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
-            this.dispose();
+            
+            // Guardar la selección según el jugador
+            if (esJugador1) {
+                nombresPokemonJugador1.clear();
+                nombresPokemonJugador1.addAll(nombresPokemonSeleccionados);
+                
+                // Verificar si hay un segundo jugador humano
+                if (POOBkemonGUI.getJugador2() != null && 
+                    !POOBkemonGUI.getJugador2().getNombre().startsWith("Computer")) {
+                    // Abrir ventana de selección para el jugador 2
+                    this.dispose();
+                    VentanaSeleccion ventanaJugador2 = new VentanaSeleccion(false);
+                    ventanaJugador2.mostrar();
+                } else {
+                    // No hay jugador 2 humano, continuar al siguiente paso
+                    this.dispose();
+                    POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
+                }
+            } else {
+                // Es el jugador 2
+                nombresPokemonJugador2.clear();
+                nombresPokemonJugador2.addAll(nombresPokemonSeleccionados);
+                
+                // Combinar las selecciones de ambos jugadores
+                List<String> seleccionCombinada = new ArrayList<>();
+                seleccionCombinada.addAll(nombresPokemonJugador1);
+                seleccionCombinada.addAll(nombresPokemonJugador2);
+                
+                this.dispose();
+                POOBkemonGUI.mostrarVentanaMovimientos(seleccionCombinada);
+            }
         });
         
         // Listeners para botones de items
@@ -327,6 +395,10 @@ public class VentanaSeleccion extends Ventana {
         
     private void manejarSeleccionPokemon(JButton boton) {
         String nombrePokemon = boton.getToolTipText();
+        if (nombrePokemon == null || nombrePokemon.equals("No disponible") || 
+            nombrePokemon.equals("No encontrado") || nombrePokemon.equals("Error")) {
+            return;
+        }
         
         if (selectedPokemonButtons.contains(boton)) {
             // Deseleccionar
