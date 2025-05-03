@@ -7,6 +7,6 @@ public class Tackle extends Movimiento {
 
     @Override
     protected void aplicarEfectoSecundario(Pokemon usuario, Pokemon objetivo) {
-        // No tiene efecto secundario
+        // Efecto secundario: -
     }
 }

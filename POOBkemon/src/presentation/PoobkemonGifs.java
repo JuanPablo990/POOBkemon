@@ -17,7 +17,7 @@ public class PoobkemonGifs {
     static {
         // Pokémon
         POKEMON_IMAGES.put("Aron", "/resources/Pokemones/Acero/Aron.gif");
-        POKEMON_IMAGES.put("Metangross", "/resources/Pokemones/Acero/Metangross.gif");
+        POKEMON_IMAGES.put("Metang", "/resources/Pokemones/Acero/Metangross.gif");
         POKEMON_IMAGES.put("corphish", "/resources/Pokemones/Agua/corphish.gif");
         POKEMON_IMAGES.put("magikarp", "/resources/Pokemones/Agua/magikarp.gif");
         POKEMON_IMAGES.put("Scizor", "/resources/Pokemones/Bicho/Scizor.gif");
@@ -29,7 +29,7 @@ public class PoobkemonGifs {
         POKEMON_IMAGES.put("Duskull", "/resources/Pokemones/Fantasma/Duskull.gif");
         POKEMON_IMAGES.put("Shuppet", "/resources/Pokemones/Fantasma/Shuppet.gif");
         POKEMON_IMAGES.put("Torchic", "/resources/Pokemones/Fuego/Torchic.gif");
-        POKEMON_IMAGES.put("Torjoal", "/resources/Pokemones/Fuego/Torjoal.gif");
+        POKEMON_IMAGES.put("Torkoal", "/resources/Pokemones/Fuego/Torjoal.gif");
         POKEMON_IMAGES.put("Azurill", "/resources/Pokemones/Hada/Azurill.gif");
         POKEMON_IMAGES.put("Gardevoir", "/resources/Pokemones/Hada/Gardevoir.gif");
         POKEMON_IMAGES.put("Snorunt", "/resources/Pokemones/Hielo/Snorunt.gif");
