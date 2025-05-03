@@ -2,6 +2,8 @@ package presentation;
 
 import javax.swing.*;
 import java.util.List;
+import domain.POOBkemon;
+import domain.Entrenador;
 
 public class POOBkemonGUI {
     private static VentanaInicio ventanaInicio;
@@ -10,6 +12,10 @@ public class POOBkemonGUI {
     private static VentanaSeleccion ventanaSeleccion;
     private static VentanaMovimientos ventanaMovimientos;
     private static VentanaBatalla ventanaBatalla;
+    
+    private static POOBkemon poobkemon;
+    private static Entrenador jugador1;
+    private static Entrenador jugador2;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -17,8 +23,37 @@ public class POOBkemonGUI {
         });
     }
 
+    // Métodos para manejar la instancia de POOBkemon
+    public static POOBkemon getPoobkemon() {
+        if (poobkemon == null) {
+            poobkemon = new POOBkemon();
+        }
+        return poobkemon;
+    }
+
+    // Métodos para manejar los entrenadores
+    public static Entrenador getJugador1() {
+        return jugador1;
+    }
+
+    public static Entrenador getJugador2() {
+        return jugador2;
+    }
+
+    public static void setJugador1(Entrenador jugador) {
+        jugador1 = jugador;
+    }
+
+    public static void setJugador2(Entrenador jugador) {
+        jugador2 = jugador;
+    }
+
     public static void reiniciarAplicacion() {
         cerrarTodasLasVentanas();
+        // Limpiar referencias al reiniciar
+        poobkemon = null;
+        jugador1 = null;
+        jugador2 = null;
         mostrarVentanaInicio();
     }
 

@@ -2,6 +2,10 @@ package domain;
 
 import java.util.Scanner;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.Scanner;
+import java.util.List;
 
 public class Batalla {
     private Entrenador entrenador1;
@@ -312,4 +316,89 @@ public class Batalla {
         Entrenador ganador = equipoDebilitado(entrenador1) ? entrenador2 : entrenador1;
         System.out.println("\n¡" + ganador.getNombre() + " gana la batalla!");
     }
+    
+ // --- Getters para la fachada ---
+
+    /**
+     * Obtiene el primer entrenador en la batalla.
+     */
+    public Entrenador getEntrenador1() {
+        return this.entrenador1;
+    }
+
+    /**
+     * Obtiene el segundo entrenador en la batalla.
+     */
+    public Entrenador getEntrenador2() {
+        return this.entrenador2;
+    }
+
+    /**
+     * Indica si la batalla ha terminado (un entrenador no tiene Pokémon disponibles).
+     */
+    public boolean isBatallaTerminada() {
+        return this.batallaTerminada();
+    }
+
+    /**
+     * Devuelve el entrenador ganador (null si la batalla no ha terminado).
+     */
+    public Entrenador getGanador() {
+        return this.isBatallaTerminada() ? 
+               (this.equipoDebilitado(entrenador1) ? entrenador2 : entrenador1) : 
+               null;
+    }
+
+    /**
+     * Obtiene el Pokémon activo de un entrenador.
+     */
+    public Pokemon getPokemonActivo(Entrenador entrenador) {
+        if (!entrenador.equals(entrenador1) && !entrenador.equals(entrenador2)) {
+            throw new IllegalArgumentException("El entrenador no está en esta batalla.");
+        }
+        return entrenador.getPokemonActivo();
+    }
+
+    /**
+     * Devuelve los movimientos disponibles (con PP > 0) de un Pokémon.
+     */
+    public List<Movimiento> getMovimientosDisponibles(Pokemon pokemon) {
+        return pokemon.getMovimientos().stream()
+               .filter(m -> m.getPp() > 0)
+               .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtiene las opciones disponibles para el turno actual de un entrenador.
+     * Ejemplo: ["ATACAR", "CAMBIAR_POKEMON", "USAR_ITEM"].
+     */
+    public List<String> getOpcionesTurno(Entrenador entrenador) {
+        List<String> opciones = new ArrayList<>();
+        opciones.add("ATACAR");
+        
+        // Verificar si hay Pokémon para cambiar
+        boolean puedeCambiar = entrenador.getEquipoPokemon().stream()
+                              .filter(p -> !p.equals(entrenador.getPokemonActivo()))
+                              .anyMatch(p -> !p.estaDebilitado());
+        if (puedeCambiar) {
+            opciones.add("CAMBIAR_POKEMON");
+        }
+        
+        // Verificar si hay ítems disponibles
+        if (!entrenador.getMochilaItems().isEmpty()) {
+            opciones.add("USAR_ITEM");
+        }
+        
+        return opciones;
+    }
+
+    /**
+     * Obtiene los Pokémon vivos y no activos de un entrenador (para cambios).
+     */
+    public List<Pokemon> getPokemonsDisponiblesParaCambio(Entrenador entrenador) {
+        return entrenador.getEquipoPokemon().stream()
+               .filter(p -> !p.equals(entrenador.getPokemonActivo()) && !p.estaDebilitado())
+               .collect(Collectors.toList());
+    }
+    
 }

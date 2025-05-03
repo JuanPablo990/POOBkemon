@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.EmptyBorder;
+import domain.Entrenador;  // <-- Añade este import
 
 public class VentanaOpciones extends Ventana {
     private FondoPanel fondoPanel;
@@ -179,6 +180,7 @@ public class VentanaOpciones extends Ventana {
         Dimension tamanoBotones = new Dimension(150, 60);
         JButton btnNormal = crearBotonDialogo(NORMAL_IMAGE, tamanoBotones, "Normal");
         JButton btnSupervivencia = crearBotonDialogo(SUPERVIVENCIA_IMAGE, tamanoBotones, "Supervivencia");
+        
         btnNormal.addActionListener(e -> {
             boolean nombresValidos = true;
             if (mostrarPlayer1 && txtPlayer1.getText().trim().isEmpty()) {
@@ -192,7 +194,15 @@ public class VentanaOpciones extends Ventana {
             if (nombresValidos) {
                 String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
                 String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
-                storePlayerNames(player1Name, player2Name);
+                
+                // Crear entrenadores usando la fachada
+                Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
+                Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
+                
+                // Almacenar referencias para uso posterior
+                POOBkemonGUI.setJugador1(jugador1);
+                POOBkemonGUI.setJugador2(jugador2);
+                
                 dialog.dispose();
                 this.setVisible(false);
                 POOBkemonGUI.mostrarVentanaSeleccion();
@@ -225,11 +235,6 @@ public class VentanaOpciones extends Ventana {
         dialog.setVisible(true);
     }
 
-    private void storePlayerNames(String player1Name, String player2Name) {
-        System.setProperty("poobkemon.player1", player1Name);
-        System.setProperty("poobkemon.player2", player2Name);
-    }
-
     private JButton crearBotonDialogo(String imagenPath, Dimension size, String textoAlternativo) {
         JButton boton = new JButton() {
             @Override
@@ -249,7 +254,8 @@ public class VentanaOpciones extends Ventana {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
             Image img = iconoOriginal.getImage().getScaledInstance(size.width,size.height,Image.SCALE_SMOOTH);
             boton.setIcon(new ImageIcon(img));
-        } catch (Exception e) {System.err.println("Error al cargar imagen: " + imagenPath);
+        } catch (Exception e) {
+            System.err.println("Error al cargar imagen: " + imagenPath);
             boton.setText(textoAlternativo);
         }
 
@@ -305,8 +311,9 @@ public class VentanaOpciones extends Ventana {
     }
 
     @Override
-    protected void accionExportar() {mostrarFileChooser("Exportar opciones", new String[]{"opt"},"Archivos de opciones (*.opt)",
-    		e -> JOptionPane.showMessageDialog(this, "Opciones exportadas"));
+    protected void accionExportar() {
+        mostrarFileChooser("Exportar opciones", new String[]{"opt"},"Archivos de opciones (*.opt)",
+                e -> JOptionPane.showMessageDialog(this, "Opciones exportadas"));
     }
 
     @Override
