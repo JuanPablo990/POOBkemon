@@ -24,6 +24,7 @@ public class POOBkemonGUI {
     private static Map<String, List<String>> movimientosJugador2 = new HashMap<>();
 
     private static boolean mostrandoMovimientosJugador1 = true;
+    private static boolean turnoJugador1 = true;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> mostrarVentanaInicio());
@@ -96,6 +97,14 @@ public class POOBkemonGUI {
         mostrandoMovimientosJugador1 = valor;
     }
 
+    public static boolean isTurnoJugador1() {
+        return turnoJugador1;
+    }
+
+    public static void cambiarTurno() {
+        turnoJugador1 = !turnoJugador1;
+    }
+
     public static void reiniciarAplicacion() {
         cerrarTodasLasVentanas();
         poobkemon = null;
@@ -106,6 +115,7 @@ public class POOBkemonGUI {
         movimientosJugador1.clear();
         movimientosJugador2.clear();
         mostrandoMovimientosJugador1 = true;
+        turnoJugador1 = true;
         mostrarVentanaInicio();
     }
 
@@ -170,6 +180,10 @@ public class POOBkemonGUI {
         getPoobkemon().setJugadores(jugador1, jugador2);
         ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
         ventanaBatalla.mostrar();
+    }
+
+    public static VentanaBatalla getVentanaBatalla() {
+        return ventanaBatalla;
     }
 
     private static void cerrarOtrasVentanas(JFrame ventanaActual) {

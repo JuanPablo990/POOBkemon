@@ -10,6 +10,7 @@ public class POOBkemon {
     private Batalla batallaActual;
     private Entrenador jugador1;
     private Entrenador jugador2;
+    private boolean turnoJugador1 = true;
 
     public POOBkemon() {
         this.poquedex = Poquedex.getInstancia();
@@ -154,11 +155,24 @@ public class POOBkemon {
         return batallaActual;
     }
 
+    public boolean esTurnoJugador1() {
+        return turnoJugador1;
+    }
+
+    public void cambiarTurno() {
+        turnoJugador1 = !turnoJugador1;
+    }
+
+    public Entrenador getEntrenadorEnTurno() {
+        return turnoJugador1 ? jugador1 : jugador2;
+    }
+
     // --- Métodos de reinicio ---
     public void reiniciarJuego() {
         this.entrenadores.clear();
         this.batallaActual = null;
         this.jugador1 = null;
         this.jugador2 = null;
+        this.turnoJugador1 = true;
     }
 }

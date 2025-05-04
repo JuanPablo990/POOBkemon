@@ -2,9 +2,12 @@ package presentation;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.List;
+import domain.*;
 
 public class VentanaBatalla extends Ventana {
 
@@ -15,11 +18,15 @@ public class VentanaBatalla extends Ventana {
     private FondoPanel panelGif;
     private JProgressBar progressBar1;
     private JProgressBar progressBar2;
+    private JLabel labelJugador;
+    private boolean turnoJugador1 = true;
 
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
         configurarVentana();
         inicializarComponentes();
+        cargarPokemonesIniciales();
+        actualizarVistaJugador();
     }
 
     private void inicializarComponentes() {
@@ -33,14 +40,12 @@ public class VentanaBatalla extends Ventana {
         panelImagenPokemon2.setSize(ANCHO_PANEL, ALTO_PANEL);
 
         progressBar1 = new JProgressBar(0, 100);
-        progressBar1.setValue(100);
         progressBar1.setStringPainted(true);
         progressBar1.setForeground(Color.YELLOW);
         progressBar1.setBackground(new Color(0, 0, 0, 0));
         progressBar1.setBorderPainted(false);
 
         progressBar2 = new JProgressBar(0, 100);
-        progressBar2.setValue(100);
         progressBar2.setStringPainted(true);
         progressBar2.setForeground(Color.BLUE);
         progressBar2.setBackground(new Color(0, 0, 0, 0));
@@ -56,36 +61,83 @@ public class VentanaBatalla extends Ventana {
 
         panelGif.add(panelImagenPokemon);
         panelGif.add(panelImagenPokemon2);
-        SwingUtilities.invokeLater(() -> actualizarPosicionPanelImagen());
+        SwingUtilities.invokeLater(this::actualizarPosicionPanelImagen);
 
         JPanel panelInferior = new JPanel(new BorderLayout());
         FondoPanel panelArena = new FondoPanel("/resources/abajo.png");
-        panelArena.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        panelArena.setLayout(new BorderLayout());
+
+        labelJugador = new JLabel("Turno: " + POOBkemonGUI.getJugador1().getNombre(), SwingConstants.CENTER);
+        labelJugador.setFont(new Font("Arial", Font.BOLD, 20));
+        panelArena.add(labelJugador, BorderLayout.NORTH);
+
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton btnAtaque = crearBotonConImagen("/resources/ataque.png", "Ataque");
         JButton btnCambio = crearBotonConImagen("/resources/cambio.png", "Cambio");
         JButton btnItem = crearBotonConImagen("/resources/item.png", "Item");
         JButton btnHuida = crearBotonConImagen("/resources/huida.png", "Huida");
+
         btnHuida.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "¡Has perdido! Regresando al inicio...");
             POOBkemonGUI.reiniciarAplicacion();
         });
+
         btnAtaque.addActionListener(e -> mostrarVentanaAtaque());
         btnCambio.addActionListener(e -> mostrarVentanaCambioPokemon());
         btnItem.addActionListener(e -> mostrarVentanaItem());
-        panelArena.add(btnAtaque);
-        panelArena.add(btnCambio);
-        panelArena.add(btnItem);
-        panelArena.add(btnHuida);
+
+        panelBotones.add(btnAtaque);
+        panelBotones.add(btnCambio);
+        panelBotones.add(btnItem);
+        panelBotones.add(btnHuida);
+
+        panelArena.add(panelBotones, BorderLayout.CENTER);
         panelInferior.add(panelArena, BorderLayout.CENTER);
+
         panelPrincipal.add(panelGif, BorderLayout.CENTER);
         panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
         setContentPane(panelPrincipal);
+
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 actualizarPosicionPanelImagen();
             }
         });
+    }
+
+    private void actualizarVistaJugador() {
+        Entrenador jugador = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+        labelJugador.setText("Turno: " + jugador.getNombre());
+
+        Pokemon activo = jugador.getPokemonActivo();
+        String rutaGif = PoobkemonGifs.getPokemonImage(activo.getNombre());
+        if (rutaGif != null) {
+            ImageIcon gif = new ImageIcon(getClass().getResource(rutaGif));
+            if (turnoJugador1) {
+                setImagenPokemon(gif);
+                actualizarVidaPokemon1(activo.getPs());
+            } else {
+                setImagenPokemon2(gif);
+                actualizarVidaPokemon2(activo.getPs());
+            }
+        }
+    }
+
+    private void cargarPokemonesIniciales() {
+        Entrenador j1 = POOBkemonGUI.getJugador1();
+        Entrenador j2 = POOBkemonGUI.getJugador2();
+        Pokemon p1 = j1.getPokemonActivo();
+        Pokemon p2 = j2.getPokemonActivo();
+
+        String gif1 = PoobkemonGifs.getPokemonImage(p1.getNombre());
+        String gif2 = PoobkemonGifs.getPokemonImage(p2.getNombre());
+
+        if (gif1 != null) setImagenPokemon(new ImageIcon(getClass().getResource(gif1)));
+        if (gif2 != null) setImagenPokemon2(new ImageIcon(getClass().getResource(gif2)));
+
+        actualizarVidaPokemon1(p1.getPs());
+        actualizarVidaPokemon2(p2.getPs());
     }
 
     private void actualizarPosicionPanelImagen() {
@@ -179,59 +231,36 @@ public class VentanaBatalla extends Ventana {
         Color verdeAguamarina = new Color(102, 205, 170);
         Color fondoClaro = new Color(224, 255, 240);
         ventana.getContentPane().setBackground(fondoClaro);
-        for (int i = 1; i <= 4; i++) {
-            JButton btn = new JButton("Ataque " + i);
+
+        Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+        List<Movimiento> movimientos = POOBkemonGUI.getPoobkemon().getMovimientosDisponibles(actual.getPokemonActivo());
+
+        for (Movimiento m : movimientos) {
+            JButton btn = new JButton(m.getNombre());
             btn.setBackground(verdeAguamarina);
             btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
             btn.setFont(new Font("Arial", Font.BOLD, 14));
+            btn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JOptionPane.showMessageDialog(VentanaBatalla.this, actual.getNombre() + " usó " + m.getNombre());
+                    turnoJugador1 = !turnoJugador1;
+                    actualizarVistaJugador();
+                    ventana.dispose();
+                }
+            });
             ventana.add(btn);
         }
+
         ventana.setVisible(true);
     }
 
     private void mostrarVentanaItem() {
-        JDialog ventana = new JDialog(this, "Selecciona un Item", true);
-        ventana.setLayout(new GridLayout(4, 1, 10, 10));
-        ventana.setSize(300, 300);
-        ventana.setLocationRelativeTo(this);
-        Color verdeAguamarina = new Color(102, 205, 170);
-        Color fondoClaro = new Color(224, 255, 240);
-        ventana.getContentPane().setBackground(fondoClaro);
-        String[] items = {"/resources/potion.png", "/resources/superpotion.png", "/resources/hyperpotion.png", "/resources/revivir.png"};
-        for (String item : items) {
-            FondoPanel fondoPanel = new FondoPanel(item);
-            JButton btn = new JButton();
-            btn.setBackground(new Color(102, 205, 170));
-            btn.setBorder(BorderFactory.createEmptyBorder());
-            btn.setFocusPainted(false);
-            btn.setContentAreaFilled(false);
-            fondoPanel.add(btn);
-            ventana.add(fondoPanel);
-        }
-        ventana.setVisible(true);
+        JOptionPane.showMessageDialog(this, "Sistema de ítems no implementado aún.");
     }
 
     private void mostrarVentanaCambioPokemon() {
-        JDialog ventana = new JDialog(this, "Selecciona un Pokémon", true);
-        ventana.setLayout(new GridLayout(2, 3, 10, 10));
-        ventana.setSize(300, 200);
-        ventana.setLocationRelativeTo(this);
-        Color verdeAguamarina = new Color(102, 205, 170);
-        Color fondoClaro = new Color(224, 255, 240);
-        ventana.getContentPane().setBackground(fondoClaro);
-        for (int i = 1; i <= 6; i++) {
-            FondoPanel panelPokebola = new FondoPanel("/resources/pokebola.gif");
-            JButton btn = new JButton("Pokémon " + i);
-            btn.setLayout(new BorderLayout());
-            btn.add(panelPokebola, BorderLayout.CENTER);
-            btn.setPreferredSize(new Dimension(80, 80));
-            btn.setBackground(new Color(102, 205, 170));
-            btn.setBorder(BorderFactory.createEmptyBorder());
-            btn.setFocusPainted(false);
-            btn.setContentAreaFilled(false);
-            ventana.add(btn);
-        }
-        ventana.setVisible(true);
+        JOptionPane.showMessageDialog(this, "Sistema de cambio de Pokémon no implementado aún.");
     }
 }
