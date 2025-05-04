@@ -94,27 +94,30 @@ public class VentanaSeleccion extends Ventana {
         panelIzquierdo = new JPanel(new BorderLayout());
         panelIzquierdo.setOpaque(false);
         panelContenedorPrincipal.add(panelIzquierdo);
-        
-        // Etiqueta para mostrar el entrenador actual
-        lblEntrenador = new JLabel();
-        lblEntrenador.setFont(new Font("Arial", Font.BOLD, 18));
-        lblEntrenador.setForeground(Color.WHITE);
-        lblEntrenador.setHorizontalAlignment(SwingConstants.CENTER);
-        lblEntrenador.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        panelIzquierdo.add(lblEntrenador, BorderLayout.NORTH);
 
-        // Panel derecho (matriz)
+        // Panel derecho (matriz y etiqueta)
         panelDerecho = new JPanel(new BorderLayout());
         panelDerecho.setOpaque(false);
         panelDerecho.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 20));
         panelContenedorPrincipal.add(panelDerecho);
+
+        // Etiqueta del entrenador en la parte superior derecha (centrada horizontalmente, 10px a la izquierda)
+        JPanel panelEtiquetaSuperior = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        panelEtiquetaSuperior.setOpaque(false);
+        panelEtiquetaSuperior.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        lblEntrenador = new JLabel();
+        lblEntrenador.setFont(new Font("Arial", Font.BOLD, 18));
+        lblEntrenador.setForeground(Color.BLACK);
+        panelEtiquetaSuperior.add(lblEntrenador);
+
+        panelDerecho.add(panelEtiquetaSuperior, BorderLayout.NORTH);
 
         // Configuración de la matriz
         JPanel panelMatriz = new JPanel(new GridLayout(NUM_FILAS_MATRIZ, NUM_COLUMNAS_MATRIZ, ESPACIO_MATRIZ, ESPACIO_MATRIZ));
         panelMatriz.setOpaque(false);
         panelDerecho.add(panelMatriz, BorderLayout.CENTER);
 
-        // Obtener nombres de Pokémon ordenados
         String[] nombresPokemon = PoobkemonGifs.POKEMON_IMAGES.keySet().toArray(new String[0]);
         Arrays.sort(nombresPokemon);
 
@@ -132,18 +135,18 @@ public class VentanaSeleccion extends Ventana {
         panelAbajoIzquierda = new JPanel(new GridBagLayout());
         panelAbajoIzquierda.setOpaque(false);
         panelAbajoIzquierda.setBorder(BorderFactory.createEmptyBorder(20, MARGEN_IZQUIERDO, 0, 0));
-        
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        
+
         int anchoBoton = PREF_ANCHO_BOTON_ITEM - 10;
         int altoBoton = PREF_ALTO_BOTON_ITEM - 10;
-        
+
         String[] textosBotones = {"Poción", "Hiperpoción", "Superpoción", "Revivir"};
         botonesSuperiores = new JButton[4];
-        
+
         // Fila superior (3 botones)
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 8, 0);
@@ -151,22 +154,22 @@ public class VentanaSeleccion extends Ventana {
             JButton boton = crearBotonItem(textosBotones[i]);
             boton.setPreferredSize(new Dimension(anchoBoton, altoBoton));
             botonesSuperiores[i] = boton;
-            
+
             gbc.gridx = i;
             gbc.insets.left = (i == 0) ? 0 : 4;
             panelAbajoIzquierda.add(boton, gbc);
         }
-        
+
         // Botón revivir (fila inferior)
         JButton btnRevivir = crearBotonItem(textosBotones[3]);
         btnRevivir.setPreferredSize(new Dimension(anchoBoton, altoBoton));
         botonesSuperiores[3] = btnRevivir;
-        
+
         gbc.gridy = 1;
         gbc.gridx = 1;
         gbc.insets = new Insets(-4, 0, 0, 0);
         panelAbajoIzquierda.add(btnRevivir, gbc);
-        
+
         contenedorBotones.add(panelAbajoIzquierda, BorderLayout.CENTER);
         panelIzquierdo.add(contenedorBotones, BorderLayout.SOUTH);
 
@@ -182,6 +185,9 @@ public class VentanaSeleccion extends Ventana {
 
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
     }
+
+
+
 
     private void actualizarEtiquetaEntrenador() {
         if (esJugador1) {
@@ -328,7 +334,6 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
- 
     private void configurarListeners() {
         btnSiguiente.addActionListener(e -> {
             if (pokemonSelectedCount < 1) {
@@ -354,26 +359,17 @@ public class VentanaSeleccion extends Ventana {
             if (esJugador1) {
                 nombresPokemonJugador1.clear();
                 nombresPokemonJugador1.addAll(nombresPokemonSeleccionados);
-
-                if (POOBkemonGUI.getJugador2() != null && 
-                    !POOBkemonGUI.getJugador2().getNombre().startsWith("Computer")) {
-                    this.dispose();
-                    SwingUtilities.invokeLater(() -> {
-                        VentanaSeleccion ventanaJugador2 = new VentanaSeleccion(false);
-                        ventanaJugador2.mostrar();
-                    });
-                } else {
-                    this.dispose();
-                    POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
-                }
+                
+                // Ir directamente a la ventana de movimientos del Jugador 1
+                this.dispose();
+                POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
             } else {
                 nombresPokemonJugador2.clear();
                 nombresPokemonJugador2.addAll(nombresPokemonSeleccionados);
-                List<String> seleccionCombinada = new ArrayList<>();
-                seleccionCombinada.addAll(nombresPokemonJugador1);
-                seleccionCombinada.addAll(nombresPokemonJugador2);
+                
+                // Vamos directo a la ventana de movimientos del Jugador 2
                 this.dispose();
-                POOBkemonGUI.mostrarVentanaMovimientos(seleccionCombinada);
+                POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
             }
         });
 
@@ -491,7 +487,4 @@ public class VentanaSeleccion extends Ventana {
             redimensionarBotonesItems();
         });
     }
-    
-    
-    
 }

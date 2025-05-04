@@ -101,32 +101,25 @@ public class VentanaMovimientos extends Ventana {
                         e.printStackTrace();
                     }
 
-                    JPanel panelBotones = new JPanel(new GridBagLayout());
-                    panelBotones.setOpaque(false);
-                    panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
-                    GridBagConstraints gbc = new GridBagConstraints();
-                    gbc.gridwidth = GridBagConstraints.REMAINDER;
-                    gbc.fill = GridBagConstraints.HORIZONTAL;
-                    gbc.insets = new Insets(3, 5, 3, 5);
-                    gbc.weightx = 1;
+                    JPanel panelCombos = new JPanel(new GridLayout(4, 1, 5, 5));
+                    panelCombos.setOpaque(false);
+                    panelCombos.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
 
                     List<String> movimientos = new ArrayList<>();
+                    String[] opcionesMovimientos = {"Movimiento 1", "Movimiento 2", "Movimiento 3", "Movimiento 4"};
 
                     for (int i = 0; i < 4; i++) {
-                        String nombreMovimiento = "Mov " + (i + 1);
-                        JButton boton = new JButton(nombreMovimiento);
-                        boton.setBackground(new Color(70, 180, 130, 150));
-                        boton.setForeground(Color.BLACK);
-                        boton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                        boton.setPreferredSize(new Dimension(0, 30));
-                        boton.setFont(new Font("Arial", Font.BOLD, 12));
-                        panelBotones.add(boton, gbc);
-                        movimientos.add(nombreMovimiento);
+                        JComboBox<String> comboBox = new JComboBox<>(opcionesMovimientos);
+                        comboBox.setBackground(new Color(70, 180, 130, 150));
+                        comboBox.setForeground(Color.BLACK);
+                        comboBox.setFont(new Font("Arial", Font.PLAIN, 12));
+                        comboBox.setMaximumRowCount(4);
+                        panelCombos.add(comboBox);
+                        movimientos.add(opcionesMovimientos[i]);
                     }
 
                     movimientosPorPokemon.put(nombrePokemon, movimientos);
-                    contenidoCelda.add(panelBotones, BorderLayout.CENTER);
+                    contenidoCelda.add(panelCombos, BorderLayout.CENTER);
                 }
 
                 contenidoCelda.add(panelImagen, BorderLayout.NORTH);
