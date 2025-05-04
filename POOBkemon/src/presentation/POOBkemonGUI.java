@@ -1,6 +1,7 @@
 package presentation;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 import domain.POOBkemon;
 import domain.Entrenador;
@@ -12,13 +13,15 @@ public class POOBkemonGUI {
     private static VentanaSeleccion ventanaSeleccion;
     private static VentanaMovimientos ventanaMovimientos;
     private static VentanaBatalla ventanaBatalla;
-    
+
     private static POOBkemon poobkemon;
     private static Entrenador jugador1;
     private static Entrenador jugador2;
-    
-    // Lista para almacenar las selecciones del jugador 1
+
     private static List<String> seleccionPokemonJugador1;
+    private static List<String> seleccionPokemonJugador2;
+
+    private static boolean mostrandoMovimientosJugador1 = true;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -26,7 +29,6 @@ public class POOBkemonGUI {
         });
     }
 
-    // Métodos para manejar la instancia de POOBkemon
     public static POOBkemon getPoobkemon() {
         if (poobkemon == null) {
             poobkemon = new POOBkemon();
@@ -34,7 +36,6 @@ public class POOBkemonGUI {
         return poobkemon;
     }
 
-    // Métodos para manejar los entrenadores
     public static Entrenador getJugador1() {
         return jugador1;
     }
@@ -50,24 +51,39 @@ public class POOBkemonGUI {
     public static void setJugador2(Entrenador jugador) {
         jugador2 = jugador;
     }
-    
-    // Método para establecer la selección del jugador 1
+
     public static void setSeleccionPokemonJugador1(List<String> seleccion) {
         seleccionPokemonJugador1 = seleccion;
     }
-    
-    // Método para obtener la selección del jugador 1
+
     public static List<String> getSeleccionPokemonJugador1() {
         return seleccionPokemonJugador1;
     }
 
+    public static void setSeleccionPokemonJugador2(List<String> seleccion) {
+        seleccionPokemonJugador2 = seleccion;
+    }
+
+    public static List<String> getSeleccionPokemonJugador2() {
+        return seleccionPokemonJugador2;
+    }
+
+    public static boolean isMostrandoMovimientosJugador1() {
+        return mostrandoMovimientosJugador1;
+    }
+
+    public static void setMostrandoMovimientosJugador1(boolean valor) {
+        mostrandoMovimientosJugador1 = valor;
+    }
+
     public static void reiniciarAplicacion() {
         cerrarTodasLasVentanas();
-        // Limpiar referencias al reiniciar
         poobkemon = null;
         jugador1 = null;
         jugador2 = null;
         seleccionPokemonJugador1 = null;
+        seleccionPokemonJugador2 = null;
+        mostrandoMovimientosJugador1 = true;
         mostrarVentanaInicio();
     }
 
@@ -118,28 +134,27 @@ public class POOBkemonGUI {
 
     public static void mostrarVentanaSeleccion() {
         cerrarOtrasVentanas(null);
-        // Mostrar ventana para el jugador 1 (por defecto)
         ventanaSeleccion = new VentanaSeleccion(true);
         ventanaSeleccion.mostrar();
     }
-    
-    // Método para mostrar la ventana de selección especificando el jugador
+
     public static void mostrarVentanaSeleccion(boolean esJugador1) {
         cerrarOtrasVentanas(null);
         ventanaSeleccion = new VentanaSeleccion(esJugador1);
         ventanaSeleccion.mostrar();
     }
 
-    public static void mostrarVentanaMovimientos() {
+    public static void mostrarVentanaMovimientos(List<String> seleccion) {
         cerrarOtrasVentanas(null);
-        ventanaMovimientos = new VentanaMovimientos(null);
-        ventanaMovimientos.mostrar();
-    }
-
-    public static void mostrarVentanaMovimientos(List<String> rutasPokemonSeleccionados) {
-        cerrarOtrasVentanas(null);
-        ventanaMovimientos = new VentanaMovimientos(rutasPokemonSeleccionados);
-        ventanaMovimientos.mostrar();
+        if (mostrandoMovimientosJugador1) {
+            setSeleccionPokemonJugador1(seleccion);
+            ventanaMovimientos = new VentanaMovimientos(seleccion, true);
+            ventanaMovimientos.mostrar();
+        } else {
+            setSeleccionPokemonJugador2(seleccion);
+            ventanaMovimientos = new VentanaMovimientos(seleccion, false);
+            ventanaMovimientos.mostrar();
+        }
     }
 
     public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {

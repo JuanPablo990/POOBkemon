@@ -4,21 +4,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VentanaMovimientos extends Ventana {
     private FondoPanel fondoPanel;
     private List<String> nombresPokemonSeleccionados;
     private JLabel[] etiquetasImagenes;
+    private boolean esJugador1;
+    private JLabel lblJugador;
 
     private static final int POKEMON_WIDTH = 100;
     private static final int POKEMON_HEIGHT = 100;
     private static final int MARGEN_SUPERIOR = 30;
     private static final int MARGEN_INFERIOR = 20;
 
-    public VentanaMovimientos(List<String> nombresPokemonSeleccionados) {
+    public VentanaMovimientos(List<String> nombresPokemonSeleccionados, boolean esJugador1) {
         super("Movimientos de POOBkemon");
         this.nombresPokemonSeleccionados = nombresPokemonSeleccionados;
+        this.esJugador1 = esJugador1;
         if (nombresPokemonSeleccionados != null) {
             etiquetasImagenes = new JLabel[nombresPokemonSeleccionados.size()];
         }
@@ -30,6 +34,13 @@ public class VentanaMovimientos extends Ventana {
         fondoPanel = new FondoPanel(PoobkemonGifs.FONDO_MOVIMIENTOS);
         fondoPanel.setLayout(new BorderLayout());
         fondoPanel.setBorder(BorderFactory.createEmptyBorder(MARGEN_SUPERIOR, 0, MARGEN_INFERIOR, 0));
+
+        lblJugador = new JLabel();
+        lblJugador.setFont(new Font("Arial", Font.BOLD, 16));
+        lblJugador.setForeground(Color.WHITE);
+        lblJugador.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
+        actualizarEtiquetaJugador();
+        fondoPanel.add(lblJugador, BorderLayout.NORTH);
 
         JPanel gridPrincipal = new JPanel(new GridLayout(2, 3, 15, 15));
         gridPrincipal.setOpaque(false);
@@ -58,17 +69,10 @@ public class VentanaMovimientos extends Ventana {
                         URL url = getClass().getResource(rutaImagen);
                         if (url != null) {
                             ImageIcon iconoOriginal = new ImageIcon(url);
-
-                            // ESCALAR la imagen si es más grande que 100x100 respetando proporciones
                             Image imagenOriginal = iconoOriginal.getImage();
                             int widthOriginal = iconoOriginal.getIconWidth();
                             int heightOriginal = iconoOriginal.getIconHeight();
-
-                            float escala = Math.min(
-                                (float) POKEMON_WIDTH / widthOriginal,
-                                (float) POKEMON_HEIGHT / heightOriginal
-                            );
-
+                            float escala = Math.min((float) POKEMON_WIDTH / widthOriginal, (float) POKEMON_HEIGHT / heightOriginal);
                             int nuevoAncho = Math.round(widthOriginal * escala);
                             int nuevoAlto = Math.round(heightOriginal * escala);
 
@@ -76,23 +80,18 @@ public class VentanaMovimientos extends Ventana {
                             ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
 
                             JLabel labelImagen = new JLabel(iconoEscalado, JLabel.CENTER);
-                            labelImagen.setHorizontalAlignment(JLabel.CENTER);
-                            labelImagen.setVerticalAlignment(JLabel.CENTER);
                             etiquetasImagenes[pokemonIndex] = labelImagen;
 
                             JPanel contenedorImagen = new JPanel(new GridBagLayout());
                             contenedorImagen.setOpaque(false);
                             contenedorImagen.setPreferredSize(new Dimension(POKEMON_WIDTH, POKEMON_HEIGHT));
                             contenedorImagen.add(labelImagen);
-
                             panelImagen.add(contenedorImagen, BorderLayout.CENTER);
 
                             JLabel labelNombre = new JLabel(nombrePokemon, JLabel.CENTER);
                             labelNombre.setForeground(Color.BLACK);
                             labelNombre.setFont(new Font("Arial", Font.BOLD, 12));
                             panelImagen.add(labelNombre, BorderLayout.SOUTH);
-                        } else {
-                            System.err.println("No se encontró la imagen para: " + nombrePokemon);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -139,14 +138,19 @@ public class VentanaMovimientos extends Ventana {
         btnSiguiente.setBackground(new Color(70, 180, 130));
         btnSiguiente.setForeground(Color.WHITE);
         btnSiguiente.addActionListener(e -> {
-            // Cambio realizado aquí: Ahora abre la VentanaBatalla
             if (nombresPokemonSeleccionados != null && !nombresPokemonSeleccionados.isEmpty()) {
-                POOBkemonGUI.mostrarVentanaBatalla(nombresPokemonSeleccionados);
+                dispose();
+                if (esJugador1) {
+                    POOBkemonGUI.setMostrandoMovimientosJugador1(false);
+                    POOBkemonGUI.mostrarVentanaMovimientos(POOBkemonGUI.getSeleccionPokemonJugador2());
+                } else {
+                    List<String> combinados = new ArrayList<>();
+                    combinados.addAll(POOBkemonGUI.getSeleccionPokemonJugador1());
+                    combinados.addAll(POOBkemonGUI.getSeleccionPokemonJugador2());
+                    POOBkemonGUI.mostrarVentanaBatalla(combinados);
+                }
             } else {
-                JOptionPane.showMessageDialog(VentanaMovimientos.this,
-                    "No hay Pokémon seleccionados",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No hay Pokémon seleccionados", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         panelBoton.add(btnSiguiente);
@@ -158,6 +162,13 @@ public class VentanaMovimientos extends Ventana {
 
         fondoPanel.add(contenedorCentral, BorderLayout.CENTER);
         setContentPane(fondoPanel);
+    }
+
+    private void actualizarEtiquetaJugador() {
+        String nombre = esJugador1 ?
+            (POOBkemonGUI.getJugador1() != null ? POOBkemonGUI.getJugador1().getNombre() : "Jugador 1") :
+            (POOBkemonGUI.getJugador2() != null ? POOBkemonGUI.getJugador2().getNombre() : "Jugador 2");
+        lblJugador.setText("Movimientos de: " + nombre);
     }
 
     private void configurarVentana() {
