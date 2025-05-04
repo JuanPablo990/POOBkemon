@@ -328,6 +328,7 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
+ 
     private void configurarListeners() {
         btnSiguiente.addActionListener(e -> {
             if (pokemonSelectedCount < 1) {
@@ -342,57 +343,48 @@ public class VentanaSeleccion extends Ventana {
                     "Límite excedido", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
+
             if (reviveSelectedCount > MAX_REVIVE_SELECTED) {
                 JOptionPane.showMessageDialog(this,
                     "Solo puedes seleccionar máximo " + MAX_REVIVE_SELECTED + " revivir",
                     "Límite excedido", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
-            // Guardar la selección según el jugador
+
             if (esJugador1) {
                 nombresPokemonJugador1.clear();
                 nombresPokemonJugador1.addAll(nombresPokemonSeleccionados);
-                
-                // Verificar si hay un segundo jugador humano
+
                 if (POOBkemonGUI.getJugador2() != null && 
                     !POOBkemonGUI.getJugador2().getNombre().startsWith("Computer")) {
-                    // Abrir ventana de selección para el jugador 2
                     this.dispose();
-                    VentanaSeleccion ventanaJugador2 = new VentanaSeleccion(false);
-                    ventanaJugador2.mostrar();
+                    SwingUtilities.invokeLater(() -> {
+                        VentanaSeleccion ventanaJugador2 = new VentanaSeleccion(false);
+                        ventanaJugador2.mostrar();
+                    });
                 } else {
-                    // No hay jugador 2 humano, continuar al siguiente paso
                     this.dispose();
                     POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
                 }
             } else {
-                // Es el jugador 2
                 nombresPokemonJugador2.clear();
                 nombresPokemonJugador2.addAll(nombresPokemonSeleccionados);
-                
-                // Combinar las selecciones de ambos jugadores
                 List<String> seleccionCombinada = new ArrayList<>();
                 seleccionCombinada.addAll(nombresPokemonJugador1);
                 seleccionCombinada.addAll(nombresPokemonJugador2);
-                
                 this.dispose();
                 POOBkemonGUI.mostrarVentanaMovimientos(seleccionCombinada);
             }
         });
-        
-        // Listeners para botones de items
+
         for (JButton boton : botonesSuperiores) {
             boton.addActionListener(e -> manejarSeleccionItem((JButton) e.getSource()));
         }
-        
-        // Listeners para botones de Pokémon
         for (JButton boton : botonesMatriz) {
             boton.addActionListener(e -> manejarSeleccionPokemon((JButton) e.getSource()));
         }
     }
-        
+    
     private void manejarSeleccionPokemon(JButton boton) {
         String nombrePokemon = boton.getToolTipText();
         if (nombrePokemon == null || nombrePokemon.equals("No disponible") || 
@@ -499,4 +491,7 @@ public class VentanaSeleccion extends Ventana {
             redimensionarBotonesItems();
         });
     }
+    
+    
+    
 }

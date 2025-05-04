@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.EmptyBorder;
-import domain.Entrenador;  // <-- Añade este import
+import domain.Entrenador;
 
 public class VentanaOpciones extends Ventana {
     private FondoPanel fondoPanel;
@@ -205,7 +205,8 @@ public class VentanaOpciones extends Ventana {
                 
                 dialog.dispose();
                 this.setVisible(false);
-                POOBkemonGUI.mostrarVentanaSeleccion();
+                POOBkemonGUI.setMostrandoMovimientosJugador1(true);
+                POOBkemonGUI.mostrarVentanaSeleccion(true);
             }
         });
 

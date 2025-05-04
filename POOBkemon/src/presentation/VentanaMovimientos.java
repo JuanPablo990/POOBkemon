@@ -5,11 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VentanaMovimientos extends Ventana {
     private FondoPanel fondoPanel;
     private List<String> nombresPokemonSeleccionados;
+    private Map<String, List<String>> movimientosPorPokemon;
     private JLabel[] etiquetasImagenes;
     private boolean esJugador1;
     private JLabel lblJugador;
@@ -23,6 +26,7 @@ public class VentanaMovimientos extends Ventana {
         super("Movimientos de POOBkemon");
         this.nombresPokemonSeleccionados = nombresPokemonSeleccionados;
         this.esJugador1 = esJugador1;
+        this.movimientosPorPokemon = new HashMap<>();
         if (nombresPokemonSeleccionados != null) {
             etiquetasImagenes = new JLabel[nombresPokemonSeleccionados.size()];
         }
@@ -96,33 +100,36 @@ public class VentanaMovimientos extends Ventana {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
 
-                contenidoCelda.add(panelImagen, BorderLayout.NORTH);
+                    JPanel panelBotones = new JPanel(new GridBagLayout());
+                    panelBotones.setOpaque(false);
+                    panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-                JPanel panelBotones = new JPanel(new GridBagLayout());
-                panelBotones.setOpaque(false);
-                panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.gridwidth = GridBagConstraints.REMAINDER;
+                    gbc.fill = GridBagConstraints.HORIZONTAL;
+                    gbc.insets = new Insets(3, 5, 3, 5);
+                    gbc.weightx = 1;
 
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridwidth = GridBagConstraints.REMAINDER;
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.insets = new Insets(3, 5, 3, 5);
-                gbc.weightx = 1;
+                    List<String> movimientos = new ArrayList<>();
 
-                if (nombresPokemonSeleccionados != null && pokemonIndex < numPokemonesSeleccionados) {
                     for (int i = 0; i < 4; i++) {
-                        JButton boton = new JButton("Mov " + (i + 1));
+                        String nombreMovimiento = "Mov " + (i + 1);
+                        JButton boton = new JButton(nombreMovimiento);
                         boton.setBackground(new Color(70, 180, 130, 150));
                         boton.setForeground(Color.BLACK);
                         boton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                         boton.setPreferredSize(new Dimension(0, 30));
                         boton.setFont(new Font("Arial", Font.BOLD, 12));
                         panelBotones.add(boton, gbc);
+                        movimientos.add(nombreMovimiento);
                     }
+
+                    movimientosPorPokemon.put(nombrePokemon, movimientos);
+                    contenidoCelda.add(panelBotones, BorderLayout.CENTER);
                 }
 
-                contenidoCelda.add(panelBotones, BorderLayout.CENTER);
+                contenidoCelda.add(panelImagen, BorderLayout.NORTH);
                 celda.add(contenidoCelda, BorderLayout.CENTER);
                 gridPrincipal.add(celda);
                 pokemonIndex++;
@@ -139,10 +146,15 @@ public class VentanaMovimientos extends Ventana {
         btnSiguiente.setForeground(Color.WHITE);
         btnSiguiente.addActionListener(e -> {
             if (nombresPokemonSeleccionados != null && !nombresPokemonSeleccionados.isEmpty()) {
+                for (String nombre : nombresPokemonSeleccionados) {
+                    List<String> movimientos = movimientosPorPokemon.get(nombre);
+                    POOBkemonGUI.setMovimientosDePokemon(nombre, movimientos, esJugador1);
+                }
+
                 dispose();
                 if (esJugador1) {
                     POOBkemonGUI.setMostrandoMovimientosJugador1(false);
-                    POOBkemonGUI.mostrarVentanaMovimientos(POOBkemonGUI.getSeleccionPokemonJugador2());
+                    POOBkemonGUI.mostrarVentanaSeleccion(false);
                 } else {
                     List<String> combinados = new ArrayList<>();
                     combinados.addAll(POOBkemonGUI.getSeleccionPokemonJugador1());

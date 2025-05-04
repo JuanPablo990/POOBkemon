@@ -1,8 +1,7 @@
 package presentation;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import domain.POOBkemon;
 import domain.Entrenador;
 
@@ -21,12 +20,13 @@ public class POOBkemonGUI {
     private static List<String> seleccionPokemonJugador1;
     private static List<String> seleccionPokemonJugador2;
 
+    private static Map<String, List<String>> movimientosJugador1 = new HashMap<>();
+    private static Map<String, List<String>> movimientosJugador2 = new HashMap<>();
+
     private static boolean mostrandoMovimientosJugador1 = true;
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            mostrarVentanaInicio();
-        });
+        SwingUtilities.invokeLater(() -> mostrarVentanaInicio());
     }
 
     public static POOBkemon getPoobkemon() {
@@ -68,6 +68,26 @@ public class POOBkemonGUI {
         return seleccionPokemonJugador2;
     }
 
+    public static void setMovimientosDePokemon(String nombrePokemon, List<String> movimientos, boolean esJugador1) {
+        if (esJugador1) {
+            movimientosJugador1.put(nombrePokemon, movimientos);
+        } else {
+            movimientosJugador2.put(nombrePokemon, movimientos);
+        }
+    }
+
+    public static List<String> getMovimientosDePokemon(String nombrePokemon, boolean esJugador1) {
+        return esJugador1 ? movimientosJugador1.get(nombrePokemon) : movimientosJugador2.get(nombrePokemon);
+    }
+
+    public static Map<String, List<String>> getMovimientosJugador1() {
+        return movimientosJugador1;
+    }
+
+    public static Map<String, List<String>> getMovimientosJugador2() {
+        return movimientosJugador2;
+    }
+
     public static boolean isMostrandoMovimientosJugador1() {
         return mostrandoMovimientosJugador1;
     }
@@ -83,35 +103,25 @@ public class POOBkemonGUI {
         jugador2 = null;
         seleccionPokemonJugador1 = null;
         seleccionPokemonJugador2 = null;
+        movimientosJugador1.clear();
+        movimientosJugador2.clear();
         mostrandoMovimientosJugador1 = true;
         mostrarVentanaInicio();
     }
 
     private static void cerrarTodasLasVentanas() {
-        if (ventanaInicio != null) {
-            ventanaInicio.dispose();
-            ventanaInicio = null;
-        }
-        if (ventanaOpciones != null) {
-            ventanaOpciones.dispose();
-            ventanaOpciones = null;
-        }
-        if (ventanaCreditos != null) {
-            ventanaCreditos.dispose();
-            ventanaCreditos = null;
-        }
-        if (ventanaSeleccion != null) {
-            ventanaSeleccion.dispose();
-            ventanaSeleccion = null;
-        }
-        if (ventanaMovimientos != null) {
-            ventanaMovimientos.dispose();
-            ventanaMovimientos = null;
-        }
-        if (ventanaBatalla != null) {
-            ventanaBatalla.dispose();
-            ventanaBatalla = null;
-        }
+        if (ventanaInicio != null) ventanaInicio.dispose();
+        if (ventanaOpciones != null) ventanaOpciones.dispose();
+        if (ventanaCreditos != null) ventanaCreditos.dispose();
+        if (ventanaSeleccion != null) ventanaSeleccion.dispose();
+        if (ventanaMovimientos != null) ventanaMovimientos.dispose();
+        if (ventanaBatalla != null) ventanaBatalla.dispose();
+        ventanaInicio = null;
+        ventanaOpciones = null;
+        ventanaCreditos = null;
+        ventanaSeleccion = null;
+        ventanaMovimientos = null;
+        ventanaBatalla = null;
     }
 
     public static void mostrarVentanaInicio() {
@@ -133,9 +143,7 @@ public class POOBkemonGUI {
     }
 
     public static void mostrarVentanaSeleccion() {
-        cerrarOtrasVentanas(null);
-        ventanaSeleccion = new VentanaSeleccion(true);
-        ventanaSeleccion.mostrar();
+        mostrarVentanaSeleccion(true);
     }
 
     public static void mostrarVentanaSeleccion(boolean esJugador1) {
@@ -164,29 +172,11 @@ public class POOBkemonGUI {
     }
 
     private static void cerrarOtrasVentanas(JFrame ventanaActual) {
-        if (ventanaInicio != null && ventanaInicio != ventanaActual) {
-            ventanaInicio.dispose();
-            ventanaInicio = null;
-        }
-        if (ventanaOpciones != null && ventanaOpciones != ventanaActual) {
-            ventanaOpciones.dispose();
-            ventanaOpciones = null;
-        }
-        if (ventanaCreditos != null && ventanaCreditos != ventanaActual) {
-            ventanaCreditos.dispose();
-            ventanaCreditos = null;
-        }
-        if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual) {
-            ventanaSeleccion.dispose();
-            ventanaSeleccion = null;
-        }
-        if (ventanaMovimientos != null && ventanaMovimientos != ventanaActual) {
-            ventanaMovimientos.dispose();
-            ventanaMovimientos = null;
-        }
-        if (ventanaBatalla != null && ventanaBatalla != ventanaActual) {
-            ventanaBatalla.dispose();
-            ventanaBatalla = null;
-        }
+        if (ventanaInicio != null && ventanaInicio != ventanaActual) ventanaInicio.dispose();
+        if (ventanaOpciones != null && ventanaOpciones != ventanaActual) ventanaOpciones.dispose();
+        if (ventanaCreditos != null && ventanaCreditos != ventanaActual) ventanaCreditos.dispose();
+        if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual) ventanaSeleccion.dispose();
+        if (ventanaMovimientos != null && ventanaMovimientos != ventanaActual) ventanaMovimientos.dispose();
+        if (ventanaBatalla != null && ventanaBatalla != ventanaActual) ventanaBatalla.dispose();
     }
 }
