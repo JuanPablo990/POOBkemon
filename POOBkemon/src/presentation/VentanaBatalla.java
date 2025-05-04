@@ -27,36 +27,31 @@ public class VentanaBatalla extends Ventana {
         panelGif = new FondoPanel("/resources/pelea.gif");
         panelGif.setLayout(null);
 
-        // Crear paneles para los Pokémon con BorderLayout
         panelImagenPokemon = new JPanel(new BorderLayout());
         panelImagenPokemon.setSize(ANCHO_PANEL, ALTO_PANEL);
         panelImagenPokemon2 = new JPanel(new BorderLayout());
         panelImagenPokemon2.setSize(ANCHO_PANEL, ALTO_PANEL);
 
-        // Configurar ProgressBar para el Pokémon 1 (abajo)
         progressBar1 = new JProgressBar(0, 100);
         progressBar1.setValue(100);
         progressBar1.setStringPainted(true);
-        progressBar1.setForeground(Color.GREEN);
-        progressBar1.setBackground(Color.WHITE);
-        progressBar1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        progressBar1.setForeground(Color.YELLOW);
+        progressBar1.setBackground(new Color(0, 0, 0, 0));
+        progressBar1.setBorderPainted(false);
 
-        // Configurar ProgressBar para el Pokémon 2 (arriba)
         progressBar2 = new JProgressBar(0, 100);
         progressBar2.setValue(100);
         progressBar2.setStringPainted(true);
-        progressBar2.setForeground(Color.GREEN);
-        progressBar2.setBackground(Color.WHITE);
-        progressBar2.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        progressBar2.setForeground(Color.BLUE);
+        progressBar2.setBackground(new Color(0, 0, 0, 0));
+        progressBar2.setBorderPainted(false);
 
-        // Añadir las progress bars a los paneles
         panelImagenPokemon.add(progressBar1, BorderLayout.SOUTH);
         panelImagenPokemon2.add(progressBar2, BorderLayout.NORTH);
 
-        // Configurar bordes y transparencia
-        panelImagenPokemon.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        panelImagenPokemon.setBorder(BorderFactory.createEmptyBorder());
         panelImagenPokemon.setOpaque(false);
-        panelImagenPokemon2.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        panelImagenPokemon2.setBorder(BorderFactory.createEmptyBorder());
         panelImagenPokemon2.setOpaque(false);
 
         panelGif.add(panelImagenPokemon);
@@ -97,20 +92,18 @@ public class VentanaBatalla extends Ventana {
         int panelWidth = panelGif.getWidth();
         int panelHeight = panelGif.getHeight();
         if (panelWidth == 0 || panelHeight == 0) return;
-        
-        // Pokémon 2 (arriba a la derecha)
+
         int x2 = (int)(panelWidth * 0.7) - (ANCHO_PANEL / 2);
         int y2 = (int)(panelHeight * 0.2);
-        
-        // Pokémon 1 (abajo a la izquierda)
+
         int x1 = (int)(panelWidth * 0.3) - (ANCHO_PANEL / 2);
         int y1 = (int)(panelHeight * 0.47);
-        
+
         x1 = Math.max(0, Math.min(x1, panelWidth - ANCHO_PANEL));
         y1 = Math.max(0, Math.min(y1, panelHeight - ALTO_PANEL));
         x2 = Math.max(0, Math.min(x2, panelWidth - ANCHO_PANEL));
         y2 = Math.max(0, Math.min(y2, panelHeight - ALTO_PANEL));
-        
+
         panelImagenPokemon.setBounds(x1, y1, ANCHO_PANEL, ALTO_PANEL);
         panelImagenPokemon2.setBounds(x2, y2, ANCHO_PANEL, ALTO_PANEL);
         panelGif.repaint();
@@ -136,26 +129,10 @@ public class VentanaBatalla extends Ventana {
 
     public void actualizarVidaPokemon1(int vida) {
         progressBar1.setValue(vida);
-        // Cambiar color según la vida
-        if (vida < 20) {
-            progressBar1.setForeground(Color.RED);
-        } else if (vida < 50) {
-            progressBar1.setForeground(Color.ORANGE);
-        } else {
-            progressBar1.setForeground(Color.GREEN);
-        }
     }
 
     public void actualizarVidaPokemon2(int vida) {
         progressBar2.setValue(vida);
-        // Cambiar color según la vida
-        if (vida < 20) {
-            progressBar2.setForeground(Color.RED);
-        } else if (vida < 50) {
-            progressBar2.setForeground(Color.ORANGE);
-        } else {
-            progressBar2.setForeground(Color.GREEN);
-        }
     }
 
     private JButton crearBotonConImagen(String rutaImagen, String textoAlternativo) {
