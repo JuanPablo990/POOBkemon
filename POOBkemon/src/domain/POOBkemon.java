@@ -65,6 +65,18 @@ public class POOBkemon {
     public void setJugadores(Entrenador jugador1, Entrenador jugador2) {
         this.jugador1 = jugador1;
         this.jugador2 = jugador2;
+
+        if (!entrenadores.contains(jugador1)) {
+            entrenadores.add(jugador1);
+        }
+        if (!entrenadores.contains(jugador2)) {
+            entrenadores.add(jugador2);
+        }
+    }
+
+    public void prepararBatalla() {
+        setJugadores(jugador1, jugador2);
+        iniciarBatalla();
     }
 
     // --- Getters para Batalla ---

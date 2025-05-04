@@ -1,5 +1,11 @@
 package presentation;
 
+import domain.POOBkemon;
+import domain.Entrenador;
+import domain.Potion;
+import domain.SuperPotion;
+import domain.HyperPotion;
+import domain.Revive;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -337,8 +343,8 @@ public class VentanaSeleccion extends Ventana {
     private void configurarListeners() {
         btnSiguiente.addActionListener(e -> {
             if (pokemonSelectedCount < 1) {
-                JOptionPane.showMessageDialog(this, 
-                    "Debes seleccionar al menos 1 Pokémon para continuar", 
+                JOptionPane.showMessageDialog(this,
+                    "Debes seleccionar al menos 1 Pokémon para continuar",
                     "Selección incompleta", JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -356,18 +362,50 @@ public class VentanaSeleccion extends Ventana {
                 return;
             }
 
+            POOBkemon juego = POOBkemonGUI.getPoobkemon();
+
             if (esJugador1) {
                 nombresPokemonJugador1.clear();
                 nombresPokemonJugador1.addAll(nombresPokemonSeleccionados);
-                
-                // Ir directamente a la ventana de movimientos del Jugador 1
+
+                Entrenador entrenador1 = POOBkemonGUI.getJugador1();
+
+                for (String nombre : nombresPokemonSeleccionados) {
+                    entrenador1.agregarPokemonPorNombre(nombre);
+                }
+
+                for (JButton boton : selectedItemButtons) {
+                    String nombreItem = boton.getToolTipText();
+                    switch (nombreItem) {
+                        case "Poción" -> entrenador1.agregarItem(new Potion());
+                        case "Superpoción" -> entrenador1.agregarItem(new SuperPotion());
+                        case "Hiperpoción" -> entrenador1.agregarItem(new HyperPotion());
+                        case "Revivir" -> entrenador1.agregarItem(new Revive());
+                    }
+                }
+
                 this.dispose();
                 POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
             } else {
                 nombresPokemonJugador2.clear();
                 nombresPokemonJugador2.addAll(nombresPokemonSeleccionados);
-                
-                // Vamos directo a la ventana de movimientos del Jugador 2
+
+                Entrenador entrenador2 = POOBkemonGUI.getJugador2();
+
+                for (String nombre : nombresPokemonSeleccionados) {
+                    entrenador2.agregarPokemonPorNombre(nombre);
+                }
+
+                for (JButton boton : selectedItemButtons) {
+                    String nombreItem = boton.getToolTipText();
+                    switch (nombreItem) {
+                        case "Poción" -> entrenador2.agregarItem(new Potion());
+                        case "Superpoción" -> entrenador2.agregarItem(new SuperPotion());
+                        case "Hiperpoción" -> entrenador2.agregarItem(new HyperPotion());
+                        case "Revivir" -> entrenador2.agregarItem(new Revive());
+                    }
+                }
+
                 this.dispose();
                 POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
             }
@@ -380,6 +418,7 @@ public class VentanaSeleccion extends Ventana {
             boton.addActionListener(e -> manejarSeleccionPokemon((JButton) e.getSource()));
         }
     }
+
     
     private void manejarSeleccionPokemon(JButton boton) {
         String nombrePokemon = boton.getToolTipText();
