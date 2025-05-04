@@ -34,6 +34,14 @@ public class POOBkemon {
         return poquedex.obtenerNombresMovimientosDisponibles();
     }
 
+    public List<String> obtenerMovimientosPorTipo(String tipo) {
+        return poquedex.obtenerMovimientosPorTipo(tipo);
+    }
+
+    public Poquedex getPoquedex() {
+        return poquedex;
+    }
+
     // --- Métodos para Entrenadores ---
     public Entrenador crearEntrenador(String nombre) {
         Entrenador entrenador = new Entrenador(nombre);
@@ -113,7 +121,7 @@ public class POOBkemon {
     public List<String> getOpcionesTurno(Entrenador entrenador) {
         List<String> opciones = new ArrayList<>();
         opciones.add("ATACAR");
-        
+
         if (entrenador != null) {
             boolean puedeCambiar = entrenador.getEquipoPokemon().stream()
                                   .filter(p -> !p.equals(entrenador.getPokemonActivo()))
@@ -121,12 +129,12 @@ public class POOBkemon {
             if (puedeCambiar) {
                 opciones.add("CAMBIAR_POKEMON");
             }
-            
+
             if (!entrenador.getMochilaItems().isEmpty()) {
                 opciones.add("USAR_ITEM");
             }
         }
-        
+
         return opciones;
     }
 

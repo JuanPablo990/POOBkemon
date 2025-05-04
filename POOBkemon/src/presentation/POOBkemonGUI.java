@@ -165,16 +165,12 @@ public class POOBkemonGUI {
         }
     }
 
-public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
-    cerrarOtrasVentanas(null);
-
-    // Aquí conectamos los entrenadores seleccionados al POOBkemon (dominio)
-    getPoobkemon().setJugadores(jugador1, jugador2);
-
-    ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
-    ventanaBatalla.mostrar();
-}
-
+    public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
+        cerrarOtrasVentanas(null);
+        getPoobkemon().setJugadores(jugador1, jugador2);
+        ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
+        ventanaBatalla.mostrar();
+    }
 
     private static void cerrarOtrasVentanas(JFrame ventanaActual) {
         if (ventanaInicio != null && ventanaInicio != ventanaActual) ventanaInicio.dispose();

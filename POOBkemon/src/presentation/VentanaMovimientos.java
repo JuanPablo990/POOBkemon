@@ -4,10 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+
+import domain.Pokemon;
+import presentation.POOBkemonGUI;
+
 
 public class VentanaMovimientos extends Ventana {
     private FondoPanel fondoPanel;
@@ -21,6 +27,28 @@ public class VentanaMovimientos extends Ventana {
     private static final int POKEMON_HEIGHT = 100;
     private static final int MARGEN_SUPERIOR = 30;
     private static final int MARGEN_INFERIOR = 20;
+
+    private static final Map<String, List<String>> COMPATIBILIDAD_MOVIMIENTOS = new HashMap<>();
+    static {
+        COMPATIBILIDAD_MOVIMIENTOS.put("Acero", List.of("Acero", "Roca", "Tierra"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Agua", List.of("Agua", "Hielo"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Bicho", List.of("Bicho", "Planta", "Veneno"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Dragón", List.of("Dragón", "Agua", "Eléctrico"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Eléctrico", List.of("Eléctrico", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Fantasma", List.of("Fantasma", "Siniestro"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Fuego", List.of("Fuego", "Volador", "Acero"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Hada", List.of("Hada", "Psíquico", "Planta"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Hielo", List.of("Hielo", "Agua"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Lucha", List.of("Lucha", "Roca", "Siniestro"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Normal", List.of("Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Planta", List.of("Planta", "Bicho", "Hada"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Psíquico", List.of("Psíquico", "Hada"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Roca", List.of("Roca", "Tierra", "Acero"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Siniestro", List.of("Siniestro", "Fantasma", "Lucha"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Tierra", List.of("Tierra", "Roca", "Acero"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Veneno", List.of("Veneno", "Planta", "Bicho"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Volador", List.of("Volador", "Normal", "Lucha"));
+    }
 
     public VentanaMovimientos(List<String> nombresPokemonSeleccionados, boolean esJugador1) {
         super("Movimientos de POOBkemon");
@@ -74,11 +102,9 @@ public class VentanaMovimientos extends Ventana {
                         if (url != null) {
                             ImageIcon iconoOriginal = new ImageIcon(url);
                             Image imagenOriginal = iconoOriginal.getImage();
-                            int widthOriginal = iconoOriginal.getIconWidth();
-                            int heightOriginal = iconoOriginal.getIconHeight();
-                            float escala = Math.min((float) POKEMON_WIDTH / widthOriginal, (float) POKEMON_HEIGHT / heightOriginal);
-                            int nuevoAncho = Math.round(widthOriginal * escala);
-                            int nuevoAlto = Math.round(heightOriginal * escala);
+                            float escala = Math.min((float) POKEMON_WIDTH / iconoOriginal.getIconWidth(), (float) POKEMON_HEIGHT / iconoOriginal.getIconHeight());
+                            int nuevoAncho = Math.round(iconoOriginal.getIconWidth() * escala);
+                            int nuevoAlto = Math.round(iconoOriginal.getIconHeight() * escala);
 
                             Image imagenEscalada = imagenOriginal.getScaledInstance(nuevoAncho, nuevoAlto, Image.SCALE_DEFAULT);
                             ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
@@ -106,16 +132,36 @@ public class VentanaMovimientos extends Ventana {
                     panelCombos.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
 
                     List<String> movimientos = new ArrayList<>();
-                    String[] opcionesMovimientos = {"Movimiento 1", "Movimiento 2", "Movimiento 3", "Movimiento 4"};
+
+                    Pokemon pokemon = POOBkemonGUI.getPoobkemon().crearPokemon(nombrePokemon);
+                    String tipoPrincipal = pokemon.getTipoPrincipal();
+                    String tipoSecundario = pokemon.getTipoSecundario();
+
+                    List<String> tiposCompatibles = new ArrayList<>();
+                    if (COMPATIBILIDAD_MOVIMIENTOS.containsKey(tipoPrincipal)) {
+                        tiposCompatibles.addAll(COMPATIBILIDAD_MOVIMIENTOS.get(tipoPrincipal));
+                    }
+                    if (tipoSecundario != null && COMPATIBILIDAD_MOVIMIENTOS.containsKey(tipoSecundario)) {
+                        for (String t : COMPATIBILIDAD_MOVIMIENTOS.get(tipoSecundario)) {
+                            if (!tiposCompatibles.contains(t)) tiposCompatibles.add(t);
+                        }
+                    }
+
+                    List<String> movimientosCompatibles = new ArrayList<>();
+                    for (String tipo : tiposCompatibles) {
+                        movimientosCompatibles.addAll(
+                            POOBkemonGUI.getPoobkemon().getPoquedex().obtenerMovimientosPorTipo(tipo)
+                        );
+                    }
 
                     for (int i = 0; i < 4; i++) {
-                        JComboBox<String> comboBox = new JComboBox<>(opcionesMovimientos);
+                        JComboBox<String> comboBox = new JComboBox<>(movimientosCompatibles.toArray(new String[0]));
                         comboBox.setBackground(new Color(70, 180, 130, 150));
                         comboBox.setForeground(Color.BLACK);
                         comboBox.setFont(new Font("Arial", Font.PLAIN, 12));
                         comboBox.setMaximumRowCount(4);
                         panelCombos.add(comboBox);
-                        movimientos.add(opcionesMovimientos[i]);
+                        movimientos.add("Movimiento " + (i + 1));
                     }
 
                     movimientosPorPokemon.put(nombrePokemon, movimientos);

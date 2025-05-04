@@ -68,7 +68,6 @@ public class Poquedex {
         registrarMovimiento(new Tackle());
         registrarMovimiento(new HydroPump());
         registrarMovimiento(new Flail());
-
         registrarMovimiento(new KnockOff());
         registrarMovimiento(new MetalClaw());
         registrarMovimiento(new MeteorMash());
@@ -92,7 +91,6 @@ public class Poquedex {
         registrarMovimiento(new HeadSmash());
         registrarMovimiento(new IronHead());
     }
-
 
     public void registrarPokemon(String nombre, Class<? extends Pokemon> clasePokemon) {
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -120,15 +118,16 @@ public class Poquedex {
     }
 
     public Pokemon crearPokemon(String nombre) {
-        Class<? extends Pokemon> clasePokemon = pokemonesDisponibles.get(nombre);
-        if (clasePokemon == null) {
-            throw new IllegalArgumentException("El Pokémon " + nombre + " no existe en la Poquedex");
+        for (Map.Entry<String, Class<? extends Pokemon>> entry : pokemonesDisponibles.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(nombre)) {
+                try {
+                    return entry.getValue().getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException("Error al crear el Pokémon: " + e.getMessage(), e);
+                }
+            }
         }
-        try {
-            return clasePokemon.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Error al crear el Pokémon: " + e.getMessage(), e);
-        }
+        throw new IllegalArgumentException("El Pokémon " + nombre + " no existe en la Poquedex");
     }
 
     public Movimiento crearMovimiento(String nombre) {
@@ -200,7 +199,7 @@ public class Poquedex {
     }
 
     public boolean existePokemon(String nombre) {
-        return pokemonesDisponibles.containsKey(nombre);
+        return pokemonesDisponibles.keySet().stream().anyMatch(n -> n.equalsIgnoreCase(nombre));
     }
 
     public boolean existeMovimiento(String nombre) {
