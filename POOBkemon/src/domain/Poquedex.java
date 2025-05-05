@@ -64,33 +64,64 @@ public class Poquedex {
     }
 
     private void registrarMovimientosBase() {
-        registrarMovimiento(new Splash());
-        registrarMovimiento(new Tackle());
-        registrarMovimiento(new HydroPump());
+        registrarMovimiento(new AerialAce());
+        registrarMovimiento(new AquaJet());
+        registrarMovimiento(new AquaTail());
+        registrarMovimiento(new AuroraBeam());
+        registrarMovimiento(new BodySlam());
+        registrarMovimiento(new BubbleBeam());
+        registrarMovimiento(new BulletPunch());
+        registrarMovimiento(new CalmMind());
+        registrarMovimiento(new ChargeBeam());
+        registrarMovimiento(new ConfuseRay());
+        registrarMovimiento(new Crabhammer());
+        registrarMovimiento(new Crunch());
+        registrarMovimiento(new DestinyBond());
+        registrarMovimiento(new DragonBreath());
+        registrarMovimiento(new DragonDance());
+        registrarMovimiento(new Earthquake());
+        registrarMovimiento(new Explosion());
+        registrarMovimiento(new ExtremeSpeed());
+        registrarMovimiento(new FlashCannon());
         registrarMovimiento(new Flail());
+        registrarMovimiento(new HeadSmash());
+        registrarMovimiento(new HydroPump());
+        registrarMovimiento(new IceBall());
+        registrarMovimiento(new IceShard());
+        registrarMovimiento(new IcyWind());
+        registrarMovimiento(new IronHead());
         registrarMovimiento(new KnockOff());
         registrarMovimiento(new MetalClaw());
         registrarMovimiento(new MeteorMash());
+        registrarMovimiento(new MirrorShot());
+        registrarMovimiento(new Moonblast());
+        registrarMovimiento(new PainSplit());
+        registrarMovimiento(new PlayRough());
+        registrarMovimiento(new Psychic());
+        registrarMovimiento(new QuickAttack());
+        registrarMovimiento(new RapidSpin());
+        registrarMovimiento(new Rest());
         registrarMovimiento(new RockTomb());
-        registrarMovimiento(new SwordsDance());
-        registrarMovimiento(new XScissor());
-        registrarMovimiento(new ZenHeadbutt());
-        registrarMovimiento(new AquaTail());
-        registrarMovimiento(new ConfuseRay());
-        registrarMovimiento(new DragonBreath());
-        registrarMovimiento(new ExtremeSpeed());
+        registrarMovimiento(new SandTomb());
+        registrarMovimiento(new ShadowBall());
         registrarMovimiento(new ShadowClaw());
+        registrarMovimiento(new ShadowSneak());
+        registrarMovimiento(new ShellSmash());
+        registrarMovimiento(new SignalBeam());
+        registrarMovimiento(new Spikes());
+        registrarMovimiento(new Splash());
+        registrarMovimiento(new Superpower());
+        registrarMovimiento(new Surf());
+        registrarMovimiento(new SwordsDance());
+        registrarMovimiento(new Tackle());
         registrarMovimiento(new ThunderWave());
         registrarMovimiento(new UTurn());
+        registrarMovimiento(new WaterGun());
         registrarMovimiento(new WillOWisp());
-        registrarMovimiento(new AquaJet());
-        registrarMovimiento(new BulletPunch());
-        registrarMovimiento(new Crabhammer());
-        registrarMovimiento(new DragonDance());
-        registrarMovimiento(new Earthquake());
-        registrarMovimiento(new HeadSmash());
-        registrarMovimiento(new IronHead());
+        registrarMovimiento(new XScissor());
+        registrarMovimiento(new ZenHeadbutt());
     }
+
 
     public void registrarPokemon(String nombre, Class<? extends Pokemon> clasePokemon) {
         if (nombre == null || nombre.trim().isEmpty()) {
