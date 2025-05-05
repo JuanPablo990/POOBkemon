@@ -61,7 +61,12 @@ public class PoobkemonGifs {
     }
 
     public static String getPokemonImage(String pokemonName) {
-        return POKEMON_IMAGES.get(pokemonName);
+    	for (Map.Entry<String, String> entry : POKEMON_IMAGES.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(pokemonName)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     public static String getItemImage(String itemName) {

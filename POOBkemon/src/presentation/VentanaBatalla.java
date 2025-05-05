@@ -128,7 +128,6 @@ public class VentanaBatalla extends Ventana {
             return;
         }
 
-        // Crear 4 botones (uno por cada posible ataque)
         for (int i = 0; i < 4; i++) {
             JButton btnAtaque;
             if (i < movimientos.size()) {
@@ -204,21 +203,17 @@ public class VentanaBatalla extends Ventana {
         List<Pokemon> equipo = actual.getEquipoPokemon();
 
         for (Pokemon p : equipo) {
-            // Panel que contiene la pokebola y el nombre
             JPanel panelPokebola = new JPanel(new BorderLayout());
             panelPokebola.setOpaque(false);
             
-            // Imagen de pokebola
             FondoPanel imagenPokebola = new FondoPanel("/resources/pokebola.gif");
             imagenPokebola.setPreferredSize(new Dimension(100, 100));
             imagenPokebola.setLayout(new BorderLayout());
             
-            // Label con el nombre del Pokémon
             JLabel nombrePokemon = new JLabel(p.getNombre(), SwingConstants.CENTER);
             nombrePokemon.setFont(new Font("Arial", Font.BOLD, 14));
             nombrePokemon.setForeground(Color.BLACK);
             
-            // Botón transparente sobre la pokebola
             JButton btnPokemon = new JButton();
             btnPokemon.setLayout(new BorderLayout());
             btnPokemon.add(imagenPokebola, BorderLayout.CENTER);
@@ -231,6 +226,16 @@ public class VentanaBatalla extends Ventana {
             btnPokemon.addActionListener(e -> {
                 actual.setPokemonActivo(p);
                 JOptionPane.showMessageDialog(ventana, "¡Has cambiado a " + p.getNombre() + "!");
+                
+                // Actualizar barra de vida del nuevo Pokémon activo
+                if (turnoJugador1) {
+                    progressBar1.setMaximum(p.getPsMaximos());
+                    progressBar1.setValue(p.getPs());
+                } else {
+                    progressBar2.setMaximum(p.getPsMaximos());
+                    progressBar2.setValue(p.getPs());
+                }
+                
                 actualizarVistaJugador();
                 ventana.dispose();
                 
@@ -258,21 +263,17 @@ public class VentanaBatalla extends Ventana {
 
         for (Pokemon p : equipo) {
             if (!p.estaDebilitado() && !p.equals(entrenador.getPokemonActivo())) {
-                // Panel que contiene la pokebola y el nombre
                 JPanel panelPokebola = new JPanel(new BorderLayout());
                 panelPokebola.setOpaque(false);
                 
-                // Imagen de pokebola
                 FondoPanel imagenPokebola = new FondoPanel("/resources/pokebola.gif");
                 imagenPokebola.setPreferredSize(new Dimension(100, 100));
                 imagenPokebola.setLayout(new BorderLayout());
                 
-                // Label con el nombre del Pokémon
                 JLabel nombrePokemon = new JLabel(p.getNombre(), SwingConstants.CENTER);
                 nombrePokemon.setFont(new Font("Arial", Font.BOLD, 14));
                 nombrePokemon.setForeground(Color.BLACK);
                 
-                // Botón transparente sobre la pokebola
                 JButton btnPokemon = new JButton();
                 btnPokemon.setLayout(new BorderLayout());
                 btnPokemon.add(imagenPokebola, BorderLayout.CENTER);
@@ -284,6 +285,16 @@ public class VentanaBatalla extends Ventana {
                 btnPokemon.addActionListener(e -> {
                     entrenador.setPokemonActivo(p);
                     JOptionPane.showMessageDialog(ventana, "¡" + entrenador.getNombre() + " envía a " + p.getNombre() + "!");
+                    
+                    // Actualizar barra de vida del nuevo Pokémon activo
+                    if (entrenador == POOBkemonGUI.getJugador1()) {
+                        progressBar1.setMaximum(p.getPsMaximos());
+                        progressBar1.setValue(p.getPs());
+                    } else {
+                        progressBar2.setMaximum(p.getPsMaximos());
+                        progressBar2.setValue(p.getPs());
+                    }
+                    
                     actualizarVistaJugador();
                     ventana.dispose();
                     
@@ -301,8 +312,8 @@ public class VentanaBatalla extends Ventana {
 
     private void mostrarVentanaItem() {
         JDialog ventana = new JDialog(this, "Selecciona un Item", true);
-        ventana.setLayout(new GridLayout(0, 2, 15, 15));
-        ventana.setSize(400, 300);
+        ventana.setLayout(new GridLayout(3, 1, 10, 10)); // Cambiado a 3 filas x 1 columna
+        ventana.setSize(300, 300); // Ajustado el tamaño para mejor visualización
         ventana.setLocationRelativeTo(this);
 
         Color verdeAguamarina = new Color(102, 205, 170);
@@ -318,35 +329,65 @@ public class VentanaBatalla extends Ventana {
             return;
         }
 
-        for (Item item : items) {
-            FondoPanel panelItem = new FondoPanel("/resources/" + item.getNombre().toLowerCase() + ".png");
-            JButton btn = new JButton(item.getNombre());
-            btn.setLayout(new BorderLayout());
-            btn.add(panelItem, BorderLayout.CENTER);
-            btn.setBackground(verdeAguamarina);
-            btn.setForeground(Color.BLACK);
-            btn.setFocusPainted(false);
-            btn.setFont(new Font("Arial", Font.BOLD, 12));
-            btn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        // Creamos botones para cada tipo de poción
+        JButton btnPocion = new JButton("Poción");
+        JButton btnSuperPocion = new JButton("Superpoción");
+        JButton btnHiperPocion = new JButton("Hiperpoción");
 
-            btn.addActionListener(ev -> {
-                Pokemon objetivo = seleccionarPokemonParaItem(actual);
-                if (objetivo != null) {
-                    item.usar(objetivo);
-                    actual.getMochilaItems().remove(item);
-                    actualizarVidaPokemones();
-                    JOptionPane.showMessageDialog(ventana, "¡Has usado " + item.getNombre() + " en " + objetivo.getNombre() + "!");
-                    ventana.dispose();
-                    
-                    turnoJugador1 = !turnoJugador1;
-                    actualizarVistaJugador();
-                }
-            });
+        // Configuramos los botones
+        btnPocion.setBackground(verdeAguamarina);
+        btnPocion.setForeground(Color.BLACK);
+        btnPocion.setFocusPainted(false);
+        btnPocion.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        btnSuperPocion.setBackground(verdeAguamarina);
+        btnSuperPocion.setForeground(Color.BLACK);
+        btnSuperPocion.setFocusPainted(false);
+        btnSuperPocion.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        btnHiperPocion.setBackground(verdeAguamarina);
+        btnHiperPocion.setForeground(Color.BLACK);
+        btnHiperPocion.setFocusPainted(false);
+        btnHiperPocion.setFont(new Font("Arial", Font.BOLD, 14));
 
-            ventana.add(btn);
-        }
+        // Verificamos qué items tiene el jugador y habilitamos los botones correspondientes
+        btnPocion.setEnabled(items.stream().anyMatch(i -> i instanceof Potion));
+        btnSuperPocion.setEnabled(items.stream().anyMatch(i -> i instanceof SuperPotion));
+        btnHiperPocion.setEnabled(items.stream().anyMatch(i -> i instanceof HyperPotion));
+
+        // Añadimos los listeners
+        btnPocion.addActionListener(e -> usarItem(ventana, actual, items, "Poción"));
+        btnSuperPocion.addActionListener(e -> usarItem(ventana, actual, items, "Superpoción"));
+        btnHiperPocion.addActionListener(e -> usarItem(ventana, actual, items, "Hiperpoción"));
+
+        // Añadimos los botones a la ventana
+        ventana.add(btnPocion);
+        ventana.add(btnSuperPocion);
+        ventana.add(btnHiperPocion);
 
         ventana.setVisible(true);
+    }
+
+    // Método auxiliar para usar el item seleccionado
+    private void usarItem(JDialog ventana, Entrenador entrenador, List<Item> items, String tipoItem) {
+        Pokemon objetivo = seleccionarPokemonParaItem(entrenador);
+        if (objetivo != null) {
+            Item item = items.stream()
+                .filter(i -> i.getNombre().equals(tipoItem))
+                .findFirst()
+                .orElse(null);
+            
+            if (item != null) {
+                item.usar(objetivo);
+                items.remove(item);
+                actualizarVidaPokemones();
+                JOptionPane.showMessageDialog(ventana, "¡Has usado " + item.getNombre() + " en " + objetivo.getNombre() + "!");
+                ventana.dispose();
+                
+                turnoJugador1 = !turnoJugador1;
+                actualizarVistaJugador();
+            }
+        }
     }
 
     private Pokemon seleccionarPokemonParaItem(Entrenador entrenador) {
@@ -396,13 +437,16 @@ public class VentanaBatalla extends Ventana {
 
         Pokemon activo = jugador.getPokemonActivo();
         String rutaGif = PoobkemonGifs.getPokemonImage(activo.getNombre());
+
         if (rutaGif != null) {
             FondoPanel fondoPokemon = new FondoPanel(rutaGif);
             if (turnoJugador1) {
                 setImagenPokemon(fondoPokemon);
+                progressBar1.setMaximum(activo.getPsMaximos());
                 actualizarVidaPokemon1(activo.getPs());
             } else {
                 setImagenPokemon2(fondoPokemon);
+                progressBar2.setMaximum(activo.getPsMaximos());
                 actualizarVidaPokemon2(activo.getPs());
             }
         }
@@ -420,8 +464,10 @@ public class VentanaBatalla extends Ventana {
         if (gif1 != null) setImagenPokemon(new FondoPanel(gif1));
         if (gif2 != null) setImagenPokemon2(new FondoPanel(gif2));
 
-        actualizarVidaPokemon1(p1.getPs());
-        actualizarVidaPokemon2(p2.getPs());
+        progressBar1.setMaximum(p1.getPsMaximos());
+        progressBar1.setValue(p1.getPs());
+        progressBar2.setMaximum(p2.getPsMaximos());
+        progressBar2.setValue(p2.getPs());
     }
 
     private void actualizarPosicionPanelImagen() {
@@ -463,10 +509,12 @@ public class VentanaBatalla extends Ventana {
 
     public void actualizarVidaPokemon1(int vida) {
         progressBar1.setValue(vida);
+        progressBar1.setString(vida + "/" + progressBar1.getMaximum());
     }
 
     public void actualizarVidaPokemon2(int vida) {
         progressBar2.setValue(vida);
+        progressBar2.setString(vida + "/" + progressBar2.getMaximum());
     }
 
     private JButton crearBotonConImagen(String rutaImagen, String textoAlternativo) {
