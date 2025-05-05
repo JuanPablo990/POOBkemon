@@ -157,4 +157,15 @@ public class Entrenador {
             throw new IllegalStateException("No puedes usar pociones en Pokémon debilitados");
         }
     }
+    
+    public Pokemon getPokemonPorNombre(String nombre) {
+        for (Pokemon p : equipoPokemon) {
+            if (p.getNombre().equals(nombre)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    
 }

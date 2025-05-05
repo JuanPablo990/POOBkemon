@@ -336,4 +336,16 @@ public class Pokemon {
             getDefensaEspecial(), etapaDefensaEspecial
         );
     }
+    
+    public void setMovimientosDesdeNombres(List<String> nombres) {
+        List<Movimiento> lista = new ArrayList<>();
+        for (String nombre : nombres) {
+            Movimiento m = Poquedex.getInstancia().crearMovimiento(nombre); // o MovimientoFactory
+            if (m != null) {
+                lista.add(m);
+            }
+        }
+        asignarMovimientos(lista); // Usa tu método ya implementado con validaciones
+    }
+
 }

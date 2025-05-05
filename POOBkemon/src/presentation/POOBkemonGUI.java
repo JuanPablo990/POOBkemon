@@ -2,6 +2,7 @@ package presentation;
 
 import javax.swing.*;
 import java.util.*;
+import java.awt.event.*;
 import domain.POOBkemon;
 import domain.Entrenador;
 
@@ -12,6 +13,7 @@ public class POOBkemonGUI {
     private static VentanaSeleccion ventanaSeleccion;
     private static VentanaMovimientos ventanaMovimientos;
     private static VentanaBatalla ventanaBatalla;
+    private static VentanaDebug ventanaDebug;
 
     private static POOBkemon poobkemon;
     private static Entrenador jugador1;
@@ -27,7 +29,10 @@ public class POOBkemonGUI {
     private static boolean turnoJugador1 = true;
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> mostrarVentanaInicio());
+        SwingUtilities.invokeLater(() -> {
+            mostrarVentanaInicio();
+            mostrarVentanaDebug();
+        });
     }
 
     public static POOBkemon getPoobkemon() {
@@ -126,12 +131,14 @@ public class POOBkemonGUI {
         if (ventanaSeleccion != null) ventanaSeleccion.dispose();
         if (ventanaMovimientos != null) ventanaMovimientos.dispose();
         if (ventanaBatalla != null) ventanaBatalla.dispose();
+        if (ventanaDebug != null) ventanaDebug.dispose();
         ventanaInicio = null;
         ventanaOpciones = null;
         ventanaCreditos = null;
         ventanaSeleccion = null;
         ventanaMovimientos = null;
         ventanaBatalla = null;
+        ventanaDebug = null;
     }
 
     public static void mostrarVentanaInicio() {
@@ -180,6 +187,22 @@ public class POOBkemonGUI {
         getPoobkemon().setJugadores(jugador1, jugador2);
         ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
         ventanaBatalla.mostrar();
+    }
+
+    public static void mostrarVentanaDebug() {
+        if (ventanaDebug != null) ventanaDebug.dispose();
+        ventanaDebug = new VentanaDebug();
+        JButton botonActualizar = new JButton("Actualizar");
+        botonActualizar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ventanaDebug.dispose();
+                ventanaDebug = new VentanaDebug();
+                ventanaDebug.setVisible(true);
+            }
+        });
+        ventanaDebug.add(botonActualizar, java.awt.BorderLayout.SOUTH);
+        ventanaDebug.setVisible(true);
     }
 
     public static VentanaBatalla getVentanaBatalla() {
