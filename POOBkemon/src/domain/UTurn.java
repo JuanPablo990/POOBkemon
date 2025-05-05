@@ -7,6 +7,6 @@ public class UTurn extends Movimiento {
 
     @Override
     protected void aplicarEfectoSecundario(Pokemon usuario, Pokemon objetivo) {
-        // Efecto secundario: Cambia al usuario después del ataque
+        System.out.println(usuario.getNombre() + " regresó después del ataque. ¡Es momento de cambiar!");
     }
 }

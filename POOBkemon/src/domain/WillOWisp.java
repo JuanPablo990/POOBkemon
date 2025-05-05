@@ -7,6 +7,6 @@ public class WillOWisp extends Movimiento {
 
     @Override
     protected void aplicarEfectoSecundario(Pokemon usuario, Pokemon objetivo) {
-        // Efecto secundario: Quema al rival
+        System.out.println(objetivo.getNombre() + " fue quemado.");
     }
 }

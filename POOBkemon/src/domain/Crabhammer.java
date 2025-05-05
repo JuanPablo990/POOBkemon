@@ -7,6 +7,7 @@ public class Crabhammer extends Movimiento {
 
     @Override
     protected void aplicarEfectoSecundario(Pokemon usuario, Pokemon objetivo) {
-        // Efecto secundario: Mayor probabilidad de golpe crítico
+        System.out.println("¡Tiene alta probabilidad de golpe crítico!");
+        // No hay sistema de críticos implementado, es solo informativo
     }
 }

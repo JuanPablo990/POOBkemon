@@ -7,6 +7,7 @@ public class Earthquake extends Movimiento {
 
     @Override
     protected void aplicarEfectoSecundario(Pokemon usuario, Pokemon objetivo) {
-        // Efecto secundario: Afecta a todos los Pokémon en el campo
+        // Solo mensaje: afectaría a todos, pero no hay sistema multienemigo
+        System.out.println("¡El terremoto sacudió el campo!");
     }
 }
