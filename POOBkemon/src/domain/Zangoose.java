@@ -2,6 +2,6 @@ package domain;
 
 public class Zangoose extends Pokemon {
     public Zangoose() {
-        super("Zangoose", "Normal", null, 73, 115, 60, 90, 60, 60);
+    	super("Zangoose", "Normal", null, 233, 205, 125, 160, 125, 125);
     }
 }

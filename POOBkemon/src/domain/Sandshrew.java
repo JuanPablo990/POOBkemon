@@ -2,6 +2,6 @@ package domain;
 
 public class Sandshrew extends Pokemon {
     public Sandshrew() {
-        super("Sandshrew", "Tierra", null, 50, 75, 85, 40, 20, 30);
+    	super("Sandshrew", "Tierra", null, 156, 165, 105, 145, 30, 35);
     }
 }

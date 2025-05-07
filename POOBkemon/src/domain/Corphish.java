@@ -2,6 +2,6 @@ package domain;
 
 public class Corphish extends Pokemon {
     public Corphish() {
-        super("Corphish", "Agua", null, 43, 80, 65, 35, 50, 35);
+    	super("Corphish", "Agua", null, 227, 196, 166, 106, 136, 106);
     }
 }

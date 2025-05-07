@@ -2,6 +2,6 @@ package domain;
 
 public class Duskull extends Pokemon {
     public Duskull() {
-        super("Duskull", "Fantasma", null, 20, 40, 90, 25, 30, 90);
+    	super("Duskull", "Fantasma", null, 181, 116, 216, 86, 96, 216);
     }
 }

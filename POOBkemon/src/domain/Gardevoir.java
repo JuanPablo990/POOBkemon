@@ -2,6 +2,6 @@ package domain;
 
 public class Gardevoir extends Pokemon {
     public Gardevoir() {
-        super("Gardevoir", "Psíquico", "Hada", 68, 65, 65, 80, 125, 115);
+    	super("Gardevoir", "Psíquico", "Hada", 277, 166, 166, 196, 286, 266);
     }
 }

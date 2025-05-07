@@ -2,6 +2,6 @@ package domain;
 
 public class Poochyena extends Pokemon {
     public Poochyena() {
-        super("Poochyena", "Siniestro", null, 35, 55, 35, 35, 30, 30);
+    	super("Poochyena", "Siniestro", null, 181, 176, 136, 136, 146, 146);
     }
 }

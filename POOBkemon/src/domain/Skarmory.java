@@ -2,6 +2,6 @@ package domain;
 
 public class Skarmory extends Pokemon {
     public Skarmory() {
-        super("Skarmory", "Acero", "Volador", 65, 80, 140, 70, 40, 70);
+    	super("Skarmory", "Acero", "Volador", 271, 200, 317, 175, 120, 175);
     }
 }

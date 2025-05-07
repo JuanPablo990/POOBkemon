@@ -11,6 +11,7 @@ public class POOBkemon {
     private Entrenador jugador1;
     private Entrenador jugador2;
     private boolean turnoJugador1 = true;
+    
 
     public POOBkemon() {
         this.poquedex = Poquedex.getInstancia();
@@ -66,7 +67,7 @@ public class POOBkemon {
     // --- Métodos para Batallas ---
     public void iniciarBatalla() {
         if (jugador1 != null && jugador2 != null) {
-            this.batallaActual = new Batalla(jugador1, jugador2);
+        	this.batallaActual = new Batalla(jugador1, jugador2,null);
             batallaActual.iniciarBatalla();
         }
     }

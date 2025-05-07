@@ -3,8 +3,7 @@ package presentation;
 import javax.swing.*;
 import java.util.*;
 import java.awt.event.*;
-import domain.POOBkemon;
-import domain.Entrenador;
+import domain.*;
 
 public class POOBkemonGUI {
     private static VentanaInicio ventanaInicio;
@@ -18,6 +17,7 @@ public class POOBkemonGUI {
     private static POOBkemon poobkemon;
     private static Entrenador jugador1;
     private static Entrenador jugador2;
+    private static Batalla batallaActual;
 
     private static List<String> seleccionPokemonJugador1;
     private static List<String> seleccionPokemonJugador2;
@@ -48,6 +48,10 @@ public class POOBkemonGUI {
 
     public static Entrenador getJugador2() {
         return jugador2;
+    }
+
+    public static Batalla getBatallaActual() {
+        return batallaActual;
     }
 
     public static void setJugador1(Entrenador jugador) {
@@ -108,6 +112,9 @@ public class POOBkemonGUI {
 
     public static void cambiarTurno() {
         turnoJugador1 = !turnoJugador1;
+        if (ventanaBatalla != null) {
+            ventanaBatalla.actualizarVistaJugador();
+        }
     }
 
     public static void reiniciarAplicacion() {
@@ -115,6 +122,7 @@ public class POOBkemonGUI {
         poobkemon = null;
         jugador1 = null;
         jugador2 = null;
+        batallaActual = null;
         seleccionPokemonJugador1 = null;
         seleccionPokemonJugador2 = null;
         movimientosJugador1.clear();
@@ -185,8 +193,16 @@ public class POOBkemonGUI {
     public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
         cerrarOtrasVentanas(null);
         getPoobkemon().setJugadores(jugador1, jugador2);
+        
+        // Primero crear la ventana
         ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
+        
+        // Luego crear la batalla pasando la ventana
+        batallaActual = new Batalla(jugador1, jugador2, ventanaBatalla);
+        
+        // Iniciar la batalla
         ventanaBatalla.mostrar();
+        batallaActual.iniciarBatalla();
     }
 
     public static void mostrarVentanaDebug() {

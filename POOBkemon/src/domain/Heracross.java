@@ -2,6 +2,6 @@ package domain;
 
 public class Heracross extends Pokemon {
     public Heracross() {
-        super("Heracross", "Bicho", "Lucha", 80, 125, 75, 85, 40, 95);
+    	super("Heracross", "Bicho", "Lucha", 301, 286, 186, 116, 226, 206);
     }
 }

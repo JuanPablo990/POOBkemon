@@ -2,6 +2,6 @@ package domain;
 
 public class Spoink extends Pokemon {
     public Spoink() {
-        super("Spoink", "Psíquico", null, 60, 25, 35, 60, 70, 80);
+    	super("Spoink", "Hielo", "Agua", 284, 105, 135, 85, 145, 135);
     }
 }

@@ -2,6 +2,6 @@ package domain;
 
 public class Voltorb extends Pokemon {
     public Voltorb() {
-        super("Voltorb", "Eléctrico", null, 40, 30, 50, 100, 55, 55);
+    	super("Voltorb", "Eléctrico", null, 190, 105, 125, 205, 125, 125);
     }
 }
