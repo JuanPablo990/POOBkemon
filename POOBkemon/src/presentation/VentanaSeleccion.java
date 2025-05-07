@@ -24,9 +24,9 @@ public class VentanaSeleccion extends Ventana {
     private JPanel panelIzquierdo;
     private JPanel panelDerecho;
     private JPanel panelAbajoIzquierda;
-    private JButton[] botonesSuperiores;
+    private JSpinner[] spinnersItems;
     private JButton[] botonesMatriz = new JButton[36];
-    private JLabel lblEntrenador; // Nueva etiqueta para mostrar el nombre del entrenador actual
+    private JLabel lblEntrenador;
     
     // Flag para saber qué jugador está seleccionando
     private boolean esJugador1 = true;
@@ -48,15 +48,12 @@ public class VentanaSeleccion extends Ventana {
     // Constantes para selección
     private static final Color SELECTED_COLOR = new Color(0, 255, 0, 100);
     private static final int MAX_POKEMON_SELECTED = 6;
-    private static final int MAX_POTIONS_SELECTED = 2;
-    private static final int MAX_REVIVE_SELECTED = 1;
+    private static final int MAX_POR_TIPO_POCION = 2;  // Máximo 2 de cada tipo de poción
+    private static final int MAX_REVIVE_SELECTED = 2;  // Máximo 2 Revivir
     
     // Contadores de selección
     private int pokemonSelectedCount = 0;
-    private int potionsSelectedCount = 0;
-    private int reviveSelectedCount = 0;
     private Set<JButton> selectedPokemonButtons = new HashSet<>();
-    private Set<JButton> selectedItemButtons = new HashSet<>();
     private List<String> nombresPokemonSeleccionados = new ArrayList<>();
     
     // Almacenamiento para las selecciones de ambos jugadores
@@ -107,7 +104,7 @@ public class VentanaSeleccion extends Ventana {
         panelDerecho.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 20));
         panelContenedorPrincipal.add(panelDerecho);
 
-        // Etiqueta del entrenador en la parte superior derecha (centrada horizontalmente, 10px a la izquierda)
+        // Etiqueta del entrenador en la parte superior derecha
         JPanel panelEtiquetaSuperior = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         panelEtiquetaSuperior.setOpaque(false);
         panelEtiquetaSuperior.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
@@ -133,7 +130,7 @@ public class VentanaSeleccion extends Ventana {
             panelMatriz.add(boton);
         }
 
-        // Configuración de los botones de items
+        // Configuración de los spinners de items
         JPanel contenedorBotones = new JPanel(new BorderLayout());
         contenedorBotones.setOpaque(false);
         contenedorBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
@@ -147,34 +144,29 @@ public class VentanaSeleccion extends Ventana {
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
 
-        int anchoBoton = PREF_ANCHO_BOTON_ITEM - 10;
-        int altoBoton = PREF_ALTO_BOTON_ITEM - 10;
+        String[] textosItems = {"Poción", "Hiperpoción", "Superpoción", "Revivir"};
+        spinnersItems = new JSpinner[4];
 
-        String[] textosBotones = {"Poción", "Hiperpoción", "Superpoción", "Revivir"};
-        botonesSuperiores = new JButton[4];
-
-        // Fila superior (3 botones)
+        // Crear spinners para cada tipo de ítem
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 8, 0);
         for (int i = 0; i < 3; i++) {
-            JButton boton = crearBotonItem(textosBotones[i]);
-            boton.setPreferredSize(new Dimension(anchoBoton, altoBoton));
-            botonesSuperiores[i] = boton;
-
+            JPanel itemPanel = crearPanelItem(textosItems[i]);
+            spinnersItems[i] = (JSpinner) itemPanel.getClientProperty("spinner");
+            
             gbc.gridx = i;
             gbc.insets.left = (i == 0) ? 0 : 4;
-            panelAbajoIzquierda.add(boton, gbc);
+            panelAbajoIzquierda.add(itemPanel, gbc);
         }
 
-        // Botón revivir (fila inferior)
-        JButton btnRevivir = crearBotonItem(textosBotones[3]);
-        btnRevivir.setPreferredSize(new Dimension(anchoBoton, altoBoton));
-        botonesSuperiores[3] = btnRevivir;
-
+        // Panel para Revivir (fila inferior)
+        JPanel revivePanel = crearPanelItem(textosItems[3]);
+        spinnersItems[3] = (JSpinner) revivePanel.getClientProperty("spinner");
+        
         gbc.gridy = 1;
         gbc.gridx = 1;
         gbc.insets = new Insets(-4, 0, 0, 0);
-        panelAbajoIzquierda.add(btnRevivir, gbc);
+        panelAbajoIzquierda.add(revivePanel, gbc);
 
         contenedorBotones.add(panelAbajoIzquierda, BorderLayout.CENTER);
         panelIzquierdo.add(contenedorBotones, BorderLayout.SOUTH);
@@ -192,8 +184,60 @@ public class VentanaSeleccion extends Ventana {
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
     }
 
-
-
+    private JPanel crearPanelItem(String nombreItem) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+        
+        try {
+            // Crear el icono del item
+            String rutaImagen = PoobkemonGifs.getItemImage(nombreItem);
+            ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(rutaImagen));
+            Image imagenEscalada = iconoOriginal.getImage()
+                .getScaledInstance(PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
+            JLabel iconoLabel = new JLabel(new ImageIcon(imagenEscalada));
+            iconoLabel.setToolTipText(nombreItem);
+            
+            // Crear el spinner con el límite correspondiente
+            int maximo = nombreItem.equals("Revivir") ? MAX_REVIVE_SELECTED : MAX_POR_TIPO_POCION;
+            SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, maximo, 1);
+            JSpinner spinner = new JSpinner(spinnerModel);
+            
+            // Configurar el editor del spinner para que sea más compacto
+            JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner.getEditor();
+            editor.getTextField().setColumns(2);
+            editor.getTextField().setHorizontalAlignment(JTextField.CENTER);
+            
+            // Añadir componentes al panel
+            panel.add(iconoLabel, BorderLayout.CENTER);
+            panel.add(spinner, BorderLayout.SOUTH);
+            
+            // Guardar referencia al spinner en el panel
+            panel.putClientProperty("spinner", spinner);
+            panel.putClientProperty("tipoItem", nombreItem);
+            
+            return panel;
+        } catch (Exception e) {
+            // En caso de error, mostrar una versión simplificada
+            JPanel errorPanel = new JPanel(new BorderLayout());
+            errorPanel.setOpaque(false);
+            
+            JLabel label = new JLabel(nombreItem);
+            label.setForeground(Color.WHITE);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            
+            int maximo = nombreItem.equals("Revivir") ? MAX_REVIVE_SELECTED : MAX_POR_TIPO_POCION;
+            SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, maximo, 1);
+            JSpinner spinner = new JSpinner(spinnerModel);
+            
+            errorPanel.add(label, BorderLayout.CENTER);
+            errorPanel.add(spinner, BorderLayout.SOUTH);
+            
+            errorPanel.putClientProperty("spinner", spinner);
+            errorPanel.putClientProperty("tipoItem", nombreItem);
+            
+            return errorPanel;
+        }
+    }
 
     private void actualizarEtiquetaEntrenador() {
         if (esJugador1) {
@@ -239,33 +283,6 @@ public class VentanaSeleccion extends Ventana {
         boton.setFont(new Font("Arial", Font.BOLD, 10));
     }
 
-    private JButton crearBotonItem(String texto) {
-        try {
-            String rutaImagen = PoobkemonGifs.getItemImage(texto);
-            ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(rutaImagen));
-            Image imagenEscalada = iconoOriginal.getImage()
-                .getScaledInstance(PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
-            JButton boton = new JButton(new ImageIcon(imagenEscalada));
-            
-            boton.setPreferredSize(new Dimension(PREF_ANCHO_BOTON_ITEM, PREF_ALTO_BOTON_ITEM));
-            boton.setFocusPainted(false);
-            boton.setToolTipText(texto);
-            boton.setOpaque(false);
-            boton.setContentAreaFilled(false);
-            boton.setBorderPainted(false);
-            return boton;
-        } catch (Exception e) {
-            JButton boton = new JButton(texto);
-            boton.setPreferredSize(new Dimension(PREF_ANCHO_BOTON_ITEM, PREF_ALTO_BOTON_ITEM));
-            boton.setForeground(Color.WHITE);
-            boton.setFocusPainted(false);
-            boton.setOpaque(false);
-            boton.setContentAreaFilled(false);
-            boton.setBorderPainted(false);
-            return boton;
-        }
-    }
-
     private JButton crearBotonSiguiente(String texto) {
         JButton boton = new JButton(texto);
         boton.setFont(new Font("Arial", Font.BOLD, 14));
@@ -287,7 +304,7 @@ public class VentanaSeleccion extends Ventana {
 
     private void redimensionarComponentes() {
         redimensionarBotonesMatriz();
-        redimensionarBotonesItems();
+        redimensionarSpinnersItems();
         revalidate();
         repaint();
     }
@@ -320,22 +337,31 @@ public class VentanaSeleccion extends Ventana {
         }
     }
     
-    private void redimensionarBotonesItems() {
-        if (panelIzquierdo != null && botonesSuperiores != null && botonesSuperiores.length > 0) {
+    private void redimensionarSpinnersItems() {
+        if (panelIzquierdo != null && spinnersItems != null && spinnersItems.length > 0) {
             int anchoDisponible = panelIzquierdo.getWidth() - MARGEN_IZQUIERDO;
-            int espacioEntreBotones = ESPACIO_BOTONES_ITEMS * (botonesSuperiores.length - 1);
-            int anchoPorBoton = (anchoDisponible - espacioEntreBotones) / botonesSuperiores.length;
-            anchoPorBoton = Math.max(MIN_ANCHO_BOTON, Math.min(anchoPorBoton, MAX_ANCHO_BOTON));
-            int altoPorBoton = (anchoPorBoton * 3) / RELACION_ASPECTO;
+            int espacioEntreItems = ESPACIO_BOTONES_ITEMS * (spinnersItems.length - 1);
+            int anchoPorItem = (anchoDisponible - espacioEntreItems) / spinnersItems.length;
+            anchoPorItem = Math.max(MIN_ANCHO_BOTON, Math.min(anchoPorItem, MAX_ANCHO_BOTON));
+            int altoPorItem = (anchoPorItem * 3) / RELACION_ASPECTO;
             
-            for (JButton boton : botonesSuperiores) {
-                ImageIcon icono = (ImageIcon) boton.getIcon();
-                if (icono != null) {
-                    Image img = icono.getImage()
-                        .getScaledInstance(anchoPorBoton-15, altoPorBoton-10, Image.SCALE_SMOOTH);
-                    boton.setIcon(new ImageIcon(img));
+            for (Component comp : panelAbajoIzquierda.getComponents()) {
+                if (comp instanceof JPanel) {
+                    JPanel itemPanel = (JPanel) comp;
+                    for (Component subComp : itemPanel.getComponents()) {
+                        if (subComp instanceof JLabel) {
+                            // Redimensionar el icono
+                            JLabel iconoLabel = (JLabel) subComp;
+                            if (iconoLabel.getIcon() instanceof ImageIcon) {
+                                ImageIcon icono = (ImageIcon) iconoLabel.getIcon();
+                                Image img = icono.getImage()
+                                    .getScaledInstance(anchoPorItem-15, altoPorItem-30, Image.SCALE_SMOOTH);
+                                iconoLabel.setIcon(new ImageIcon(img));
+                            }
+                        }
+                    }
+                    itemPanel.setPreferredSize(new Dimension(anchoPorItem, altoPorItem));
                 }
-                boton.setPreferredSize(new Dimension(anchoPorBoton, altoPorBoton));
             }
         }
     }
@@ -346,19 +372,6 @@ public class VentanaSeleccion extends Ventana {
                 JOptionPane.showMessageDialog(this,
                     "Debes seleccionar al menos 1 Pokémon para continuar",
                     "Selección incompleta", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            if (potionsSelectedCount > MAX_POTIONS_SELECTED) {
-                JOptionPane.showMessageDialog(this,
-                    "Solo puedes seleccionar máximo " + MAX_POTIONS_SELECTED + " pociones",
-                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            if (reviveSelectedCount > MAX_REVIVE_SELECTED) {
-                JOptionPane.showMessageDialog(this,
-                    "Solo puedes seleccionar máximo " + MAX_REVIVE_SELECTED + " revivir",
-                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -374,13 +387,19 @@ public class VentanaSeleccion extends Ventana {
                     entrenador1.agregarPokemonPorNombre(nombre);
                 }
 
-                for (JButton boton : selectedItemButtons) {
-                    String nombreItem = boton.getToolTipText();
-                    switch (nombreItem) {
-                        case "Poción" -> entrenador1.agregarItem(new Potion());
-                        case "Superpoción" -> entrenador1.agregarItem(new SuperPotion());
-                        case "Hiperpoción" -> entrenador1.agregarItem(new HyperPotion());
-                        case "Revivir" -> entrenador1.agregarItem(new Revive());
+                // Procesar los ítems seleccionados
+                for (JSpinner spinner : spinnersItems) {
+                    int cantidad = (int) spinner.getValue();
+                    if (cantidad > 0) {
+                        String tipoItem = (String) ((JPanel) spinner.getParent()).getClientProperty("tipoItem");
+                        for (int i = 0; i < cantidad; i++) {
+                            switch (tipoItem) {
+                                case "Poción" -> entrenador1.agregarItem(new Potion());
+                                case "Superpoción" -> entrenador1.agregarItem(new SuperPotion());
+                                case "Hiperpoción" -> entrenador1.agregarItem(new HyperPotion());
+                                case "Revivir" -> entrenador1.agregarItem(new Revive());
+                            }
+                        }
                     }
                 }
 
@@ -396,13 +415,19 @@ public class VentanaSeleccion extends Ventana {
                     entrenador2.agregarPokemonPorNombre(nombre);
                 }
 
-                for (JButton boton : selectedItemButtons) {
-                    String nombreItem = boton.getToolTipText();
-                    switch (nombreItem) {
-                        case "Poción" -> entrenador2.agregarItem(new Potion());
-                        case "Superpoción" -> entrenador2.agregarItem(new SuperPotion());
-                        case "Hiperpoción" -> entrenador2.agregarItem(new HyperPotion());
-                        case "Revivir" -> entrenador2.agregarItem(new Revive());
+                // Procesar los ítems seleccionados
+                for (JSpinner spinner : spinnersItems) {
+                    int cantidad = (int) spinner.getValue();
+                    if (cantidad > 0) {
+                        String tipoItem = (String) ((JPanel) spinner.getParent()).getClientProperty("tipoItem");
+                        for (int i = 0; i < cantidad; i++) {
+                            switch (tipoItem) {
+                                case "Poción" -> entrenador2.agregarItem(new Potion());
+                                case "Superpoción" -> entrenador2.agregarItem(new SuperPotion());
+                                case "Hiperpoción" -> entrenador2.agregarItem(new HyperPotion());
+                                case "Revivir" -> entrenador2.agregarItem(new Revive());
+                            }
+                        }
                     }
                 }
 
@@ -411,14 +436,10 @@ public class VentanaSeleccion extends Ventana {
             }
         });
 
-        for (JButton boton : botonesSuperiores) {
-            boton.addActionListener(e -> manejarSeleccionItem((JButton) e.getSource()));
-        }
         for (JButton boton : botonesMatriz) {
             boton.addActionListener(e -> manejarSeleccionPokemon((JButton) e.getSource()));
         }
     }
-
     
     private void manejarSeleccionPokemon(JButton boton) {
         String nombrePokemon = boton.getToolTipText();
@@ -449,45 +470,6 @@ public class VentanaSeleccion extends Ventana {
             selectedPokemonButtons.add(boton);
             pokemonSelectedCount++;
             nombresPokemonSeleccionados.add(nombrePokemon);
-        }
-        boton.repaint();
-    }
-    
-    private void manejarSeleccionItem(JButton boton) {
-        String tipoItem = boton.getToolTipText();
-        boolean esRevivir = tipoItem.equals("Revivir");
-        
-        if (selectedItemButtons.contains(boton)) {
-            // Deseleccionar
-            boton.setBackground(null);
-            boton.setOpaque(false);
-            selectedItemButtons.remove(boton);
-            
-            if (esRevivir) {
-                reviveSelectedCount--;
-            } else {
-                potionsSelectedCount--;
-            }
-        } else {
-            // Verificar límites
-            if (esRevivir && reviveSelectedCount >= MAX_REVIVE_SELECTED) {
-                return;
-            }
-            
-            if (!esRevivir && potionsSelectedCount >= MAX_POTIONS_SELECTED) {
-                return;
-            }
-            
-            // Seleccionar
-            boton.setBackground(SELECTED_COLOR);
-            boton.setOpaque(true);
-            selectedItemButtons.add(boton);
-            
-            if (esRevivir) {
-                reviveSelectedCount++;
-            } else {
-                potionsSelectedCount++;
-            }
         }
         boton.repaint();
     }
@@ -523,7 +505,7 @@ public class VentanaSeleccion extends Ventana {
         setVisible(true);
         SwingUtilities.invokeLater(() -> {
             redimensionarBotonesMatriz();
-            redimensionarBotonesItems();
+            redimensionarSpinnersItems();
         });
     }
 }
