@@ -7,6 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import domain.*;
 
 public class VentanaBatalla extends Ventana {
@@ -22,6 +25,8 @@ public class VentanaBatalla extends Ventana {
     private boolean turnoJugador1 = true;
     private JTextArea areaMensajes;
     private JScrollPane scrollMensajes;
+    private Map<Entrenador, List<Item>> mochilaLocal = new HashMap<>();
+
 
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
@@ -32,6 +37,12 @@ public class VentanaBatalla extends Ventana {
     }
 
     private void inicializarComponentes() {
+        Entrenador j1 = POOBkemonGUI.getJugador1();
+        Entrenador j2 = POOBkemonGUI.getJugador2();
+    	
+        // Crear copias de las mochilas para cada entrenador
+        mochilaLocal.put(j1, new ArrayList<>(j1.getMochilaItems()));
+        mochilaLocal.put(j2, new ArrayList<>(j2.getMochilaItems()));
         JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelGif = new FondoPanel("/resources/pelea.gif");
         panelGif.setLayout(null);
@@ -370,61 +381,94 @@ public class VentanaBatalla extends Ventana {
         ventana.setVisible(true);
     }
 
-    public void mostrarVentanaItem() {
-        JDialog ventana = new JDialog(this, "Selecciona un Item", true);
-        ventana.setLayout(new GridLayout(0, 1, 10, 10));
-        ventana.setSize(300, 400);
-        ventana.setLocationRelativeTo(this);
+public void mostrarVentanaItem() {
+    JDialog ventana = new JDialog(this, "Selecciona un Item", true);
+    ventana.setLayout(new GridLayout(0, 1, 10, 10));
+    ventana.setSize(300, 400);
+    ventana.setLocationRelativeTo(this);
 
-        Color verdeAguamarina = new Color(102, 205, 170);
-        Color fondoClaro = new Color(224, 255, 240);
-        ventana.getContentPane().setBackground(fondoClaro);
+    Color verdeAguamarina = new Color(102, 205, 170);
+    Color fondoClaro = new Color(224, 255, 240);
+    ventana.getContentPane().setBackground(fondoClaro);
 
-        Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
-        List<Item> items = actual.getMochilaItems();
+    Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+    List<Item> items = mochilaLocal.get(actual);
 
-        if (items.isEmpty()) {
-            agregarMensaje("¡No tienes items en tu mochila!");
-            ventana.dispose();
-            return;
-        }
-
-        // Mostrar los items disponibles del entrenador
-        for (Item item : items) {
-            JButton btnItem = new JButton(item.getNombre());
-            btnItem.setBackground(verdeAguamarina);
-            btnItem.setForeground(Color.BLACK);
-            btnItem.setFocusPainted(false);
-            btnItem.setFont(new Font("Arial", Font.BOLD, 14));
-            
-            btnItem.addActionListener(e -> {
-                Pokemon objetivo = seleccionarPokemonParaItem(actual, item);
-                if (objetivo != null) {
-                    item.usar(objetivo); // Se usa el item directamente sin verificar retorno
-                    items.remove(item); // Se elimina el item de la mochila
-                    actualizarVidaPokemones(); // Actualizar barras de vida
-                    agregarMensaje("¡Has usado " + item.getNombre() + " en " + objetivo.getNombre() + "!");
-                    
-                    // Pasar el turno después de usar el item
-                    turnoJugador1 = !turnoJugador1;
-                    actualizarVistaJugador();
-                }
-                ventana.dispose();
-            });
-            
-            ventana.add(btnItem);
-        }
-
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBackground(verdeAguamarina);
-        btnCancelar.setForeground(Color.BLACK);
-        btnCancelar.setFocusPainted(false);
-        btnCancelar.addActionListener(e -> ventana.dispose());
-        ventana.add(btnCancelar);
-
-        ventana.setVisible(true);
+    if (items.isEmpty()) {
+        agregarMensaje("¡No tienes items en tu mochila!");
+        ventana.dispose();
+        return;
     }
+
+    // Agrupar items por tipo y contar cantidades
+    Map<String, List<Item>> itemsPorTipo = new HashMap<>();
     
+    for (Item item : items) {
+        String nombre = item.getNombre();
+        if (!itemsPorTipo.containsKey(nombre)) {
+            itemsPorTipo.put(nombre, new ArrayList<>());
+        }
+        itemsPorTipo.get(nombre).add(item);
+    }
+
+    // Mostrar un botón por cada tipo de item
+    for (Map.Entry<String, List<Item>> entry : itemsPorTipo.entrySet()) {
+        String nombreItem = entry.getKey();
+        List<Item> itemsDelTipo = entry.getValue();
+        Item itemEjemplo = itemsDelTipo.get(0);
+
+        JButton btnItem = new JButton(nombreItem + " (" + itemsDelTipo.size() + ")");
+        btnItem.setBackground(verdeAguamarina);
+        btnItem.setForeground(Color.BLACK);
+        btnItem.setFocusPainted(false);
+        btnItem.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        btnItem.addActionListener(e -> {
+            Pokemon objetivo = seleccionarPokemonParaItem(actual, itemEjemplo);
+            if (objetivo != null) {
+                // Obtener el primer item del tipo
+                Item itemAUsar = itemsDelTipo.get(0);
+                
+                // Usar el item
+                itemAUsar.usar(objetivo);
+                
+                // Eliminar de ambas mochilas
+                actual.getMochilaItems().remove(itemAUsar); // Mochila real
+                items.remove(itemAUsar); // Mochila local
+                itemsDelTipo.remove(0); // Lista temporal
+
+                // Actualizar vista
+                actualizarVidaPokemones();
+                agregarMensaje("¡Has usado " + nombreItem + " en " + objetivo.getNombre() + "!");
+
+                // Actualizar botón o eliminarlo si no quedan más
+                if (itemsDelTipo.isEmpty()) {
+                    ventana.remove(btnItem);
+                } else {
+                    btnItem.setText(nombreItem + " (" + itemsDelTipo.size() + ")");
+                }
+                
+                ventana.revalidate();
+                ventana.repaint();
+
+                turnoJugador1 = !turnoJugador1;
+                actualizarVistaJugador();
+            }
+        });
+
+        ventana.add(btnItem);
+    }
+
+    JButton btnCancelar = new JButton("Cancelar");
+    btnCancelar.setBackground(verdeAguamarina);
+    btnCancelar.setForeground(Color.BLACK);
+    btnCancelar.setFocusPainted(false);
+    btnCancelar.addActionListener(e -> ventana.dispose());
+    ventana.add(btnCancelar);
+
+    ventana.setVisible(true);
+}
+
     
     private Pokemon seleccionarPokemonParaItem(Entrenador entrenador, Item item) {
         JDialog ventana = new JDialog(this, "Selecciona un Pokémon", true);
