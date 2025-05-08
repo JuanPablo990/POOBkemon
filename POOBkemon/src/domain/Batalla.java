@@ -103,30 +103,31 @@ public class Batalla {
     	ventanaBatalla.mostrarMensaje("¡" + atacante.getNombre() + " usa " + movimiento.getNombre() + "!");
         double efectividad = calcularEfectividad(movimiento, objetivo);
         String mensajeEfectividad = obtenerMensajeEfectividad(efectividad);
-        ventanaBatalla.mostrarMensaje(mensajeEfectividad); 
-        ventanaBatalla.mostrarEfectividad(efectividad);
+        ventanaBatalla.agregarMensaje(mensajeEfectividad); // Usamos agregarMensaje en lugar de mostrarMensaje
         int psAntes = objetivo.getPs();
         boolean exito = movimiento.ejecutar(atacante, objetivo, efectividad);
         if (exito) {
             int danio = psAntes - objetivo.getPs();
-            ventanaBatalla.mostrarMensaje("¡El ataque hizo " + danio + " de daño!");
+            ventanaBatalla.agregarMensaje("¡El ataque hizo " + danio + " de daño!");
             ventanaBatalla.actualizarVidaPokemon1(entrenador1.getPokemonActivo().getPs());
             ventanaBatalla.actualizarVidaPokemon2(entrenador2.getPokemonActivo().getPs());
         } else {
-            ventanaBatalla.mostrarMensaje("¡El ataque falló!");
+            ventanaBatalla.agregarMensaje("¡El ataque falló!");
         }
     }
     
     private String obtenerMensajeEfectividad(double efectividad) {
-        if (efectividad == 0) {
-            return "¡No tiene efecto!";
-        } else if (efectividad < 1) {
-            return "¡No es muy efectivo...";
-        } else if (efectividad == 1) {
-            return "¡Ataque normal!";
+    	String mensaje = String.format("[Multiplicador: x%.1f]%n", efectividad);
+        if (efectividad <= 0.0) {
+            mensaje += "INEFECTIVO";
+        } else if (efectividad >= 2.0) {
+            mensaje += "SUPEREFECTIVO";
+        } else if (efectividad == 0.5) {
+            mensaje += "EFECTIVO";
         } else {
-            return "¡Es muy efectivo!";
+            mensaje += "NEUTRAL";
         }
+        return mensaje;
     }
 
     private double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {

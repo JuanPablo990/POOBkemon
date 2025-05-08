@@ -193,14 +193,8 @@ public class POOBkemonGUI {
     public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
         cerrarOtrasVentanas(null);
         getPoobkemon().setJugadores(jugador1, jugador2);
-        
-        // Primero crear la ventana
         ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
-        
-        // Luego crear la batalla pasando la ventana
         batallaActual = new Batalla(jugador1, jugador2, ventanaBatalla);
-        
-        // Iniciar la batalla
         ventanaBatalla.mostrar();
         batallaActual.iniciarBatalla();
     }

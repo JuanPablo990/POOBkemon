@@ -151,87 +151,107 @@ public class VentanaBatalla extends Ventana {
     }
 
     public void mostrarVentanaAtaque() {
-        JDialog ventana = new JDialog(this, "Selecciona un Ataque", true);
-        ventana.setLayout(new GridLayout(2, 2, 10, 10));
-        ventana.setSize(400, 300);
-        ventana.setLocationRelativeTo(this);
+    	 JDialog ventana = new JDialog(this, "Selecciona un Ataque", true);
+    	    ventana.setLayout(new GridLayout(2, 2, 10, 10));
+    	    ventana.setSize(400, 300);
+    	    ventana.setLocationRelativeTo(this);
 
-        Color verdeAguamarina = new Color(102, 205, 170);
-        Color fondoClaro = new Color(224, 255, 240);
-        ventana.getContentPane().setBackground(fondoClaro);
+    	    Color verdeAguamarina = new Color(102, 205, 170);
+    	    Color fondoClaro = new Color(224, 255, 240);
+    	    ventana.getContentPane().setBackground(fondoClaro);
 
-        Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
-        List<Movimiento> movimientos = actual.getPokemonActivo().getMovimientos();
+    	    Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+    	    List<Movimiento> movimientos = actual.getPokemonActivo().getMovimientos();
 
-        if (movimientos.isEmpty()) {
-            agregarMensaje("¡No tiene movimientos disponibles!");
-            ventana.dispose();
-            return;
-        }
+    	    if (movimientos.isEmpty()) {
+    	        agregarMensaje("¡No tiene movimientos disponibles!");
+    	        ventana.dispose();
+    	        return;
+    	    }
 
-        for (int i = 0; i < 4; i++) {
-            JButton btnAtaque;
-            if (i < movimientos.size()) {
-                Movimiento m = movimientos.get(i);
-                btnAtaque = new JButton("<html><center>" + m.getNombre() + "<br>PP: " + m.getPp() + "/" + m.getPpMaximos() + "</center></html>");
-                btnAtaque.setEnabled(m.getPp() > 0);
-                btnAtaque.addActionListener(e -> {
-                    ejecutarAtaque(m);
-                    ventana.dispose();
-                });
-            } else {
-                btnAtaque = new JButton("Ataque " + (i + 1));
-                btnAtaque.setEnabled(false);
-            }
+    	    for (int i = 0; i < 4; i++) {
+    	        JButton btnAtaque;
+    	        if (i < movimientos.size()) {
+    	            Movimiento m = movimientos.get(i);
+    	            btnAtaque = new JButton("<html><center>" + m.getNombre() + "<br>PP: " + m.getPp() + "/" + m.getPpMaximos() + "</center></html>");
+    	            btnAtaque.setEnabled(m.getPp() > 0); // Deshabilitar si no hay PP
+    	            btnAtaque.addActionListener(e -> {
+    	                ejecutarAtaque(m);
+    	                ventana.dispose();
+    	            });
+    	        } else {
+    	            btnAtaque = new JButton("Ataque " + (i + 1));
+    	            btnAtaque.setEnabled(false);
+    	        }
 
-            btnAtaque.setBackground(verdeAguamarina);
-            btnAtaque.setForeground(Color.BLACK);
-            btnAtaque.setFocusPainted(false);
-            btnAtaque.setFont(new Font("Arial", Font.BOLD, 14));
-            ventana.add(btnAtaque);
-        }
+    	        btnAtaque.setBackground(verdeAguamarina);
+    	        btnAtaque.setForeground(Color.BLACK);
+    	        btnAtaque.setFocusPainted(false);
+    	        btnAtaque.setFont(new Font("Arial", Font.BOLD, 14));
+    	        ventana.add(btnAtaque);
+    	    }
 
-        ventana.setVisible(true);
+    	    ventana.setVisible(true);
     }
 
     private void ejecutarAtaque(Movimiento movimiento) {
-        Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+    	Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
         Entrenador defensor = turnoJugador1 ? POOBkemonGUI.getJugador2() : POOBkemonGUI.getJugador1();
-        Pokemon objetivo = defensor.getPokemonActivo();
+        Pokemon pokemonAtacante = atacante.getPokemonActivo();
+        Pokemon pokemonDefensor = defensor.getPokemonActivo();
         
-        agregarMensaje("¡" + atacante.getNombre() + " usó " + movimiento.getNombre() + "!");
+        // Verificar si el movimiento tiene PP disponibles
+        if (movimiento.getPp() <= 0) {
+            agregarMensaje("¡No quedan PP para " + movimiento.getNombre() + "!");
+            return;
+        }
         
-        boolean exito = movimiento.ejecutar(atacante.getPokemonActivo(), objetivo, 1.0);
+        agregarMensaje("¡" + atacante.getNombre() + " usó " + movimiento.getNombre() + "!");     
+        // Calcular efectividad
+        double efectividad = Efectividad.calcular(
+            movimiento.getTipo().toLowerCase().replace("é", "e"),
+            pokemonDefensor.getTipoPrincipal().toLowerCase().replace("é", "e")
+        );
+        
+        if (pokemonDefensor.getTipoSecundario() != null && !pokemonDefensor.getTipoSecundario().isEmpty()) {
+            efectividad *= Efectividad.calcular(
+                movimiento.getTipo().toLowerCase().replace("é", "e"),
+                pokemonDefensor.getTipoSecundario().toLowerCase().replace("é", "e")
+            );
+        }
+        
+        mostrarEfectividad(efectividad);
+        
+        boolean exito = movimiento.ejecutar(pokemonAtacante, pokemonDefensor, efectividad);
         
         if (exito) {
-            // Mostrar mensaje de daño (simulado)
-            int danio = (int)(Math.random() * 150) + 50; // Ejemplo de daño aleatorio
+            int danio = (int)(Math.random() * 150) + 50;
             agregarMensaje("¡El ataque hizo " + danio + " de daño!");
             
             actualizarVidaPokemon1(POOBkemonGUI.getJugador1().getPokemonActivo().getPs());
             actualizarVidaPokemon2(POOBkemonGUI.getJugador2().getPokemonActivo().getPs());
             
-            if (objetivo.estaDebilitado()) {
-                agregarMensaje("¡" + objetivo.getNombre() + " fue debilitado!");
-                agregarMensaje(objetivo.getNombre() + " regresó después del ataque. ¡Es momento de cambiar!");
+            if (pokemonDefensor.estaDebilitado()) {
+                agregarMensaje("¡" + pokemonDefensor.getNombre() + " fue debilitado!");
+                agregarMensaje(pokemonDefensor.getNombre() + " regresó después del ataque. ¡Es momento de cambiar!");
                 if (!equipoDebilitado(defensor)) {
                     mostrarVentanaCambioObligatorio(defensor);
                 }
             }
             
-            // Ejemplo de mensajes de efectos especiales
             if (movimiento.getNombre().contains("Cabeza")) {
-                agregarMensaje(atacante.getPokemonActivo().getNombre() + " sufrió " + (danio/4) + " de daño por retroceso!");
+                agregarMensaje(pokemonAtacante.getNombre() + " sufrió " + (danio/4) + " de daño por retroceso!");
             }
             
             if (movimiento.getNombre().contains("Umbrío")) {
-                agregarMensaje(objetivo.getNombre() + " redujo su Precisión.");
+                agregarMensaje(pokemonDefensor.getNombre() + " redujo su Precisión.");
             }
             
             turnoJugador1 = !turnoJugador1;
             actualizarVistaJugador();
         }
     }
+    
     private boolean equipoDebilitado(Entrenador entrenador) {
         for (Pokemon pokemon : entrenador.getEquipoPokemon()) {
             if (!pokemon.estaDebilitado()) {

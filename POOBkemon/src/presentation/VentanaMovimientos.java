@@ -188,11 +188,7 @@ private void inicializarComponentes() {
                         movimientosSeleccionados.add(seleccionado);
                     }
                 }
-
-                // Guardar en el Map auxiliar
                 POOBkemonGUI.setMovimientosDePokemon(nombre, movimientosSeleccionados, esJugador1);
-
-                // Asignar directamente al Pokémon real
                 Pokemon pokemonReal = (esJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2())
                         .getPokemonPorNombre(nombre);
                 if (pokemonReal != null) {
