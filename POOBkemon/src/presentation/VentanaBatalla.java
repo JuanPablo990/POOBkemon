@@ -148,15 +148,15 @@ public class VentanaBatalla extends Ventana {
     }
 
     public void mostrarEfectividad(double efectividad) {
-        String mensaje = String.format("[Multiplicador: x%.1f]%n", efectividad);
+        String mensaje;
         if (efectividad <= 0.0) {
-            mensaje += "INEFECTIVO";
+            mensaje = "INEFECTIVO";
         } else if (efectividad >= 2.0) {
-            mensaje += "SUPEREFECTIVO";
+            mensaje = "SUPEREFECTIVO";
         } else if (efectividad == 0.5) {
-            mensaje += "POCO EFECTIVO";
+            mensaje = "POCO EFECTIVO";
         } else {
-            mensaje += "NEUTRAL";
+            mensaje = "NEUTRAL";
         }
         agregarMensaje(mensaje);
     }

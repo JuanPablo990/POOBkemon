@@ -135,7 +135,7 @@ public class VentanaMovimientos extends Ventana {
                     List<JComboBox<String>> combos = new ArrayList<>();
                     for (int i = 0; i < 4; i++) {
                         JComboBox<String> comboBox = new JComboBox<>(movimientosCompatibles.toArray(new String[0]));
-                        configurarComboBox(comboBox);
+                        configurarComboBox(comboBox, nombrePokemon);
                         panelCombos.add(comboBox);
                         combos.add(comboBox);
                     }
@@ -176,12 +176,10 @@ public class VentanaMovimientos extends Ventana {
         String tipoPrincipal = pokemon.getTipoPrincipal();
         String tipoSecundario = pokemon.getTipoSecundario();
 
-        // Agregar tipos compatibles del tipo principal
         if (COMPATIBILIDAD_MOVIMIENTOS.containsKey(tipoPrincipal)) {
             tiposCompatibles.addAll(COMPATIBILIDAD_MOVIMIENTOS.get(tipoPrincipal));
         }
 
-        // Agregar tipos compatibles del tipo secundario (si existe)
         if (tipoSecundario != null && COMPATIBILIDAD_MOVIMIENTOS.containsKey(tipoSecundario)) {
             for (String t : COMPATIBILIDAD_MOVIMIENTOS.get(tipoSecundario)) {
                 if (!tiposCompatibles.contains(t)) {
@@ -190,7 +188,6 @@ public class VentanaMovimientos extends Ventana {
             }
         }
 
-        // Obtener todos los movimientos de los tipos compatibles
         List<String> movimientosCompatibles = new ArrayList<>();
         for (String tipo : tiposCompatibles) {
             List<String> movimientosDelTipo = POOBkemonGUI.getPoobkemon().getPoquedex().obtenerMovimientosPorTipo(tipo);
@@ -204,7 +201,7 @@ public class VentanaMovimientos extends Ventana {
         return movimientosCompatibles;
     }
 
-    private void configurarComboBox(JComboBox<String> comboBox) {
+    private void configurarComboBox(JComboBox<String> comboBox, String nombrePokemon) {
         comboBox.setBackground(new Color(70, 180, 130, 150));
         comboBox.setForeground(Color.BLACK);
         comboBox.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -224,10 +221,51 @@ public class VentanaMovimientos extends Ventana {
                 return this;
             }
         });
+
+        final String[] seleccionAnterior = {null};
+        
+        comboBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String seleccionActual = (String) e.getItem();
+                List<JComboBox<String>> combos = combosPorPokemon.get(nombrePokemon);
+                
+                for (JComboBox<String> otroCombo : combos) {
+                    if (otroCombo != comboBox && seleccionActual.equals(otroCombo.getSelectedItem())) {
+                        JOptionPane.showMessageDialog(this, 
+                            "Este ataque ya está seleccionado para este Pokémon", 
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                        comboBox.setSelectedItem(seleccionAnterior[0]);
+                        return;
+                    }
+                }
+                
+                seleccionAnterior[0] = seleccionActual;
+            }
+        });
     }
 
     private void manejarBotonSiguiente() {
         if (nombresPokemonSeleccionados != null && !nombresPokemonSeleccionados.isEmpty()) {
+            // Validar que no haya movimientos duplicados en ningún Pokémon
+            for (String nombre : nombresPokemonSeleccionados) {
+                List<JComboBox<String>> combos = combosPorPokemon.get(nombre);
+                List<String> movimientosSeleccionados = new ArrayList<>();
+                
+                for (JComboBox<String> combo : combos) {
+                    String seleccionado = (String) combo.getSelectedItem();
+                    if (seleccionado != null) {
+                        if (movimientosSeleccionados.contains(seleccionado)) {
+                            JOptionPane.showMessageDialog(this,
+                                "El Pokémon " + nombre + " tiene movimientos duplicados: " + seleccionado,
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        movimientosSeleccionados.add(seleccionado);
+                    }
+                }
+            }
+
+            // Si pasa la validación, proceder con el guardado
             for (String nombre : nombresPokemonSeleccionados) {
                 List<JComboBox<String>> combos = combosPorPokemon.get(nombre);
                 List<String> movimientosSeleccionados = new ArrayList<>();

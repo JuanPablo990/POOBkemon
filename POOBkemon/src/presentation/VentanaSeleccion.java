@@ -48,8 +48,8 @@ public class VentanaSeleccion extends Ventana {
     // Constantes para selección
     private static final Color SELECTED_COLOR = new Color(0, 255, 0, 100);
     private static final int MAX_POKEMON_SELECTED = 6;
-    private static final int MAX_POR_TIPO_POCION = 2;  // Máximo 2 de cada tipo de poción
-    private static final int MAX_REVIVE_SELECTED = 1;  // Máximo 1 Revivir
+    private static final int MAX_POR_TIPO_POCION = 2;
+    private static final int MAX_REVIVE_SELECTED = 1;
     
     // Contadores de selección
     private int pokemonSelectedCount = 0;
