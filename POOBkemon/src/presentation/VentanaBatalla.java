@@ -151,47 +151,47 @@ public class VentanaBatalla extends Ventana {
     }
 
     public void mostrarVentanaAtaque() {
-    	 JDialog ventana = new JDialog(this, "Selecciona un Ataque", true);
-    	    ventana.setLayout(new GridLayout(2, 2, 10, 10));
-    	    ventana.setSize(400, 300);
-    	    ventana.setLocationRelativeTo(this);
-    	    Color verdeAguamarina = new Color(102, 205, 170);
-    	    Color fondoClaro = new Color(224, 255, 240);
-    	    ventana.getContentPane().setBackground(fondoClaro);
-    	    Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
-    	    Pokemon pokemonActivo = actual.getPokemonActivo();
-    	    List<Movimiento> movimientos = pokemonActivo.getMovimientos();
-    	    if (movimientos.isEmpty()) {
-    	        agregarMensaje("¡No tiene movimientos disponibles!");
-    	        ventana.dispose();
-    	        return;
-    	    }
+        JDialog ventana = new JDialog(this, "Selecciona un Ataque", true);
+        ventana.setLayout(new GridLayout(2, 2, 10, 10));
+        ventana.setSize(400, 300);
+        ventana.setLocationRelativeTo(this);
+        Color verdeAguamarina = new Color(102, 205, 170);
+        Color fondoClaro = new Color(224, 255, 240);
+        ventana.getContentPane().setBackground(fondoClaro);
+        Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+        Pokemon pokemonActivo = actual.getPokemonActivo();
+        List<Movimiento> movimientos = pokemonActivo.getMovimientos();
+        if (movimientos.isEmpty()) {
+            agregarMensaje("¡No tiene movimientos disponibles!");
+            ventana.dispose();
+            return;
+        }
 
-    	    for (int i = 0; i < 4; i++) {
-    	        JButton btnAtaque;
-    	        if (i < movimientos.size()) {
-    	            Movimiento m = movimientos.get(i);
-    	            btnAtaque = new JButton("<html><center>" + m.getNombre() + "<br>PP: " + m.getPp() + "/" + m.getPpMaximos() + "</center></html>");
-    	            btnAtaque.setEnabled(m.getPp() > 0);
-    	            btnAtaque.addActionListener(e -> {
-    	                ejecutarAtaque(m);
-    	                ventana.dispose();
-    	            });
-    	        } else {
-    	            btnAtaque = new JButton("Ataque " + (i + 1));
-    	            btnAtaque.setEnabled(false);
-    	        }
-    	        btnAtaque.setBackground(verdeAguamarina);
-    	        btnAtaque.setForeground(Color.BLACK);
-    	        btnAtaque.setFocusPainted(false);
-    	        btnAtaque.setFont(new Font("Arial", Font.BOLD, 14));
-    	        ventana.add(btnAtaque);
-    	    }
-    	    ventana.setVisible(true);
+        for (int i = 0; i < 4; i++) {
+            JButton btnAtaque;
+            if (i < movimientos.size()) {
+                Movimiento m = movimientos.get(i);
+                btnAtaque = new JButton("<html><center>" + m.getNombre() + "<br>PP: " + m.getPp() + "/" + m.getPpMaximos() + "</center></html>");
+                btnAtaque.setEnabled(m.getPp() > 0);
+                btnAtaque.addActionListener(e -> {
+                    ejecutarAtaque(m);
+                    ventana.dispose();
+                });
+            } else {
+                btnAtaque = new JButton("Ataque " + (i + 1));
+                btnAtaque.setEnabled(false);
+            }
+            btnAtaque.setBackground(verdeAguamarina);
+            btnAtaque.setForeground(Color.BLACK);
+            btnAtaque.setFocusPainted(false);
+            btnAtaque.setFont(new Font("Arial", Font.BOLD, 14));
+            ventana.add(btnAtaque);
+        }
+        ventana.setVisible(true);
     }
 
     private void ejecutarAtaque(Movimiento movimiento) {
-    	Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+        Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
         Entrenador defensor = turnoJugador1 ? POOBkemonGUI.getJugador2() : POOBkemonGUI.getJugador1();
         Pokemon pokemonAtacante = atacante.getPokemonActivo();
         Pokemon pokemonDefensor = defensor.getPokemonActivo();
@@ -372,8 +372,8 @@ public class VentanaBatalla extends Ventana {
 
     public void mostrarVentanaItem() {
         JDialog ventana = new JDialog(this, "Selecciona un Item", true);
-        ventana.setLayout(new GridLayout(3, 1, 10, 10));
-        ventana.setSize(300, 300);
+        ventana.setLayout(new GridLayout(0, 1, 10, 10));
+        ventana.setSize(300, 400);
         ventana.setLocationRelativeTo(this);
 
         Color verdeAguamarina = new Color(102, 205, 170);
@@ -389,65 +389,47 @@ public class VentanaBatalla extends Ventana {
             return;
         }
 
-        JButton btnPocion = new JButton("Poción");
-        JButton btnSuperPocion = new JButton("Superpoción");
-        JButton btnHiperPocion = new JButton("Hiperpoción");
+        // Mostrar los items disponibles del entrenador
+        for (Item item : items) {
+            JButton btnItem = new JButton(item.getNombre());
+            btnItem.setBackground(verdeAguamarina);
+            btnItem.setForeground(Color.BLACK);
+            btnItem.setFocusPainted(false);
+            btnItem.setFont(new Font("Arial", Font.BOLD, 14));
+            
+            btnItem.addActionListener(e -> {
+                Pokemon objetivo = seleccionarPokemonParaItem(actual, item);
+                if (objetivo != null) {
+                    item.usar(objetivo); // Se usa el item directamente sin verificar retorno
+                    items.remove(item); // Se elimina el item de la mochila
+                    actualizarVidaPokemones(); // Actualizar barras de vida
+                    agregarMensaje("¡Has usado " + item.getNombre() + " en " + objetivo.getNombre() + "!");
+                    
+                    // Pasar el turno después de usar el item
+                    turnoJugador1 = !turnoJugador1;
+                    actualizarVistaJugador();
+                }
+                ventana.dispose();
+            });
+            
+            ventana.add(btnItem);
+        }
 
-        btnPocion.setBackground(verdeAguamarina);
-        btnPocion.setForeground(Color.BLACK);
-        btnPocion.setFocusPainted(false);
-        btnPocion.setFont(new Font("Arial", Font.BOLD, 14));
-        
-        btnSuperPocion.setBackground(verdeAguamarina);
-        btnSuperPocion.setForeground(Color.BLACK);
-        btnSuperPocion.setFocusPainted(false);
-        btnSuperPocion.setFont(new Font("Arial", Font.BOLD, 14));
-        
-        btnHiperPocion.setBackground(verdeAguamarina);
-        btnHiperPocion.setForeground(Color.BLACK);
-        btnHiperPocion.setFocusPainted(false);
-        btnHiperPocion.setFont(new Font("Arial", Font.BOLD, 14));
-
-        btnPocion.setEnabled(items.stream().anyMatch(i -> i instanceof Potion));
-        btnSuperPocion.setEnabled(items.stream().anyMatch(i -> i instanceof SuperPotion));
-        btnHiperPocion.setEnabled(items.stream().anyMatch(i -> i instanceof HyperPotion));
-
-        btnPocion.addActionListener(e -> usarItem(ventana, actual, items, "Poción"));
-        btnSuperPocion.addActionListener(e -> usarItem(ventana, actual, items, "Superpoción"));
-        btnHiperPocion.addActionListener(e -> usarItem(ventana, actual, items, "Hiperpoción"));
-
-        ventana.add(btnPocion);
-        ventana.add(btnSuperPocion);
-        ventana.add(btnHiperPocion);
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(verdeAguamarina);
+        btnCancelar.setForeground(Color.BLACK);
+        btnCancelar.setFocusPainted(false);
+        btnCancelar.addActionListener(e -> ventana.dispose());
+        ventana.add(btnCancelar);
 
         ventana.setVisible(true);
     }
-
-    private void usarItem(JDialog ventana, Entrenador entrenador, List<Item> items, String tipoItem) {
-        Pokemon objetivo = seleccionarPokemonParaItem(entrenador);
-        if (objetivo != null) {
-            Item item = items.stream()
-                .filter(i -> i.getNombre().equals(tipoItem))
-                .findFirst()
-                .orElse(null);
-            
-            if (item != null) {
-                item.usar(objetivo);
-                items.remove(item);
-                actualizarVidaPokemones();
-                agregarMensaje("¡Has usado " + item.getNombre() + " en " + objetivo.getNombre() + "!");
-                ventana.dispose();
-                
-                turnoJugador1 = !turnoJugador1;
-                actualizarVistaJugador();
-            }
-        }
-    }
-
-    private Pokemon seleccionarPokemonParaItem(Entrenador entrenador) {
+    
+    
+    private Pokemon seleccionarPokemonParaItem(Entrenador entrenador, Item item) {
         JDialog ventana = new JDialog(this, "Selecciona un Pokémon", true);
         ventana.setLayout(new GridLayout(0, 1, 10, 10));
-        ventana.setSize(300, 200);
+        ventana.setSize(300, 300);
         ventana.setLocationRelativeTo(this);
 
         Color verdeAguamarina = new Color(102, 205, 170);
@@ -458,14 +440,45 @@ public class VentanaBatalla extends Ventana {
         List<Pokemon> equipo = entrenador.getEquipoPokemon();
 
         for (Pokemon pokemon : equipo) {
-            JButton btn = new JButton(pokemon.getNombre() + " (PS: " + pokemon.getPs() + "/" + pokemon.getPsMaximos() + ")");
+            JButton btn = new JButton(
+                "<html><center>" + pokemon.getNombre() + 
+                "<br>PS: " + pokemon.getPs() + "/" + pokemon.getPsMaximos() + 
+                "<br>Estado: " + (pokemon.estaDebilitado() ? "Debilitado" : "Activo") + "</center></html>");
+            
             btn.setBackground(verdeAguamarina);
             btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
+            btn.setFont(new Font("Arial", Font.PLAIN, 12));
+            
+            // Validar si el item se puede usar en este Pokémon
+            boolean puedeUsar = true;
+            String mensajeError = "";
+            
+            if (item instanceof Potion || item instanceof SuperPotion || item instanceof HyperPotion) {
+                if (pokemon.estaDebilitado()) {
+                    puedeUsar = false;
+                    mensajeError = "No se puede usar poción en un Pokémon debilitado";
+                } else if (pokemon.getPs() == pokemon.getPsMaximos()) {
+                    puedeUsar = false;
+                    mensajeError = "El Pokémon ya tiene toda su vida";
+                }
+            } else if (item instanceof Revive) {
+                if (!pokemon.estaDebilitado()) {
+                    puedeUsar = false;
+                    mensajeError = "Solo se puede revivir Pokémon debilitados";
+                }
+            }
+            
+            btn.setEnabled(puedeUsar);
+            if (!puedeUsar) {
+                btn.setToolTipText(mensajeError);
+            }
+            
             btn.addActionListener(ev -> {
                 seleccionado[0] = pokemon;
                 ventana.dispose();
             });
+            
             ventana.add(btn);
         }
 
