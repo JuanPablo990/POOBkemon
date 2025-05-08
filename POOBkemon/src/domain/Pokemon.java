@@ -212,15 +212,6 @@ public class Pokemon {
         if (nuevosMovimientos == null || nuevosMovimientos.isEmpty() || nuevosMovimientos.size() > 4) {
             throw new IllegalArgumentException("Un Pokémon debe tener entre 1 y 4 movimientos");
         }
-
-        // Verificar compatibilidad de tipos
-        for (Movimiento movimiento : nuevosMovimientos) {
-            if (!esMovimientoCompatible(movimiento)) {
-                throw new IllegalArgumentException("El movimiento " + movimiento.getNombre() + 
-                    " no es compatible con los tipos del Pokémon");
-            }
-        }
-
         // Si pasa todas las validaciones, asignar los movimientos
         this.movimientos = new ArrayList<>(nuevosMovimientos);
     }
@@ -257,12 +248,6 @@ public class Pokemon {
         if (movimiento == null) {
             throw new IllegalArgumentException("El movimiento no puede ser nulo");
         }
-
-        if (!esMovimientoCompatible(movimiento)) {
-            throw new IllegalArgumentException("El movimiento " + movimiento.getNombre() + 
-                " no es compatible con los tipos del Pokémon");
-        }
-
         if (movimientos.size() >= 4) {
             throw new IllegalArgumentException("El Pokémon ya tiene 4 movimientos");
         }
@@ -281,12 +266,6 @@ public class Pokemon {
         if (indice < 0 || indice >= movimientos.size()) {
             throw new IllegalArgumentException("Índice de movimiento inválido");
         }
-
-        if (!esMovimientoCompatible(nuevoMovimiento)) {
-            throw new IllegalArgumentException("El movimiento " + nuevoMovimiento.getNombre() + 
-                " no es compatible con los tipos del Pokémon");
-        }
-
         movimientos.set(indice, nuevoMovimiento);
     }
 

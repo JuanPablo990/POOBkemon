@@ -155,14 +155,12 @@ public class VentanaBatalla extends Ventana {
     	    ventana.setLayout(new GridLayout(2, 2, 10, 10));
     	    ventana.setSize(400, 300);
     	    ventana.setLocationRelativeTo(this);
-
     	    Color verdeAguamarina = new Color(102, 205, 170);
     	    Color fondoClaro = new Color(224, 255, 240);
     	    ventana.getContentPane().setBackground(fondoClaro);
-
     	    Entrenador actual = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
-    	    List<Movimiento> movimientos = actual.getPokemonActivo().getMovimientos();
-
+    	    Pokemon pokemonActivo = actual.getPokemonActivo();
+    	    List<Movimiento> movimientos = pokemonActivo.getMovimientos();
     	    if (movimientos.isEmpty()) {
     	        agregarMensaje("¡No tiene movimientos disponibles!");
     	        ventana.dispose();
@@ -174,7 +172,7 @@ public class VentanaBatalla extends Ventana {
     	        if (i < movimientos.size()) {
     	            Movimiento m = movimientos.get(i);
     	            btnAtaque = new JButton("<html><center>" + m.getNombre() + "<br>PP: " + m.getPp() + "/" + m.getPpMaximos() + "</center></html>");
-    	            btnAtaque.setEnabled(m.getPp() > 0); // Deshabilitar si no hay PP
+    	            btnAtaque.setEnabled(m.getPp() > 0);
     	            btnAtaque.addActionListener(e -> {
     	                ejecutarAtaque(m);
     	                ventana.dispose();
@@ -183,14 +181,12 @@ public class VentanaBatalla extends Ventana {
     	            btnAtaque = new JButton("Ataque " + (i + 1));
     	            btnAtaque.setEnabled(false);
     	        }
-
     	        btnAtaque.setBackground(verdeAguamarina);
     	        btnAtaque.setForeground(Color.BLACK);
     	        btnAtaque.setFocusPainted(false);
     	        btnAtaque.setFont(new Font("Arial", Font.BOLD, 14));
     	        ventana.add(btnAtaque);
     	    }
-
     	    ventana.setVisible(true);
     }
 
@@ -199,20 +195,15 @@ public class VentanaBatalla extends Ventana {
         Entrenador defensor = turnoJugador1 ? POOBkemonGUI.getJugador2() : POOBkemonGUI.getJugador1();
         Pokemon pokemonAtacante = atacante.getPokemonActivo();
         Pokemon pokemonDefensor = defensor.getPokemonActivo();
-        
-        // Verificar si el movimiento tiene PP disponibles
         if (movimiento.getPp() <= 0) {
             agregarMensaje("¡No quedan PP para " + movimiento.getNombre() + "!");
             return;
         }
-        
-        agregarMensaje("¡" + atacante.getNombre() + " usó " + movimiento.getNombre() + "!");     
-        // Calcular efectividad
+        agregarMensaje("¡" + atacante.getNombre() + " usó " + movimiento.getNombre() + "!");
         double efectividad = Efectividad.calcular(
             movimiento.getTipo().toLowerCase().replace("é", "e"),
             pokemonDefensor.getTipoPrincipal().toLowerCase().replace("é", "e")
         );
-        
         if (pokemonDefensor.getTipoSecundario() != null && !pokemonDefensor.getTipoSecundario().isEmpty()) {
             efectividad *= Efectividad.calcular(
                 movimiento.getTipo().toLowerCase().replace("é", "e"),
