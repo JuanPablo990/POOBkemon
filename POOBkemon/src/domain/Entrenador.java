@@ -16,7 +16,6 @@ public class Entrenador {
         this.pokemonActivo = null;
     }
 
-    // Métodos originales (se mantienen exactamente igual)
     public void agregarPokemon(Pokemon pokemon) {
         if (equipoPokemon.size() >= 6) {
             throw new IllegalStateException("El equipo ya tiene 6 Pokémon");
@@ -82,7 +81,6 @@ public class Entrenador {
         return String.format("%s usado con éxito en %s", item.getNombre(), pokemon.getNombre());
     }
 
-    // Nuevos métodos para integración con Poquedex (SOLO ESTOS SON NUEVOS)
     public Pokemon agregarPokemonPorNombre(String nombrePokemon) {
         Pokemon nuevo = Poquedex.getInstancia().crearPokemon(nombrePokemon);
         agregarPokemon(nuevo);
@@ -105,7 +103,6 @@ public class Entrenador {
         return Poquedex.getInstancia().obtenerNombresMovimientosDisponibles();
     }
 
-    // Métodos existentes (se mantienen igual)
     public String getNombre() {
         return nombre;
     }
@@ -116,6 +113,10 @@ public class Entrenador {
 
     public List<Item> getMochilaItems() {
         return new ArrayList<>(mochilaItems);
+    }
+
+    public List<Item> getItems() {
+        return getMochilaItems();
     }
 
     public boolean tienePokemonDisponibles() {
@@ -131,7 +132,6 @@ public class Entrenador {
         );
     }
 
-    // Métodos privados (se mantienen igual)
     private void buscarNuevoPokemonActivo() {
         pokemonActivo = equipoPokemon.stream()
             .filter(p -> !p.estaDebilitado())
@@ -152,12 +152,12 @@ public class Entrenador {
         if (item instanceof Revive && !pokemon.estaDebilitado()) {
             throw new IllegalStateException("No puedes usar Revive en un Pokémon que no está debilitado");
         }
-        if ((item instanceof Potion || item instanceof SuperPotion || item instanceof HyperPotion) 
+        if ((item instanceof Potion || item instanceof SuperPotion || item instanceof HyperPotion)
             && pokemon.estaDebilitado()) {
             throw new IllegalStateException("No puedes usar pociones en Pokémon debilitados");
         }
     }
-    
+
     public Pokemon getPokemonPorNombre(String nombre) {
         for (Pokemon p : equipoPokemon) {
             if (p.getNombre().equals(nombre)) {
@@ -166,6 +166,4 @@ public class Entrenador {
         }
         return null;
     }
-
-    
 }

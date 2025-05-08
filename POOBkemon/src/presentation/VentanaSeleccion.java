@@ -49,7 +49,7 @@ public class VentanaSeleccion extends Ventana {
     private static final Color SELECTED_COLOR = new Color(0, 255, 0, 100);
     private static final int MAX_POKEMON_SELECTED = 6;
     private static final int MAX_POR_TIPO_POCION = 2;  // Máximo 2 de cada tipo de poción
-    private static final int MAX_REVIVE_SELECTED = 2;  // Máximo 2 Revivir
+    private static final int MAX_REVIVE_SELECTED = 1;  // Máximo 1 Revivir
     
     // Contadores de selección
     private int pokemonSelectedCount = 0;
@@ -182,7 +182,61 @@ public class VentanaSeleccion extends Ventana {
         panelAbajo.add(panelBotonSiguiente, BorderLayout.EAST);
 
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
+        
+        // Configurar listeners para los spinners
+        configurarListenersSpinners();
     }
+
+private void configurarListenersSpinners() {
+    for (JSpinner spinner : spinnersItems) {
+        spinner.addChangeListener(e -> {
+            JPanel itemPanel = (JPanel) spinner.getParent();
+            String tipoItem = (String) itemPanel.getClientProperty("tipoItem");
+            int nuevoValor = (int) spinner.getValue();
+
+            // 1. Primero validar Revivir
+            if (tipoItem.equals("Revivir") && nuevoValor > 1) {
+                spinner.setValue(0);
+                JOptionPane.showMessageDialog(this,
+                    "Solo puedes llevar 1 Revivir como máximo",
+                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // 2. Validar máximo 2 por tipo de poción
+            if (!tipoItem.equals("Revivir") && nuevoValor > 2) {
+                spinner.setValue(0);
+                JOptionPane.showMessageDialog(this,
+                    "Máximo 2 " + tipoItem + " por tipo",
+                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // 3. Validar máximo 2 TIPOS de pociones diferentes
+            int tiposPocionesUsados = contarTiposPocionesSeleccionados();
+            if (!tipoItem.equals("Revivir") && nuevoValor > 0 && tiposPocionesUsados > 2) {
+                spinner.setValue(0);
+                JOptionPane.showMessageDialog(this,
+                    "Solo puedes seleccionar 2 tipos diferentes de pociones\n" +
+                    "(Ej: Poción y Superpoción, o Hiperpoción y Poción, etc.)",
+                    "Límite de tipos", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+    }
+}
+
+// Método auxiliar para contar tipos de pociones seleccionados
+private int contarTiposPocionesSeleccionados() {
+    int count = 0;
+    for (JSpinner spinner : spinnersItems) {
+        JPanel panel = (JPanel) spinner.getParent();
+        String tipoItem = (String) panel.getClientProperty("tipoItem");
+        if (!tipoItem.equals("Revivir") && (int) spinner.getValue() > 0) {
+            count++;
+        }
+    }
+    return count;
+}
 
     private JPanel crearPanelItem(String nombreItem) {
         JPanel panel = new JPanel(new BorderLayout());

@@ -31,6 +31,13 @@ public class VentanaDebug extends JFrame {
         if (POOBkemonGUI.getJugador1() != null) {
             sb.append("Nombre: ").append(POOBkemonGUI.getJugador1().getNombre()).append("\n");
             sb.append("Pokémon seleccionados: ").append(POOBkemonGUI.getSeleccionPokemonJugador1()).append("\n");
+
+            // Mostrar ítems del jugador 1
+            sb.append("Ítems:\n");
+            for (Object item : POOBkemonGUI.getJugador1().getItems()) {
+                sb.append(" - ").append(item.getClass().getSimpleName()).append("\n");
+            }
+
             sb.append("Movimientos:\n");
             for (Map.Entry<String, List<String>> entry : POOBkemonGUI.getMovimientosJugador1().entrySet()) {
                 sb.append(" - ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
@@ -43,6 +50,13 @@ public class VentanaDebug extends JFrame {
         if (POOBkemonGUI.getJugador2() != null) {
             sb.append("Nombre: ").append(POOBkemonGUI.getJugador2().getNombre()).append("\n");
             sb.append("Pokémon seleccionados: ").append(POOBkemonGUI.getSeleccionPokemonJugador2()).append("\n");
+
+            // Mostrar ítems del jugador 2
+            sb.append("Ítems:\n");
+            for (Object item : POOBkemonGUI.getJugador2().getItems()) {
+                sb.append(" - ").append(item.getClass().getSimpleName()).append("\n");
+            }
+
             sb.append("Movimientos:\n");
             for (Map.Entry<String, List<String>> entry : POOBkemonGUI.getMovimientosJugador2().entrySet()) {
                 sb.append(" - ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
