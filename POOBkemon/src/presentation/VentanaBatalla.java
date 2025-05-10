@@ -23,6 +23,9 @@ public class VentanaBatalla extends Ventana {
     private JTextArea areaMensajes;
     private JScrollPane scrollMensajes;
     private Map<Entrenador, List<Item>> mochilaLocal = new HashMap<>();
+    private JPanel panelArenaContainer;
+    private FondoPanel panelArena;
+    private JPanel panelBotones;
 
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
@@ -47,7 +50,6 @@ public class VentanaBatalla extends Ventana {
             animacion.setHorizontalAlignment(JLabel.CENTER);
             animacion.setVerticalAlignment(JLabel.CENTER);
             
-            // Cambio realizado aquí (de 10000 a 8000)
             Timer timer = new Timer(6000, e -> dialog.dispose());
             timer.setRepeats(false);
             timer.start();
@@ -107,7 +109,8 @@ public class VentanaBatalla extends Ventana {
         SwingUtilities.invokeLater(() -> actualizarPosicionPanelImagen());
 
         JPanel panelInferior = new JPanel(new BorderLayout());
-        FondoPanel panelArena = new FondoPanel("/resources/abajo.png");
+        panelArenaContainer = new JPanel(new BorderLayout());
+        panelArena = new FondoPanel("/resources/abajo.png");
         panelArena.setLayout(new BorderLayout());
 
         areaMensajes = new JTextArea(5, 30);
@@ -120,7 +123,7 @@ public class VentanaBatalla extends Ventana {
         scrollMensajes.setBorder(BorderFactory.createTitledBorder("Mensajes de Batalla"));
         panelArena.add(scrollMensajes, BorderLayout.CENTER);
 
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         panelBotones.setOpaque(false);
 
         labelJugador = new JLabel("Turno: " + POOBkemonGUI.getJugador1().getNombre(), SwingConstants.CENTER);
@@ -153,7 +156,8 @@ public class VentanaBatalla extends Ventana {
         panelBotones.add(btnHuida);
 
         panelArena.add(panelBotones, BorderLayout.SOUTH);
-        panelInferior.add(panelArena, BorderLayout.CENTER);
+        panelArenaContainer.add(panelArena, BorderLayout.CENTER);
+        panelInferior.add(panelArenaContainer, BorderLayout.CENTER);
         panelPrincipal.add(panelGif, BorderLayout.CENTER);
         panelPrincipal.add(panelInferior, BorderLayout.SOUTH);
         setContentPane(panelPrincipal);
@@ -166,6 +170,77 @@ public class VentanaBatalla extends Ventana {
         });
     }
 
+    public void actualizarVistaJugador() {
+        Entrenador jugador = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+        labelJugador.setText("Turno: " + jugador.getNombre());
+
+        // Cambiar imagen de fondo según el jugador
+        String fondoPath = turnoJugador1 ? "/resources/abajo.png" : "/resources/abajo2.png";
+        
+        // Solución sin modificar FondoPanel - recrear el panel
+        panelArenaContainer.removeAll();
+        panelArena = new FondoPanel(fondoPath);
+        panelArena.setLayout(new BorderLayout());
+        panelArena.add(scrollMensajes, BorderLayout.CENTER);
+        panelArena.add(panelBotones, BorderLayout.SOUTH);
+        panelArenaContainer.add(panelArena, BorderLayout.CENTER);
+        
+        panelArenaContainer.revalidate();
+        panelArenaContainer.repaint();
+
+        Pokemon activo = jugador.getPokemonActivo();
+        String rutaGif = PoobkemonGifs.getPokemonImage(activo.getNombre());
+
+        if (rutaGif != null) {
+            FondoPanel fondoPokemon = new FondoPanel(rutaGif);
+            if (turnoJugador1) {
+                setImagenPokemon(fondoPokemon);
+                progressBar1.setMaximum(activo.getPsMaximos());
+                actualizarVidaPokemon1(activo.getPs());
+            } else {
+                setImagenPokemon2(fondoPokemon);
+                progressBar2.setMaximum(activo.getPsMaximos());
+                actualizarVidaPokemon2(activo.getPs());
+            }
+        }
+        
+        // Actualizar posiciones de los Pokémon
+        actualizarPosicionPanelImagen();
+    }
+
+    private void actualizarPosicionPanelImagen() {
+        int panelWidth = panelGif.getWidth();
+        int panelHeight = panelGif.getHeight();
+        if (panelWidth == 0 || panelHeight == 0) return;
+
+        // Posiciones dependiendo del turno
+        int x1, y1, x2, y2;
+        
+        if (turnoJugador1) {
+            // Jugador 1 a la izquierda, jugador 2 a la derecha
+            x1 = (int)(panelWidth * 0.3) - (ANCHO_PANEL / 2);
+            y1 = (int)(panelHeight * 0.47);
+            x2 = (int)(panelWidth * 0.7) - (ANCHO_PANEL / 2);
+            y2 = (int)(panelHeight * 0.2);
+        } else {
+            // Jugador 2 a la izquierda, jugador 1 a la derecha
+            x2 = (int)(panelWidth * 0.3) - (ANCHO_PANEL / 2);
+            y2 = (int)(panelHeight * 0.47);
+            x1 = (int)(panelWidth * 0.7) - (ANCHO_PANEL / 2);
+            y1 = (int)(panelHeight * 0.2);
+        }
+
+        x1 = Math.max(0, Math.min(x1, panelWidth - ANCHO_PANEL));
+        y1 = Math.max(0, Math.min(y1, panelHeight - ALTO_PANEL));
+        x2 = Math.max(0, Math.min(x2, panelWidth - ANCHO_PANEL));
+        y2 = Math.max(0, Math.min(y2, panelHeight - ALTO_PANEL));
+
+        panelImagenPokemon.setBounds(x1, y1, ANCHO_PANEL, ALTO_PANEL);
+        panelImagenPokemon2.setBounds(x2, y2, ANCHO_PANEL, ALTO_PANEL);
+        panelGif.repaint();
+    }
+
+    // Resto de los métodos permanecen igual...
     public void agregarMensaje(String mensaje) {
         areaMensajes.append(mensaje + "\n");
         areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
@@ -559,27 +634,6 @@ public class VentanaBatalla extends Ventana {
         actualizarVidaPokemon2(POOBkemonGUI.getJugador2().getPokemonActivo().getPs());
     }
 
-    public void actualizarVistaJugador() {
-        Entrenador jugador = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
-        labelJugador.setText("Turno: " + jugador.getNombre());
-
-        Pokemon activo = jugador.getPokemonActivo();
-        String rutaGif = PoobkemonGifs.getPokemonImage(activo.getNombre());
-
-        if (rutaGif != null) {
-            FondoPanel fondoPokemon = new FondoPanel(rutaGif);
-            if (turnoJugador1) {
-                setImagenPokemon(fondoPokemon);
-                progressBar1.setMaximum(activo.getPsMaximos());
-                actualizarVidaPokemon1(activo.getPs());
-            } else {
-                setImagenPokemon2(fondoPokemon);
-                progressBar2.setMaximum(activo.getPsMaximos());
-                actualizarVidaPokemon2(activo.getPs());
-            }
-        }
-    }
-
     public void cargarPokemonesIniciales() {
         Entrenador j1 = POOBkemonGUI.getJugador1();
         Entrenador j2 = POOBkemonGUI.getJugador2();
@@ -596,27 +650,6 @@ public class VentanaBatalla extends Ventana {
         progressBar1.setValue(p1.getPs());
         progressBar2.setMaximum(p2.getPsMaximos());
         progressBar2.setValue(p2.getPs());
-    }
-
-    private void actualizarPosicionPanelImagen() {
-        int panelWidth = panelGif.getWidth();
-        int panelHeight = panelGif.getHeight();
-        if (panelWidth == 0 || panelHeight == 0) return;
-
-        int x2 = (int)(panelWidth * 0.7) - (ANCHO_PANEL / 2);
-        int y2 = (int)(panelHeight * 0.2);
-
-        int x1 = (int)(panelWidth * 0.3) - (ANCHO_PANEL / 2);
-        int y1 = (int)(panelHeight * 0.47);
-
-        x1 = Math.max(0, Math.min(x1, panelWidth - ANCHO_PANEL));
-        y1 = Math.max(0, Math.min(y1, panelHeight - ALTO_PANEL));
-        x2 = Math.max(0, Math.min(x2, panelWidth - ANCHO_PANEL));
-        y2 = Math.max(0, Math.min(y2, panelHeight - ALTO_PANEL));
-
-        panelImagenPokemon.setBounds(x1, y1, ANCHO_PANEL, ALTO_PANEL);
-        panelImagenPokemon2.setBounds(x2, y2, ANCHO_PANEL, ALTO_PANEL);
-        panelGif.repaint();
     }
 
     public void setImagenPokemon(FondoPanel fondo) {
