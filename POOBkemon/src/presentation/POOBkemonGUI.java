@@ -1,7 +1,11 @@
 package presentation;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.awt.*;
 import java.awt.event.*;
 import domain.*;
 
@@ -19,8 +23,8 @@ public class POOBkemonGUI {
     private static Entrenador jugador2;
     private static Batalla batallaActual;
 
-    private static List<String> seleccionPokemonJugador1;
-    private static List<String> seleccionPokemonJugador2;
+    private static List<String> seleccionPokemonJugador1 = new ArrayList<>();
+    private static List<String> seleccionPokemonJugador2 = new ArrayList<>();
 
     private static Map<String, List<String>> movimientosJugador1 = new HashMap<>();
     private static Map<String, List<String>> movimientosJugador2 = new HashMap<>();
@@ -119,17 +123,21 @@ public class POOBkemonGUI {
 
     public static void reiniciarAplicacion() {
         cerrarTodasLasVentanas();
+        reiniciarDatos();
+        mostrarVentanaInicio();
+    }
+
+    private static void reiniciarDatos() {
         poobkemon = null;
         jugador1 = null;
         jugador2 = null;
         batallaActual = null;
-        seleccionPokemonJugador1 = null;
-        seleccionPokemonJugador2 = null;
+        seleccionPokemonJugador1.clear();
+        seleccionPokemonJugador2.clear();
         movimientosJugador1.clear();
         movimientosJugador2.clear();
         mostrandoMovimientosJugador1 = true;
         turnoJugador1 = true;
-        mostrarVentanaInicio();
     }
 
     private static void cerrarTodasLasVentanas() {
@@ -140,6 +148,7 @@ public class POOBkemonGUI {
         if (ventanaMovimientos != null) ventanaMovimientos.dispose();
         if (ventanaBatalla != null) ventanaBatalla.dispose();
         if (ventanaDebug != null) ventanaDebug.dispose();
+        
         ventanaInicio = null;
         ventanaOpciones = null;
         ventanaCreditos = null;
@@ -182,12 +191,11 @@ public class POOBkemonGUI {
         if (mostrandoMovimientosJugador1) {
             setSeleccionPokemonJugador1(seleccion);
             ventanaMovimientos = new VentanaMovimientos(seleccion, true);
-            ventanaMovimientos.mostrar();
         } else {
             setSeleccionPokemonJugador2(seleccion);
             ventanaMovimientos = new VentanaMovimientos(seleccion, false);
-            ventanaMovimientos.mostrar();
         }
+        ventanaMovimientos.mostrar();
     }
 
     public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
@@ -200,18 +208,19 @@ public class POOBkemonGUI {
     }
 
     public static void mostrarVentanaDebug() {
-        if (ventanaDebug != null) ventanaDebug.dispose();
+        if (ventanaDebug != null) {
+            ventanaDebug.dispose();
+        }
         ventanaDebug = new VentanaDebug();
+        
         JButton botonActualizar = new JButton("Actualizar");
-        botonActualizar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ventanaDebug.dispose();
-                ventanaDebug = new VentanaDebug();
-                ventanaDebug.setVisible(true);
-            }
+        botonActualizar.addActionListener(e -> {
+            ventanaDebug.dispose();
+            ventanaDebug = new VentanaDebug();
+            ventanaDebug.setVisible(true);
         });
-        ventanaDebug.add(botonActualizar, java.awt.BorderLayout.SOUTH);
+        
+        ventanaDebug.add(botonActualizar, BorderLayout.SOUTH);
         ventanaDebug.setVisible(true);
     }
 
@@ -220,11 +229,23 @@ public class POOBkemonGUI {
     }
 
     private static void cerrarOtrasVentanas(JFrame ventanaActual) {
-        if (ventanaInicio != null && ventanaInicio != ventanaActual) ventanaInicio.dispose();
-        if (ventanaOpciones != null && ventanaOpciones != ventanaActual) ventanaOpciones.dispose();
-        if (ventanaCreditos != null && ventanaCreditos != ventanaActual) ventanaCreditos.dispose();
-        if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual) ventanaSeleccion.dispose();
-        if (ventanaMovimientos != null && ventanaMovimientos != ventanaActual) ventanaMovimientos.dispose();
-        if (ventanaBatalla != null && ventanaBatalla != ventanaActual) ventanaBatalla.dispose();
+        if (ventanaInicio != null && ventanaInicio != ventanaActual) {
+            ventanaInicio.dispose();
+        }
+        if (ventanaOpciones != null && ventanaOpciones != ventanaActual) {
+            ventanaOpciones.dispose();
+        }
+        if (ventanaCreditos != null && ventanaCreditos != ventanaActual) {
+            ventanaCreditos.dispose();
+        }
+        if (ventanaSeleccion != null && ventanaSeleccion != ventanaActual) {
+            ventanaSeleccion.dispose();
+        }
+        if (ventanaMovimientos != null && ventanaMovimientos != ventanaActual) {
+            ventanaMovimientos.dispose();
+        }
+        if (ventanaBatalla != null && ventanaBatalla != ventanaActual) {
+            ventanaBatalla.dispose();
+        }
     }
 }

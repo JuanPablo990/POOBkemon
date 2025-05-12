@@ -69,6 +69,94 @@ public class VentanaBatalla extends Ventana {
         }
     }
 
+
+private void mostrarAnimacionFinal(Entrenador ganador) {
+    JDialog dialog = new JDialog(this, "", Dialog.ModalityType.APPLICATION_MODAL);
+    dialog.setUndecorated(true);
+    dialog.setSize(800, 600);
+    dialog.setLocationRelativeTo(null);
+    
+    try {
+        // 1. Fondo con el GIF usando FondoPanel
+        FondoPanel fondo = new FondoPanel("/resources/endgame.gif");
+        fondo.setLayout(new BorderLayout());
+
+        // 2. Color dorado profesional (RGB: 255, 215, 0)
+        Color dorado = new Color(255, 215, 0); 
+        // Alternativa dorado oscuro: new Color(212, 175, 55)
+        
+        // 3. Texto del ganador con estilo dorado
+        JLabel labelGanador = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
+        labelGanador.setHorizontalAlignment(SwingConstants.CENTER);
+        labelGanador.setFont(new Font("Arial", Font.BOLD, 36));
+        labelGanador.setForeground(dorado);
+        
+        // Efecto de borde para mejor legibilidad
+        labelGanador.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(139, 69, 19), 2), // Borde marrón
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        
+        // 4. Panel para el texto con sombra
+        JPanel panelTexto = new JPanel(new GridBagLayout());
+        panelTexto.setOpaque(false);
+        panelTexto.setBorder(BorderFactory.createEmptyBorder(0, 0, 80, 0));
+        
+        // Sombra del texto
+        JLabel sombraTexto = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
+        sombraTexto.setHorizontalAlignment(SwingConstants.CENTER);
+        sombraTexto.setFont(new Font("Arial", Font.BOLD, 36));
+        sombraTexto.setForeground(new Color(0, 0, 0, 150)); // Negro semitransparente
+        
+        // Posicionamiento con superposición
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(2, 2, 0, 0); // Desplazamiento sombra
+        panelTexto.add(sombraTexto, gbc);
+        
+        gbc.insets = new Insets(0, 0, 2, 2);
+        panelTexto.add(labelGanador, gbc);
+
+        // 5. Añadir componentes
+        fondo.add(panelTexto, BorderLayout.SOUTH);
+
+        // 6. Listener para clic en cualquier lugar
+        MouseAdapter clickListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                dialog.dispose();
+                POOBkemonGUI.reiniciarAplicacion();
+            }
+        };
+        fondo.addMouseListener(clickListener);
+
+        dialog.add(fondo);
+        dialog.setVisible(true);
+
+        // 7. Timer de cierre automático
+        new Timer(10000, e -> {
+            dialog.dispose();
+            POOBkemonGUI.reiniciarAplicacion();
+        }).start();
+
+    } catch (Exception e) {
+        System.err.println("Error al cargar la animación final: " + e.getMessage());
+        POOBkemonGUI.reiniciarAplicacion();
+    }
+}
+    
+    private void verificarFinDeBatalla() {
+        Entrenador j1 = POOBkemonGUI.getJugador1();
+        Entrenador j2 = POOBkemonGUI.getJugador2();
+        
+        if (equipoDebilitado(j1)) {
+            mostrarAnimacionFinal(j2);
+        } else if (equipoDebilitado(j2)) {
+            mostrarAnimacionFinal(j1);
+        }
+    }
+
     private void inicializarComponentes() {
         Entrenador j1 = POOBkemonGUI.getJugador1();
         Entrenador j2 = POOBkemonGUI.getJugador2();
@@ -206,6 +294,9 @@ public class VentanaBatalla extends Ventana {
         
         // Actualizar posiciones de los Pokémon
         actualizarPosicionPanelImagen();
+        
+        // Verificar si la batalla ha terminado
+        verificarFinDeBatalla();
     }
 
     private void actualizarPosicionPanelImagen() {
@@ -240,7 +331,6 @@ public class VentanaBatalla extends Ventana {
         panelGif.repaint();
     }
 
-    // Resto de los métodos permanecen igual...
     public void agregarMensaje(String mensaje) {
         areaMensajes.append(mensaje + "\n");
         areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
