@@ -18,7 +18,6 @@ public class POOBkemon {
         this.entrenadores = new ArrayList<>();
     }
 
-    // --- Métodos para Pokémon ---
     public Pokemon crearPokemon(String nombrePokemon) {
         return poquedex.crearPokemon(nombrePokemon);
     }
@@ -26,8 +25,7 @@ public class POOBkemon {
     public List<String> obtenerNombresPokemonDisponibles() {
         return poquedex.obtenerNombresPokemonDisponibles();
     }
-
-    // --- Métodos para Movimientos ---
+    
     public Movimiento crearMovimiento(String nombreMovimiento) {
         return poquedex.crearMovimiento(nombreMovimiento);
     }
@@ -44,7 +42,6 @@ public class POOBkemon {
         return poquedex;
     }
 
-    // --- Métodos para Entrenadores ---
     public Entrenador crearEntrenador(String nombre) {
         Entrenador entrenador = new Entrenador(nombre);
         entrenadores.add(entrenador);
@@ -64,7 +61,6 @@ public class POOBkemon {
         entrenador.asignarMovimientosAPokemon(indicePokemon, movimientos);
     }
 
-    // --- Métodos para Batallas ---
     public void iniciarBatalla() {
         if (jugador1 != null && jugador2 != null) {
         	this.batallaActual = new Batalla(jugador1, jugador2,null);
@@ -75,7 +71,6 @@ public class POOBkemon {
     public void setJugadores(Entrenador jugador1, Entrenador jugador2) {
         this.jugador1 = jugador1;
         this.jugador2 = jugador2;
-
         if (!entrenadores.contains(jugador1)) {
             entrenadores.add(jugador1);
         }
@@ -89,7 +84,6 @@ public class POOBkemon {
         iniciarBatalla();
     }
 
-    // --- Getters para Batalla ---
     public Entrenador getEntrenador1() {
         return jugador1 != null ? jugador1 : (batallaActual != null ? batallaActual.getEntrenador1() : null);
     }
@@ -123,7 +117,6 @@ public class POOBkemon {
     public List<String> getOpcionesTurno(Entrenador entrenador) {
         List<String> opciones = new ArrayList<>();
         opciones.add("ATACAR");
-
         if (entrenador != null) {
             boolean puedeCambiar = entrenador.getEquipoPokemon().stream()
                                   .filter(p -> !p.equals(entrenador.getPokemonActivo()))
@@ -131,12 +124,10 @@ public class POOBkemon {
             if (puedeCambiar) {
                 opciones.add("CAMBIAR_POKEMON");
             }
-
             if (!entrenador.getMochilaItems().isEmpty()) {
                 opciones.add("USAR_ITEM");
             }
         }
-
         return opciones;
     }
 
@@ -147,7 +138,6 @@ public class POOBkemon {
                .collect(Collectors.toList());
     }
 
-    // --- Getters generales ---
     public List<Entrenador> getEntrenadores() {
         return new ArrayList<>(entrenadores);
     }
@@ -168,7 +158,6 @@ public class POOBkemon {
         return turnoJugador1 ? jugador1 : jugador2;
     }
 
-    // --- Métodos de reinicio ---
     public void reiniciarJuego() {
         this.entrenadores.clear();
         this.batallaActual = null;
