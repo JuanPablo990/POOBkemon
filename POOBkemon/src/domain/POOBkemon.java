@@ -12,7 +12,6 @@ public class POOBkemon {
     private Entrenador jugador2;
     private boolean turnoJugador1 = true;
     
-
     public POOBkemon() {
         this.poquedex = Poquedex.getInstancia();
         this.entrenadores = new ArrayList<>();
@@ -63,7 +62,7 @@ public class POOBkemon {
 
     public void iniciarBatalla() {
         if (jugador1 != null && jugador2 != null) {
-        	this.batallaActual = new Batalla(jugador1, jugador2,null);
+            this.batallaActual = new Batalla(jugador1, jugador2, null);
             batallaActual.iniciarBatalla();
         }
     }
@@ -164,5 +163,36 @@ public class POOBkemon {
         this.jugador1 = null;
         this.jugador2 = null;
         this.turnoJugador1 = true;
+    }
+
+    // Métodos para equipos aleatorios
+    public void generarEquipoAleatorio(Entrenador entrenador, int cantidad) {
+        if (entrenador == null) {
+            throw new IllegalArgumentException("El entrenador no puede ser nulo");
+        }
+        entrenador.generarEquipoAleatorio(cantidad);
+    }
+
+    public void generarEquipoAleatorioCompleto(Entrenador entrenador) {
+        if (entrenador == null) {
+            throw new IllegalArgumentException("El entrenador no puede ser nulo");
+        }
+        entrenador.generarEquipoAleatorioCompleto();
+    }
+
+    // Método para obtener pokémon por nombre
+    public Pokemon getPokemonPorNombre(Entrenador entrenador, String nombre) {
+        if (entrenador == null || nombre == null) {
+            return null;
+        }
+        return entrenador.getPokemonPorNombre(nombre);
+    }
+
+    // Método para usar items
+    public String usarItem(Entrenador entrenador, int indiceItem, int indicePokemon) {
+        if (entrenador == null) {
+            throw new IllegalArgumentException("El entrenador no puede ser nulo");
+        }
+        return entrenador.usarItem(indiceItem, indicePokemon);
     }
 }

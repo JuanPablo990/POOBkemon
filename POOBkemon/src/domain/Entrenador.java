@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Entrenador {
@@ -14,6 +15,67 @@ public class Entrenador {
         this.equipoPokemon = new ArrayList<>(6);
         this.mochilaItems = new ArrayList<>();
         this.pokemonActivo = null;
+    }
+
+    /**
+     * Genera un equipo aleatorio de Pokémon con movimientos únicos para cada uno.
+     * @param cantidad Número de Pokémon en el equipo (1-6)
+     */
+    public void generarEquipoAleatorio(int cantidad) {
+        if (cantidad < 1 || cantidad > 6) {
+            throw new IllegalArgumentException("La cantidad debe estar entre 1 y 6");
+        }
+        
+        // Limpiar equipo actual
+        equipoPokemon.clear();
+        pokemonActivo = null;
+        
+        // Obtener todos los Pokémon disponibles
+        List<String> nombresPokemon = obtenerListaPokemonDisponibles();
+        Collections.shuffle(nombresPokemon);
+        
+        // Obtener todos los movimientos disponibles
+        List<String> nombresMovimientos = obtenerListaMovimientosDisponibles();
+        Collections.shuffle(nombresMovimientos);
+        
+        // Lista para llevar registro de movimientos ya asignados
+        List<String> movimientosAsignados = new ArrayList<>();
+        
+        // Seleccionar Pokémon aleatorios
+        for (int i = 0; i < cantidad && i < nombresPokemon.size(); i++) {
+            String nombrePokemon = nombresPokemon.get(i);
+            Pokemon pokemon = Poquedex.getInstancia().crearPokemon(nombrePokemon);
+            agregarPokemon(pokemon);
+            
+            // Seleccionar 4 movimientos aleatorios únicos para este Pokémon
+            List<String> movimientosPokemon = new ArrayList<>();
+            for (int j = 0; j < 4 && j < nombresMovimientos.size(); j++) {
+                String movimiento = nombresMovimientos.get((i * 4 + j) % nombresMovimientos.size());
+                if (!movimientosAsignados.contains(movimiento)) {
+                    movimientosPokemon.add(movimiento);
+                    movimientosAsignados.add(movimiento);
+                }
+            }
+            
+            // Si no conseguimos 4 movimientos únicos, completar con repetidos pero únicos para el Pokémon
+            while (movimientosPokemon.size() < 4 && !nombresMovimientos.isEmpty()) {
+                String movimiento;
+                do {
+                    movimiento = nombresMovimientos.get((int)(Math.random() * nombresMovimientos.size()));
+                } while (movimientosPokemon.contains(movimiento));
+                
+                movimientosPokemon.add(movimiento);
+            }
+            
+            asignarMovimientosPorNombre(i, movimientosPokemon);
+        }
+    }
+
+    /**
+     * Genera un equipo aleatorio completo de 6 Pokémon con movimientos únicos.
+     */
+    public void generarEquipoAleatorioCompleto() {
+        generarEquipoAleatorio(6);
     }
 
     public void agregarPokemon(Pokemon pokemon) {
