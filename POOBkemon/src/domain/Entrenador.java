@@ -3,6 +3,7 @@ package domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class Entrenador {
     private final String nombre;
@@ -76,6 +77,53 @@ public class Entrenador {
      */
     public void generarEquipoAleatorioCompleto() {
         generarEquipoAleatorio(6);
+    }
+
+    /**
+     * Da items aleatorios al entrenador siguiendo las reglas:
+     * - Máximo 1 Revive
+     * - Máximo 2 pociones en total
+     * - Solo 2 tipos de pociones (no se pueden tener las 3 tipos)
+     */
+    public void darItemsAleatorios() {
+        Random random = new Random();
+        mochilaItems.clear(); // Limpiar mochila antes de agregar nuevos items
+        
+        // Decidir si dar un Revive (50% de probabilidad)
+        if (random.nextBoolean()) {
+            mochilaItems.add(new Revive());
+        }
+        
+        // Decidir cuántas pociones dar (0, 1 o 2)
+        int cantidadPociones = random.nextInt(3); // 0, 1 o 2
+        
+        if (cantidadPociones > 0) {
+            // Elegir qué tipos de pociones se pueden usar (seleccionar 2 de los 3 tipos)
+            List<Class<? extends Item>> tiposPociones = new ArrayList<>();
+            tiposPociones.add(Potion.class);
+            tiposPociones.add(SuperPotion.class);
+            tiposPociones.add(HyperPotion.class);
+            Collections.shuffle(tiposPociones);
+            
+            // Seleccionar solo 2 tipos de pociones
+            List<Class<? extends Item>> tiposSeleccionados = tiposPociones.subList(0, 2);
+            
+            // Repartir las pociones entre los tipos seleccionados
+            for (int i = 0; i < cantidadPociones; i++) {
+                Class<? extends Item> tipoPocion = tiposSeleccionados.get(i % tiposSeleccionados.size());
+                try {
+                    if (tipoPocion == Potion.class) {
+                        mochilaItems.add(new Potion());
+                    } else if (tipoPocion == SuperPotion.class) {
+                        mochilaItems.add(new SuperPotion());
+                    } else if (tipoPocion == HyperPotion.class) {
+                        mochilaItems.add(new HyperPotion());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void agregarPokemon(Pokemon pokemon) {
