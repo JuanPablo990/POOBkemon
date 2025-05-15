@@ -17,7 +17,7 @@ class POOBkemontest {
     @BeforeEach
     void setUp() {
         juego = new POOBkemon();
-        entrenador = juego.crearEntrenador("Ash");
+        entrenador = juego.crearEntrenador("Thomas");
     }
 
     @Test

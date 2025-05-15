@@ -18,14 +18,14 @@ public class Pokemon {
     protected int ataqueEspecialBase;
     protected int defensaEspecialBase;
     
-    // Etapas de los stats (sin límites)
+   
     protected int etapaAtaque;
     protected int etapaDefensa;
     protected int etapaVelocidad;
     protected int etapaAtaqueEspecial;
     protected int etapaDefensaEspecial;
 
-    // Multiplicador base para las etapas
+
     private static final double MULTIPLICADOR_BASE = 1.5;
     private static final double MULTIPLICADOR_MINIMO = 0.25;
     private static final double MULTIPLICADOR_MAXIMO = 4.0;
@@ -44,7 +44,7 @@ public class Pokemon {
         this.ataqueEspecialBase = ataqueEspecialBase;
         this.defensaEspecialBase = defensaEspecialBase;
         
-        // Inicializar etapas en 0 (multiplicador neutro)
+      
         this.etapaAtaque = 0;
         this.etapaDefensa = 0;
         this.etapaVelocidad = 0;
@@ -52,7 +52,7 @@ public class Pokemon {
         this.etapaDefensaEspecial = 0;
     }
 
-    // --- Métodos para PS (vida) ---
+   
     public int aumentarPS(int cantidad) {
         if (cantidad <= 0) return 0;
         
@@ -73,7 +73,7 @@ public class Pokemon {
         return this.ps <= 0;
     }
 
-    // --- Métodos para modificar etapas de stats (sin límites) ---
+    
     public void aumentarAtaque(int cantidad) {
         this.etapaAtaque += cantidad;
     }
@@ -114,7 +114,7 @@ public class Pokemon {
         this.etapaDefensaEspecial -= cantidad;
     }
 
-    // --- Métodos para calcular multiplicadores sin límites ---
+   
     private double calcularMultiplicador(int etapa) {
         double multiplicador;
         
@@ -123,14 +123,14 @@ public class Pokemon {
         } else if (etapa < 0) {
             multiplicador = 1.0 / (1.0 + (Math.abs(etapa) * (MULTIPLICADOR_BASE - 1.0)));
         } else {
-            return 1.0; // Etapa 0 = multiplicador neutro
+            return 1.0; 
         }
         
-        // Aplicar límites absolutos
+  
         return Math.max(MULTIPLICADOR_MINIMO, Math.min(MULTIPLICADOR_MAXIMO, multiplicador));
     }
 
-    // --- Métodos para obtener stats actuales ---
+  
     public int getAtaque() {
         return (int)(this.ataqueBase * calcularMultiplicador(this.etapaAtaque));
     }
@@ -151,7 +151,7 @@ public class Pokemon {
         return (int)(this.defensaEspecialBase * calcularMultiplicador(this.etapaDefensaEspecial));
     }
 
-    // --- Getters básicos ---
+   
     public String getNombre() {
         return nombre;
     }
@@ -172,11 +172,11 @@ public class Pokemon {
         return psMaximos;
     }
 
-       // Tabla de compatibilidad de tipos para movimientos
+      
     private static final Map<String, List<String>> COMPATIBILIDAD_MOVIMIENTOS = new HashMap<>();
     
     static {
-        // Inicializar la tabla de compatibilidad
+        
         COMPATIBILIDAD_MOVIMIENTOS.put("Acero", Arrays.asList("Acero", "Roca", "Tierra"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Agua", Arrays.asList("Agua", "Hielo"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Bicho", Arrays.asList("Bicho", "Planta", "Veneno"));
@@ -197,7 +197,7 @@ public class Pokemon {
         COMPATIBILIDAD_MOVIMIENTOS.put("Volador", Arrays.asList("Volador", "Normal", "Lucha"));
     }
 
-    // Lista de movimientos del Pokémon
+    
     private List<Movimiento> movimientos = new ArrayList<>();
 
     /**
@@ -212,7 +212,7 @@ public class Pokemon {
         if (nuevosMovimientos == null || nuevosMovimientos.isEmpty() || nuevosMovimientos.size() > 4) {
             throw new IllegalArgumentException("Un Pokémon debe tener entre 1 y 4 movimientos");
         }
-        // Si pasa todas las validaciones, asignar los movimientos
+        
         this.movimientos = new ArrayList<>(nuevosMovimientos);
     }
 
@@ -225,7 +225,7 @@ public class Pokemon {
     private boolean esMovimientoCompatible(Movimiento movimiento) {
         String tipoMovimiento = movimiento.getTipo();
         
-        // Verificar compatibilidad con el tipo principal
+        
         if (COMPATIBILIDAD_MOVIMIENTOS.containsKey(tipoMovimiento)) {
             List<String> tiposCompatibles = COMPATIBILIDAD_MOVIMIENTOS.get(tipoMovimiento);
             
@@ -269,12 +269,12 @@ public class Pokemon {
         movimientos.set(indice, nuevoMovimiento);
     }
 
-    // Getter para los movimientos
+   
     public List<Movimiento> getMovimientos() {
-        return new ArrayList<>(movimientos); // Devuelve una copia para proteger la encapsulación
+        return new ArrayList<>(movimientos); 
     }
     
-        // Dentro de la clase Pokemon (domain/Pokemon.java)
+        
     public int getEtapaAtaque() {
         return this.etapaAtaque;
     }
@@ -295,7 +295,7 @@ public class Pokemon {
         return this.etapaDefensaEspecial;
     }
     
-    // --- Método toString actualizado ---
+ 
     @Override
     public String toString() {
         return String.format(
