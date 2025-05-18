@@ -32,8 +32,8 @@ public class POOBkemon {
         }
     }
 
-    // Método privado para crear entrenador con equipo aleatorio (usado en modo supervivencia)
-    private Entrenador crearEntrenadorConEquipoAleatorio(String nombre) {
+    // Método para crear entrenador con equipo aleatorio (ahora público)
+    public Entrenador crearEntrenadorConEquipoAleatorio(String nombre) {
         Entrenador entrenador = new Entrenador(nombre);
         entrenador.generarEquipoAleatorioCompleto();
         entrenador.darItemsAleatorios();
@@ -41,7 +41,16 @@ public class POOBkemon {
         return entrenador;
     }
 
-    // Métodos existentes (se mantienen igual)
+    // Métodos para gestionar el modo supervivencia
+    public void setModoSupervivencia(boolean modo) {
+        this.modoSupervivencia = modo;
+    }
+
+    public boolean isModoSupervivencia() {
+        return modoSupervivencia;
+    }
+
+    // Métodos existentes
     public Pokemon crearPokemon(String nombrePokemon) {
         return poquedex.crearPokemon(nombrePokemon);
     }
@@ -188,6 +197,7 @@ public class POOBkemon {
         this.jugador1 = null;
         this.jugador2 = null;
         this.turnoJugador1 = true;
+        this.modoSupervivencia = false;
     }
 
     // Métodos para equipos aleatorios
@@ -219,10 +229,5 @@ public class POOBkemon {
             throw new IllegalArgumentException("El entrenador no puede ser nulo");
         }
         return entrenador.usarItem(indiceItem, indicePokemon);
-    }
-
-    // Nuevo método para verificar si está en modo supervivencia
-    public boolean isModoSupervivencia() {
-        return modoSupervivencia;
     }
 }

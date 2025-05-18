@@ -10,6 +10,7 @@ import java.awt.event.*;
 import domain.*;
 
 public class POOBkemonGUI {
+    // Ventanas
     private static VentanaInicio ventanaInicio;
     private static VentanaOpciones ventanaOpciones;
     private static VentanaCreditos ventanaCreditos;
@@ -18,27 +19,36 @@ public class POOBkemonGUI {
     private static VentanaBatalla ventanaBatalla;
     private static VentanaDebug ventanaDebug;
 
+    // Modelo del juego
     private static POOBkemon poobkemon;
     private static Entrenador jugador1;
     private static Entrenador jugador2;
     private static Batalla batallaActual;
 
+    // Datos de selección
     private static List<String> seleccionPokemonJugador1 = new ArrayList<>();
     private static List<String> seleccionPokemonJugador2 = new ArrayList<>();
 
+    // Movimientos seleccionados
     private static Map<String, List<String>> movimientosJugador1 = new HashMap<>();
     private static Map<String, List<String>> movimientosJugador2 = new HashMap<>();
 
+    // Estados del juego
     private static boolean mostrandoMovimientosJugador1 = true;
     private static boolean turnoJugador1 = true;
+    private static boolean modoSupervivencia = false;
+    private static boolean modoDebug = false;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             mostrarVentanaInicio();
-            mostrarVentanaDebug();
+            if (modoDebug) {
+                mostrarVentanaDebug();
+            }
         });
     }
 
+    // Getters y setters mejorados con validación
     public static POOBkemon getPoobkemon() {
         if (poobkemon == null) {
             poobkemon = new POOBkemon();
@@ -47,59 +57,91 @@ public class POOBkemonGUI {
     }
 
     public static Entrenador getJugador1() {
+        if (jugador1 == null) {
+            throw new IllegalStateException("Jugador 1 no ha sido inicializado");
+        }
         return jugador1;
     }
 
     public static Entrenador getJugador2() {
+        if (jugador2 == null && !modoSupervivencia) {
+            throw new IllegalStateException("Jugador 2 no ha sido inicializado");
+        }
         return jugador2;
     }
 
     public static Batalla getBatallaActual() {
+        if (batallaActual == null) {
+            throw new IllegalStateException("No hay una batalla en curso");
+        }
         return batallaActual;
     }
 
     public static void setJugador1(Entrenador jugador) {
+        if (jugador == null) {
+            throw new IllegalArgumentException("El jugador no puede ser nulo");
+        }
         jugador1 = jugador;
     }
 
     public static void setJugador2(Entrenador jugador) {
+        if (jugador == null && !modoSupervivencia) {
+            throw new IllegalArgumentException("El jugador no puede ser nulo");
+        }
         jugador2 = jugador;
     }
 
     public static void setSeleccionPokemonJugador1(List<String> seleccion) {
-        seleccionPokemonJugador1 = seleccion;
+        if (seleccion == null || seleccion.size() != 3) {
+            throw new IllegalArgumentException("La selección debe contener exactamente 3 Pokémon");
+        }
+        seleccionPokemonJugador1 = new ArrayList<>(seleccion);
     }
 
     public static List<String> getSeleccionPokemonJugador1() {
-        return seleccionPokemonJugador1;
+        return new ArrayList<>(seleccionPokemonJugador1);
     }
 
     public static void setSeleccionPokemonJugador2(List<String> seleccion) {
-        seleccionPokemonJugador2 = seleccion;
+        if (seleccion == null || seleccion.size() != 3) {
+            throw new IllegalArgumentException("La selección debe contener exactamente 3 Pokémon");
+        }
+        seleccionPokemonJugador2 = new ArrayList<>(seleccion);
     }
 
     public static List<String> getSeleccionPokemonJugador2() {
-        return seleccionPokemonJugador2;
+        return new ArrayList<>(seleccionPokemonJugador2);
     }
 
     public static void setMovimientosDePokemon(String nombrePokemon, List<String> movimientos, boolean esJugador1) {
+        if (nombrePokemon == null || nombrePokemon.isEmpty()) {
+            throw new IllegalArgumentException("El nombre del Pokémon no puede estar vacío");
+        }
+        if (movimientos == null || movimientos.size() != 4) {
+            throw new IllegalArgumentException("Deben seleccionarse exactamente 4 movimientos");
+        }
+
         if (esJugador1) {
-            movimientosJugador1.put(nombrePokemon, movimientos);
+            movimientosJugador1.put(nombrePokemon, new ArrayList<>(movimientos));
         } else {
-            movimientosJugador2.put(nombrePokemon, movimientos);
+            movimientosJugador2.put(nombrePokemon, new ArrayList<>(movimientos));
         }
     }
 
     public static List<String> getMovimientosDePokemon(String nombrePokemon, boolean esJugador1) {
-        return esJugador1 ? movimientosJugador1.get(nombrePokemon) : movimientosJugador2.get(nombrePokemon);
+        List<String> movimientos = esJugador1 ? 
+            movimientosJugador1.get(nombrePokemon) : 
+            movimientosJugador2.get(nombrePokemon);
+            
+        return movimientos != null ? new ArrayList<>(movimientos) : null;
     }
 
     public static Map<String, List<String>> getMovimientosJugador1() {
-        return movimientosJugador1;
+        return new HashMap<>(movimientosJugador1);
     }
 
     public static Map<String, List<String>> getMovimientosJugador2() {
-        return movimientosJugador2;
+        return new HashMap<>(movimientosJugador2);
     }
 
     public static boolean isMostrandoMovimientosJugador1() {
@@ -112,6 +154,28 @@ public class POOBkemonGUI {
 
     public static boolean isTurnoJugador1() {
         return turnoJugador1;
+    }
+
+    public static boolean isModoSupervivencia() {
+        return modoSupervivencia;
+    }
+
+    public static void setModoSupervivencia(boolean modo) {
+        modoSupervivencia = modo;
+    }
+
+    public static boolean isModoDebug() {
+        return modoDebug;
+    }
+
+    public static void setModoDebug(boolean modo) {
+        modoDebug = modo;
+        if (modoDebug && ventanaDebug == null) {
+            mostrarVentanaDebug();
+        } else if (!modoDebug && ventanaDebug != null) {
+            ventanaDebug.dispose();
+            ventanaDebug = null;
+        }
     }
 
     public static void cambiarTurno() {
@@ -138,6 +202,7 @@ public class POOBkemonGUI {
         movimientosJugador2.clear();
         mostrandoMovimientosJugador1 = true;
         turnoJugador1 = true;
+        modoSupervivencia = false;
     }
 
     private static void cerrarTodasLasVentanas() {
@@ -158,6 +223,7 @@ public class POOBkemonGUI {
         ventanaDebug = null;
     }
 
+    // Métodos para mostrar ventanas
     public static void mostrarVentanaInicio() {
         cerrarOtrasVentanas(null);
         ventanaInicio = new VentanaInicio();
@@ -187,6 +253,10 @@ public class POOBkemonGUI {
     }
 
     public static void mostrarVentanaMovimientos(List<String> seleccion) {
+        if (seleccion == null || seleccion.size() != 3) {
+            throw new IllegalArgumentException("La selección debe contener exactamente 3 Pokémon");
+        }
+        
         cerrarOtrasVentanas(null);
         if (mostrandoMovimientosJugador1) {
             setSeleccionPokemonJugador1(seleccion);
@@ -199,6 +269,10 @@ public class POOBkemonGUI {
     }
 
     public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
+        if (nombresPokemonSeleccionados == null || nombresPokemonSeleccionados.isEmpty()) {
+            throw new IllegalArgumentException("La lista de Pokémon seleccionados no puede estar vacía");
+        }
+        
         cerrarOtrasVentanas(null);
         getPoobkemon().setJugadores(jugador1, jugador2);
         ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
@@ -207,10 +281,29 @@ public class POOBkemonGUI {
         batallaActual.iniciarBatalla();
     }
 
+    public static void iniciarBatalla() {
+        if (isModoSupervivencia()) {
+            List<String> nombresPokemon = new ArrayList<>();
+            for (Pokemon pokemon : jugador1.getEquipoPokemon()) {
+                nombresPokemon.add(pokemon.getNombre());
+            }
+            mostrarVentanaBatalla(nombresPokemon);
+        } else {
+            if (mostrandoMovimientosJugador1) {
+                mostrarVentanaMovimientos(seleccionPokemonJugador1);
+            } else {
+                mostrarVentanaMovimientos(seleccionPokemonJugador2);
+            }
+        }
+    }
+
     public static void mostrarVentanaDebug() {
+        if (!modoDebug) return;
+        
         if (ventanaDebug != null) {
             ventanaDebug.dispose();
         }
+        
         ventanaDebug = new VentanaDebug();
         
         JButton botonActualizar = new JButton("Actualizar");

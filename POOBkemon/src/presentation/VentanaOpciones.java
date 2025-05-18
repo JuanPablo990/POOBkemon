@@ -195,13 +195,12 @@ public class VentanaOpciones extends Ventana {
                 String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
                 String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
                 
-                // Crear entrenadores usando la fachada
                 Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
                 Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
                 
-                // Almacenar referencias para uso posterior
                 POOBkemonGUI.setJugador1(jugador1);
                 POOBkemonGUI.setJugador2(jugador2);
+                POOBkemonGUI.setModoSupervivencia(false); // Asegurar que no está en modo supervivencia
                 
                 dialog.dispose();
                 this.setVisible(false);
@@ -223,9 +222,18 @@ public class VentanaOpciones extends Ventana {
             if (nombresValidos) {
                 String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
                 String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
-                JOptionPane.showMessageDialog(dialog,"Modo Supervivencia seleccionado para " + titulo +
-                        "\nJugador 1: " + player1Name +(mostrarPlayer2 ? "\nJugador 2: " + player2Name : ""));
+                
+                // Crear entrenadores con equipos aleatorios completos
+                Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player1Name);
+                Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player2Name);
+                
+                POOBkemonGUI.setJugador1(jugador1);
+                POOBkemonGUI.setJugador2(jugador2);
+                POOBkemonGUI.setModoSupervivencia(true); // Activar modo supervivencia
+                
                 dialog.dispose();
+                this.setVisible(false);
+                POOBkemonGUI.iniciarBatalla(); // Iniciar batalla directamente
             }
         });
 
