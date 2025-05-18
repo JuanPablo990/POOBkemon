@@ -166,7 +166,7 @@ public class VentanaOpciones extends Ventana {
                 lblPlayer2.setForeground(Color.WHITE);
                 lblPlayer2.setFont(new Font("Arial", Font.BOLD, 16));
                 txtPlayer2 = new JTextField(15);
-                txtPlayer2.setPreferredSize(new Dimension(120, 25));
+                txtPlayer2.setPreferredSize(new Dimension(200, 30));
                 txtPlayer2.setFont(new Font("Arial", Font.PLAIN, 14));
                 panelNombres.add(lblPlayer2);
                 panelNombres.add(txtPlayer2);
@@ -183,11 +183,11 @@ public class VentanaOpciones extends Ventana {
         
         btnNormal.addActionListener(e -> {
             boolean nombresValidos = true;
-            if (mostrarPlayer1 && txtPlayer1.getText().trim().isEmpty()) {
+            if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
                 JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
-            if (mostrarPlayer2 && txtPlayer2.getText().trim().isEmpty()) {
+            if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
                 JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
@@ -195,12 +195,15 @@ public class VentanaOpciones extends Ventana {
                 String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
                 String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
                 
+                // Crear entrenadores sin equipos (se seleccionarán después)
                 Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
-                Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
+                Entrenador jugador2 = mostrarPlayer2 ? 
+                    POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name) : 
+                    POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
                 
                 POOBkemonGUI.setJugador1(jugador1);
                 POOBkemonGUI.setJugador2(jugador2);
-                POOBkemonGUI.setModoSupervivencia(false); // Asegurar que no está en modo supervivencia
+                POOBkemonGUI.setModoSupervivencia(false);
                 
                 dialog.dispose();
                 this.setVisible(false);
@@ -211,11 +214,11 @@ public class VentanaOpciones extends Ventana {
 
         btnSupervivencia.addActionListener(e -> {
             boolean nombresValidos = true;
-            if (mostrarPlayer1 && txtPlayer1.getText().trim().isEmpty()) {
+            if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
                 JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
-            if (mostrarPlayer2 && txtPlayer2.getText().trim().isEmpty()) {
+            if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
                 JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
@@ -229,11 +232,11 @@ public class VentanaOpciones extends Ventana {
                 
                 POOBkemonGUI.setJugador1(jugador1);
                 POOBkemonGUI.setJugador2(jugador2);
-                POOBkemonGUI.setModoSupervivencia(true); // Activar modo supervivencia
+                POOBkemonGUI.setModoSupervivencia(true);
                 
                 dialog.dispose();
                 this.setVisible(false);
-                POOBkemonGUI.iniciarBatalla(); // Iniciar batalla directamente
+                POOBkemonGUI.iniciarBatalla();
             }
         });
 

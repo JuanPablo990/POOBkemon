@@ -92,8 +92,8 @@ public class POOBkemonGUI {
     }
 
     public static void setSeleccionPokemonJugador1(List<String> seleccion) {
-        if (seleccion == null || seleccion.size() != 3) {
-            throw new IllegalArgumentException("La selección debe contener exactamente 3 Pokémon");
+        if (seleccion == null || seleccion.isEmpty() || seleccion.size() > 6) {
+            throw new IllegalArgumentException("La selección debe contener entre 1 y 6 Pokémon");
         }
         seleccionPokemonJugador1 = new ArrayList<>(seleccion);
     }
@@ -103,8 +103,8 @@ public class POOBkemonGUI {
     }
 
     public static void setSeleccionPokemonJugador2(List<String> seleccion) {
-        if (seleccion == null || seleccion.size() != 3) {
-            throw new IllegalArgumentException("La selección debe contener exactamente 3 Pokémon");
+        if (seleccion == null || seleccion.isEmpty() || seleccion.size() > 6) {
+            throw new IllegalArgumentException("La selección debe contener entre 1 y 6 Pokémon");
         }
         seleccionPokemonJugador2 = new ArrayList<>(seleccion);
     }
@@ -253,8 +253,8 @@ public class POOBkemonGUI {
     }
 
     public static void mostrarVentanaMovimientos(List<String> seleccion) {
-        if (seleccion == null || seleccion.size() != 3) {
-            throw new IllegalArgumentException("La selección debe contener exactamente 3 Pokémon");
+        if (seleccion == null || seleccion.isEmpty() || seleccion.size() > 6) {
+            throw new IllegalArgumentException("La selección debe contener entre 1 y 6 Pokémon");
         }
         
         cerrarOtrasVentanas(null);
