@@ -109,7 +109,8 @@ public class VentanaInicio extends Ventana {
 
     @Override
     protected void accionNuevo() {
-        JOptionPane.showMessageDialog(this, "Nuevo juego seleccionado");
+    	this.dispose();
+        POOBkemonGUI.reiniciarAplicacion();
     }
 
     @Override

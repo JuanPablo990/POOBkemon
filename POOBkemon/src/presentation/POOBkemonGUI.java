@@ -225,7 +225,9 @@ public class POOBkemonGUI {
 
     // Métodos para mostrar ventanas
     public static void mostrarVentanaInicio() {
-        cerrarOtrasVentanas(null);
+    	if (ventanaInicio != null) {
+            ventanaInicio.dispose();
+        }
         ventanaInicio = new VentanaInicio();
         ventanaInicio.mostrar();
     }
