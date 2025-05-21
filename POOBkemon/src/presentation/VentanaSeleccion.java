@@ -17,18 +17,17 @@ import java.util.List;
 import java.util.Set;
 
 public class VentanaSeleccion extends Ventana {
-    // Componentes de la interfaz
-    private FondoPanel fondoPanel;
+	
+	private FondoPanel fondoPanel;
     private JButton btnSiguiente;
     private JPanel panelContenedorPrincipal;
     private JPanel panelIzquierdo;
     private JPanel panelDerecho;
     private JPanel panelAbajoIzquierda;
     private JSpinner[] spinnersItems;
-    private JButton[] botonesMatriz = new JButton[36];
+    private List<JButton> botonesPokemon = new ArrayList<>(); // Cambiado a lista dinámica
     private JLabel lblEntrenador;
-    
-    // Flag para saber qué jugador está seleccionando
+    private JPanel panelMatriz;
     private boolean esJugador1 = true;
 
     // Constantes de diseño
@@ -81,217 +80,174 @@ public class VentanaSeleccion extends Ventana {
     }
     
     private void inicializarComponentes() {
-        setLayout(new BorderLayout());
-
+    	setLayout(new BorderLayout());
         fondoPanel = new FondoPanel(PoobkemonGifs.FONDO_SELECCION);
         fondoPanel.setLayout(new BorderLayout());
         setContentPane(fondoPanel);
-
-        // Panel contenedor principal
         panelContenedorPrincipal = new JPanel(new GridLayout(1, 2));
         panelContenedorPrincipal.setOpaque(false);
         fondoPanel.add(panelContenedorPrincipal, BorderLayout.CENTER);
         fondoPanel.setBorder(BorderFactory.createEmptyBorder(30, -95, 0, 0));
-
-        // Panel izquierdo
         panelIzquierdo = new JPanel(new BorderLayout());
         panelIzquierdo.setOpaque(false);
         panelContenedorPrincipal.add(panelIzquierdo);
-
-        // Panel derecho (matriz y etiqueta)
         panelDerecho = new JPanel(new BorderLayout());
         panelDerecho.setOpaque(false);
         panelDerecho.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 20));
         panelContenedorPrincipal.add(panelDerecho);
-
-        // Etiqueta del entrenador en la parte superior derecha
         JPanel panelEtiquetaSuperior = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         panelEtiquetaSuperior.setOpaque(false);
         panelEtiquetaSuperior.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
-
         lblEntrenador = new JLabel();
         lblEntrenador.setFont(new Font("Arial", Font.BOLD, 18));
         lblEntrenador.setForeground(Color.BLACK);
         panelEtiquetaSuperior.add(lblEntrenador);
-
         panelDerecho.add(panelEtiquetaSuperior, BorderLayout.NORTH);
-
-        // Configuración de la matriz
-        JPanel panelMatriz = new JPanel(new GridLayout(NUM_FILAS_MATRIZ, NUM_COLUMNAS_MATRIZ, ESPACIO_MATRIZ, ESPACIO_MATRIZ));
+        panelMatriz = new JPanel();
         panelMatriz.setOpaque(false);
-        panelDerecho.add(panelMatriz, BorderLayout.CENTER);
-
-        String[] nombresPokemon = PoobkemonGifs.POKEMON_IMAGES.keySet().toArray(new String[0]);
-        Arrays.sort(nombresPokemon);
-
-        for (int i = 0; i < botonesMatriz.length; i++) {
-            JButton boton = crearBotonPokemon(i < nombresPokemon.length ? nombresPokemon[i] : null);
-            botonesMatriz[i] = boton;
-            panelMatriz.add(boton);
-        }
-
-        // Configuración de los spinners de items
+        actualizarMatrizPokemon();
         JPanel contenedorBotones = new JPanel(new BorderLayout());
         contenedorBotones.setOpaque(false);
         contenedorBotones.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-
         panelAbajoIzquierda = new JPanel(new GridBagLayout());
         panelAbajoIzquierda.setOpaque(false);
         panelAbajoIzquierda.setBorder(BorderFactory.createEmptyBorder(20, MARGEN_IZQUIERDO, 0, 0));
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-
         String[] textosItems = {"Poción", "Hiperpoción", "Superpoción", "Revivir"};
         spinnersItems = new JSpinner[4];
-
-        // Crear spinners para cada tipo de ítem
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 8, 0);
         for (int i = 0; i < 3; i++) {
             JPanel itemPanel = crearPanelItem(textosItems[i]);
             spinnersItems[i] = (JSpinner) itemPanel.getClientProperty("spinner");
-            
             gbc.gridx = i;
             gbc.insets.left = (i == 0) ? 0 : 4;
             panelAbajoIzquierda.add(itemPanel, gbc);
         }
-
-        // Panel para Revivir (fila inferior)
         JPanel revivePanel = crearPanelItem(textosItems[3]);
         spinnersItems[3] = (JSpinner) revivePanel.getClientProperty("spinner");
-        
         gbc.gridy = 1;
         gbc.gridx = 1;
         gbc.insets = new Insets(-4, 0, 0, 0);
         panelAbajoIzquierda.add(revivePanel, gbc);
-
         contenedorBotones.add(panelAbajoIzquierda, BorderLayout.CENTER);
         panelIzquierdo.add(contenedorBotones, BorderLayout.SOUTH);
-
-        // Panel inferior con botón Siguiente
         JPanel panelAbajo = new JPanel(new BorderLayout());
         panelAbajo.setOpaque(false);
-
         JPanel panelBotonSiguiente = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelBotonSiguiente.setOpaque(false);
         btnSiguiente = crearBotonSiguiente("Siguiente");
         panelBotonSiguiente.add(btnSiguiente);
         panelAbajo.add(panelBotonSiguiente, BorderLayout.EAST);
-
         fondoPanel.add(panelAbajo, BorderLayout.SOUTH);
-        
-        // Configurar listeners para los spinners
         configurarListenersSpinners();
     }
-
-private void configurarListenersSpinners() {
-    for (JSpinner spinner : spinnersItems) {
-        spinner.addChangeListener(e -> {
-            JPanel itemPanel = (JPanel) spinner.getParent();
-            String tipoItem = (String) itemPanel.getClientProperty("tipoItem");
-            int nuevoValor = (int) spinner.getValue();
-
-            // 1. Primero validar Revivir
-            if (tipoItem.equals("Revivir") && nuevoValor > 1) {
-                spinner.setValue(0);
-                JOptionPane.showMessageDialog(this,
-                    "Solo puedes llevar 1 Revivir como máximo",
-                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            // 2. Validar máximo 2 por tipo de poción
-            if (!tipoItem.equals("Revivir") && nuevoValor > 2) {
-                spinner.setValue(0);
-                JOptionPane.showMessageDialog(this,
-                    "Máximo 2 " + tipoItem + " por tipo",
-                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            // 3. Validar máximo 2 TIPOS de pociones diferentes
-            int tiposPocionesUsados = contarTiposPocionesSeleccionados();
-            if (!tipoItem.equals("Revivir") && nuevoValor > 0 && tiposPocionesUsados > 2) {
-                spinner.setValue(0);
-                JOptionPane.showMessageDialog(this,
-                    "Solo puedes seleccionar 2 tipos diferentes de pociones\n" +
-                    "(Ej: Poción y Superpoción, o Hiperpoción y Poción, etc.)",
-                    "Límite de tipos", JOptionPane.WARNING_MESSAGE);
-            }
-        });
-    }
-}
-
-// Método auxiliar para contar tipos de pociones seleccionados
-private int contarTiposPocionesSeleccionados() {
-    int count = 0;
-    for (JSpinner spinner : spinnersItems) {
-        JPanel panel = (JPanel) spinner.getParent();
-        String tipoItem = (String) panel.getClientProperty("tipoItem");
-        if (!tipoItem.equals("Revivir") && (int) spinner.getValue() > 0) {
-            count++;
+    
+    private void actualizarMatrizPokemon() {
+        panelMatriz.removeAll();
+        String[] nombresPokemon = PoobkemonGifs.POKEMON_IMAGES.keySet().toArray(new String[0]);
+        Arrays.sort(nombresPokemon);
+        int numFilas = (int) Math.ceil((double) nombresPokemon.length / NUM_COLUMNAS_MATRIZ);
+        panelMatriz.setLayout(new GridLayout(numFilas, NUM_COLUMNAS_MATRIZ, ESPACIO_MATRIZ, ESPACIO_MATRIZ));
+        botonesPokemon.clear();
+        for (String nombre : nombresPokemon) {
+            JButton boton = crearBotonPokemon(nombre);
+            botonesPokemon.add(boton);
+            panelMatriz.add(boton);
         }
-    }
-    return count;
-}
-
-    private JPanel crearPanelItem(String nombreItem) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setOpaque(false);
-        
-        try {
-            // Crear el icono del item
-            String rutaImagen = PoobkemonGifs.getItemImage(nombreItem);
-            ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(rutaImagen));
-            Image imagenEscalada = iconoOriginal.getImage()
-                .getScaledInstance(PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
-            JLabel iconoLabel = new JLabel(new ImageIcon(imagenEscalada));
-            iconoLabel.setToolTipText(nombreItem);
-            
-            // Crear el spinner con el límite correspondiente
-            int maximo = nombreItem.equals("Revivir") ? MAX_REVIVE_SELECTED : MAX_POR_TIPO_POCION;
-            SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, maximo, 1);
-            JSpinner spinner = new JSpinner(spinnerModel);
-            
-            // Configurar el editor del spinner para que sea más compacto
-            JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner.getEditor();
-            editor.getTextField().setColumns(2);
-            editor.getTextField().setHorizontalAlignment(JTextField.CENTER);
-            
-            // Añadir componentes al panel
-            panel.add(iconoLabel, BorderLayout.CENTER);
-            panel.add(spinner, BorderLayout.SOUTH);
-            
-            // Guardar referencia al spinner en el panel
-            panel.putClientProperty("spinner", spinner);
-            panel.putClientProperty("tipoItem", nombreItem);
-            
-            return panel;
-        } catch (Exception e) {
-            // En caso de error, mostrar una versión simplificada
-            JPanel errorPanel = new JPanel(new BorderLayout());
-            errorPanel.setOpaque(false);
-            
-            JLabel label = new JLabel(nombreItem);
-            label.setForeground(Color.WHITE);
-            label.setHorizontalAlignment(JLabel.CENTER);
-            
-            int maximo = nombreItem.equals("Revivir") ? MAX_REVIVE_SELECTED : MAX_POR_TIPO_POCION;
-            SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, maximo, 1);
-            JSpinner spinner = new JSpinner(spinnerModel);
-            
-            errorPanel.add(label, BorderLayout.CENTER);
-            errorPanel.add(spinner, BorderLayout.SOUTH);
-            
-            errorPanel.putClientProperty("spinner", spinner);
-            errorPanel.putClientProperty("tipoItem", nombreItem);
-            
-            return errorPanel;
+        int botonesFaltantes = numFilas * NUM_COLUMNAS_MATRIZ - nombresPokemon.length;
+        for (int i = 0; i < botonesFaltantes; i++) {
+            JButton botonVacio = crearBotonPokemon(null);
+            panelMatriz.add(botonVacio);
         }
+        panelMatriz.revalidate();
+        panelMatriz.repaint();
     }
+
+	private void configurarListenersSpinners() {
+	    for (JSpinner spinner : spinnersItems) {
+	        spinner.addChangeListener(e -> {
+	            JPanel itemPanel = (JPanel) spinner.getParent();
+	            String tipoItem = (String) itemPanel.getClientProperty("tipoItem");
+	            int nuevoValor = (int) spinner.getValue();
+	            if (tipoItem.equals("Revivir") && nuevoValor > 1) {
+	                spinner.setValue(0);
+	                JOptionPane.showMessageDialog(this,
+	                    "Solo puedes llevar 1 Revivir como máximo",
+	                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
+	                return;
+	            }
+	            if (!tipoItem.equals("Revivir") && nuevoValor > 2) {
+	                spinner.setValue(0);
+	                JOptionPane.showMessageDialog(this,
+	                    "Máximo 2 " + tipoItem + " por tipo",
+	                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
+	                return;
+	            }
+	            int tiposPocionesUsados = contarTiposPocionesSeleccionados();
+	            if (!tipoItem.equals("Revivir") && nuevoValor > 0 && tiposPocionesUsados > 2) {
+	                spinner.setValue(0);
+	                JOptionPane.showMessageDialog(this,
+	                    "Solo puedes seleccionar 2 tipos diferentes de pociones\n" +
+	                    "(Ej: Poción y Superpoción, o Hiperpoción y Poción, etc.)",
+	                    "Límite de tipos", JOptionPane.WARNING_MESSAGE);
+	            }
+	        });
+	    }
+	}
+	
+	private int contarTiposPocionesSeleccionados() {
+	    int count = 0;
+	    for (JSpinner spinner : spinnersItems) {
+	        JPanel panel = (JPanel) spinner.getParent();
+	        String tipoItem = (String) panel.getClientProperty("tipoItem");
+	        if (!tipoItem.equals("Revivir") && (int) spinner.getValue() > 0) {
+	            count++;
+	        }
+	    }
+	    return count;
+	}
+	
+	    private JPanel crearPanelItem(String nombreItem) {
+	        JPanel panel = new JPanel(new BorderLayout());
+	        panel.setOpaque(false);
+	        try {
+	            String rutaImagen = PoobkemonGifs.getItemImage(nombreItem);
+	            ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(rutaImagen));
+	            Image imagenEscalada = iconoOriginal.getImage()
+	                .getScaledInstance(PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
+	            JLabel iconoLabel = new JLabel(new ImageIcon(imagenEscalada));
+	            iconoLabel.setToolTipText(nombreItem);
+	            int maximo = nombreItem.equals("Revivir") ? MAX_REVIVE_SELECTED : MAX_POR_TIPO_POCION;
+	            SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, maximo, 1);
+	            JSpinner spinner = new JSpinner(spinnerModel);
+	            JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner.getEditor();
+	            editor.getTextField().setColumns(2);
+	            editor.getTextField().setHorizontalAlignment(JTextField.CENTER);
+	            panel.add(iconoLabel, BorderLayout.CENTER);
+	            panel.add(spinner, BorderLayout.SOUTH);
+	            panel.putClientProperty("spinner", spinner);
+	            panel.putClientProperty("tipoItem", nombreItem);
+	            return panel;
+	        } catch (Exception e) {
+	            JPanel errorPanel = new JPanel(new BorderLayout());
+	            errorPanel.setOpaque(false);
+	            JLabel label = new JLabel(nombreItem);
+	            label.setForeground(Color.WHITE);
+	            label.setHorizontalAlignment(JLabel.CENTER);
+	            int maximo = nombreItem.equals("Revivir") ? MAX_REVIVE_SELECTED : MAX_POR_TIPO_POCION;
+	            SpinnerNumberModel spinnerModel = new SpinnerNumberModel(0, 0, maximo, 1);
+	            JSpinner spinner = new JSpinner(spinnerModel);
+	            errorPanel.add(label, BorderLayout.CENTER);
+	            errorPanel.add(spinner, BorderLayout.SOUTH);
+	            errorPanel.putClientProperty("spinner", spinner);
+	            errorPanel.putClientProperty("tipoItem", nombreItem);
+	            return errorPanel;
+	        }
+	    }
 
     private void actualizarEtiquetaEntrenador() {
         if (esJugador1) {
@@ -364,31 +320,25 @@ private int contarTiposPocionesSeleccionados() {
     }
 
     private void redimensionarBotonesMatriz() {
-        if (panelDerecho != null) {
-            int anchoPanel = panelDerecho.getWidth();
-            int altoPanel = panelDerecho.getHeight();
-
-            int anchoBoton = Math.min(anchoPanel / NUM_COLUMNAS_MATRIZ, altoPanel / NUM_FILAS_MATRIZ) - ESPACIO_MATRIZ * 2;
-            anchoBoton = Math.max(40, anchoBoton);
-
-            Dimension tamBoton = new Dimension(anchoBoton, anchoBoton);
-            for (JButton boton : botonesMatriz) {
-                boton.setPreferredSize(tamBoton);
-                
-                if (boton.getIcon() instanceof ImageIcon) {
-                    ImageIcon originalIcon = (ImageIcon) boton.getIcon();
-                    Image originalImage = originalIcon.getImage();
-                    
-                    Image scaledImage = originalImage.getScaledInstance(
-                        anchoBoton - 4, anchoBoton - 4, Image.SCALE_DEFAULT);
-                    
-                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
-                    scaledIcon.setImageObserver(boton);
-                    
-                    boton.setIcon(scaledIcon);
-                }
-            }
-        }
+    	 if (panelMatriz != null && !botonesPokemon.isEmpty()) {
+             int anchoPanel = panelMatriz.getWidth();
+             int altoPanel = panelMatriz.getHeight();
+             int numFilas = (int) Math.ceil((double) botonesPokemon.size() / NUM_COLUMNAS_MATRIZ);
+             int anchoBoton = Math.min(anchoPanel / NUM_COLUMNAS_MATRIZ, altoPanel / numFilas) - ESPACIO_MATRIZ * 2;
+             anchoBoton = Math.max(40, anchoBoton);
+             Dimension tamBoton = new Dimension(anchoBoton, anchoBoton);
+             for (JButton boton : botonesPokemon) {
+                 boton.setPreferredSize(tamBoton);
+                 if (boton.getIcon() instanceof ImageIcon) {
+                     ImageIcon originalIcon = (ImageIcon) boton.getIcon();
+                     Image originalImage = originalIcon.getImage();
+                     Image scaledImage = originalImage.getScaledInstance(anchoBoton - 4, anchoBoton - 4, Image.SCALE_DEFAULT);
+                     ImageIcon scaledIcon = new ImageIcon(scaledImage);
+                     scaledIcon.setImageObserver(boton);
+                     boton.setIcon(scaledIcon);
+                 }
+             }
+         }
     }
     
     private void redimensionarSpinnersItems() {
@@ -428,20 +378,14 @@ private int contarTiposPocionesSeleccionados() {
                     "Selección incompleta", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
             POOBkemon juego = POOBkemonGUI.getPoobkemon();
-
             if (esJugador1) {
                 nombresPokemonJugador1.clear();
                 nombresPokemonJugador1.addAll(nombresPokemonSeleccionados);
-
                 Entrenador entrenador1 = POOBkemonGUI.getJugador1();
-
                 for (String nombre : nombresPokemonSeleccionados) {
                     entrenador1.agregarPokemonPorNombre(nombre);
                 }
-
-                // Procesar los ítems seleccionados
                 for (JSpinner spinner : spinnersItems) {
                     int cantidad = (int) spinner.getValue();
                     if (cantidad > 0) {
@@ -456,20 +400,15 @@ private int contarTiposPocionesSeleccionados() {
                         }
                     }
                 }
-
                 this.dispose();
                 POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
             } else {
                 nombresPokemonJugador2.clear();
                 nombresPokemonJugador2.addAll(nombresPokemonSeleccionados);
-
                 Entrenador entrenador2 = POOBkemonGUI.getJugador2();
-
                 for (String nombre : nombresPokemonSeleccionados) {
                     entrenador2.agregarPokemonPorNombre(nombre);
                 }
-
-                // Procesar los ítems seleccionados
                 for (JSpinner spinner : spinnersItems) {
                     int cantidad = (int) spinner.getValue();
                     if (cantidad > 0) {
@@ -484,13 +423,11 @@ private int contarTiposPocionesSeleccionados() {
                         }
                     }
                 }
-
                 this.dispose();
                 POOBkemonGUI.mostrarVentanaMovimientos(nombresPokemonSeleccionados);
             }
         });
-
-        for (JButton boton : botonesMatriz) {
+        for (JButton boton : botonesPokemon) {
             boton.addActionListener(e -> manejarSeleccionPokemon((JButton) e.getSource()));
         }
     }
@@ -501,24 +438,19 @@ private int contarTiposPocionesSeleccionados() {
             nombrePokemon.equals("No encontrado") || nombrePokemon.equals("Error")) {
             return;
         }
-        
         if (selectedPokemonButtons.contains(boton)) {
-            // Deseleccionar
             boton.setBackground(null);
             boton.setOpaque(false);
             selectedPokemonButtons.remove(boton);
             pokemonSelectedCount--;
             nombresPokemonSeleccionados.remove(nombrePokemon);
         } else {
-            // Verificar límite máximo
             if (pokemonSelectedCount >= MAX_POKEMON_SELECTED) {
                 JOptionPane.showMessageDialog(this,
                     "Puedes seleccionar máximo " + MAX_POKEMON_SELECTED + " Pokémon",
                     "Límite alcanzado", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            
-            // Seleccionar
             boton.setBackground(SELECTED_COLOR);
             boton.setOpaque(true);
             selectedPokemonButtons.add(boton);

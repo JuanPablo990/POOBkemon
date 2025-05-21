@@ -1,6 +1,7 @@
 package presentation;
 
 import javax.swing.*;
+import java.awt.Color;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.EmptyBorder;
@@ -157,6 +158,7 @@ public class VentanaOpciones extends Ventana {
                 txtPlayer1 = new JTextField(15);
                 txtPlayer1.setPreferredSize(new Dimension(200, 30));
                 txtPlayer1.setFont(new Font("Arial", Font.PLAIN, 14));
+                txtPlayer1.setBackground(new Color(255, 255, 102));
                 panelNombres.add(lblPlayer1);
                 panelNombres.add(txtPlayer1);
             }
@@ -168,6 +170,7 @@ public class VentanaOpciones extends Ventana {
                 txtPlayer2 = new JTextField(15);
                 txtPlayer2.setPreferredSize(new Dimension(200, 30));
                 txtPlayer2.setFont(new Font("Arial", Font.PLAIN, 14));
+                txtPlayer2.setBackground(new Color(173, 216, 230));
                 panelNombres.add(lblPlayer2);
                 panelNombres.add(txtPlayer2);
             }

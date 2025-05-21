@@ -61,6 +61,7 @@ public class Poquedex {
         registrarPokemon("Wobbuffet", Wobbuffet.class);
         registrarPokemon("Zangoose", Zangoose.class);
         registrarPokemon("Zubat", Zubat.class);
+        registrarPokemon("Pikachu", Pikachu.class);
     }
 
     private void registrarMovimientosBase() {
@@ -163,8 +164,6 @@ public class Poquedex {
         registrarMovimiento(new BajarDefensaEspecial()); 
     }
 
-
-
     public void registrarPokemon(String nombre, Class<? extends Pokemon> clasePokemon) {
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
@@ -172,42 +171,61 @@ public class Poquedex {
         if (clasePokemon == null) {
             throw new IllegalArgumentException("La clase de Pokémon no puede ser nula");
         }
-        pokemonesDisponibles.put(nombre, clasePokemon);
+        // Guardar el nombre original para mantener la visualización correcta
+        pokemonesDisponibles.put(nombre.toLowerCase(), clasePokemon);
     }
 
     public void registrarMovimiento(Movimiento movimiento) {
         if (movimiento == null) {
             throw new IllegalArgumentException("El movimiento no puede ser nulo");
         }
-        movimientosDisponibles.put(movimiento.getNombre(), movimiento);
+        // Guardar el nombre en minúsculas como clave
+        movimientosDisponibles.put(movimiento.getNombre().toLowerCase(), movimiento);
     }
 
     public void eliminarPokemonDisponible(String nombre) {
-        pokemonesDisponibles.remove(nombre);
+        if (nombre != null) {
+            pokemonesDisponibles.remove(nombre.toLowerCase());
+        }
     }
 
     public void eliminarMovimientoDisponible(String nombre) {
-        movimientosDisponibles.remove(nombre);
+        if (nombre != null) {
+            movimientosDisponibles.remove(nombre.toLowerCase());
+        }
     }
 
     public Pokemon crearPokemon(String nombre) {
-        for (Map.Entry<String, Class<? extends Pokemon>> entry : pokemonesDisponibles.entrySet()) {
-            if (entry.getKey().equalsIgnoreCase(nombre)) {
-                try {
-                    return entry.getValue().getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException("Error al crear el Pokémon: " + e.getMessage(), e);
-                }
+        if (nombre == null) {
+            throw new IllegalArgumentException("El nombre del Pokémon no puede ser nulo");
+        }
+        
+        // Buscar directamente usando el nombre en minúsculas
+        Class<? extends Pokemon> pokemonClass = pokemonesDisponibles.get(nombre.toLowerCase());
+        
+        if (pokemonClass != null) {
+            try {
+                return pokemonClass.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Error al crear el Pokémon: " + e.getMessage(), e);
             }
         }
+        
         throw new IllegalArgumentException("El Pokémon " + nombre + " no existe en la Poquedex");
     }
 
     public Movimiento crearMovimiento(String nombre) {
-        Movimiento original = movimientosDisponibles.get(nombre);
+        if (nombre == null) {
+            throw new IllegalArgumentException("El nombre del movimiento no puede ser nulo");
+        }
+        
+        // Buscar directamente usando el nombre en minúsculas
+        Movimiento original = movimientosDisponibles.get(nombre.toLowerCase());
+        
         if (original == null) {
             throw new IllegalArgumentException("El movimiento " + nombre + " no existe en la Poquedex");
         }
+        
         try {
             return original.getClass().getDeclaredConstructor().newInstance();
         } catch (Exception e) {
@@ -272,10 +290,16 @@ public class Poquedex {
     }
 
     public boolean existePokemon(String nombre) {
-        return pokemonesDisponibles.keySet().stream().anyMatch(n -> n.equalsIgnoreCase(nombre));
+        if (nombre == null) {
+            return false;
+        }
+        return pokemonesDisponibles.containsKey(nombre.toLowerCase());
     }
 
     public boolean existeMovimiento(String nombre) {
-        return movimientosDisponibles.containsKey(nombre);
+        if (nombre == null) {
+            return false;
+        }
+        return movimientosDisponibles.containsKey(nombre.toLowerCase());
     }
 }

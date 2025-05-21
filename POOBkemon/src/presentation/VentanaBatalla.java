@@ -30,7 +30,6 @@ public class VentanaBatalla extends Ventana {
 
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
-        // Selección aleatoria del jugador que comienza
         this.turnoJugador1 = new Random().nextBoolean();
         mostrarAnimacionInicial();
         setSize(800, 600);
@@ -421,13 +420,13 @@ public class VentanaBatalla extends Ventana {
     }
     
     private double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
-        String tipoAtaque = movimiento.getTipo().toLowerCase().replace("é", "e");
-        String tipoDefensa = objetivo.getTipoPrincipal().toLowerCase().replace("é", "e");
-        double efectividad = Efectividad.calcular(tipoAtaque, tipoDefensa);
+        String tipoAtaque = (movimiento.getTipo() != null) ? movimiento.getTipo().toLowerCase().replace("é", "e") : "";
+        String tipoDefensaPrincipal = (objetivo.getTipoPrincipal() != null) ? objetivo.getTipoPrincipal().toLowerCase().replace("é", "e") : "";
+        double efectividad = Efectividad.calcular(tipoAtaque, tipoDefensaPrincipal);
 
         if (objetivo.getTipoSecundario() != null && !objetivo.getTipoSecundario().isEmpty()) {
-            String tipoSecundario = objetivo.getTipoSecundario().toLowerCase().replace("é", "e");
-            efectividad *= Efectividad.calcular(tipoAtaque, tipoSecundario);
+            String tipoDefensaSecundario = objetivo.getTipoSecundario().toLowerCase().replace("é", "e");
+            efectividad *= Efectividad.calcular(tipoAtaque, tipoDefensaSecundario);
         }
         return efectividad;
     }

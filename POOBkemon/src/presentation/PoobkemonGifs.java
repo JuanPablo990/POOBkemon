@@ -52,6 +52,7 @@ public class PoobkemonGifs {
         POKEMON_IMAGES.put("Tentacool", "/resources/Pokemones/Veneno/Tentacool.gif");
         POKEMON_IMAGES.put("Skarmory", "/resources/Pokemones/Volador/Skarmory.gif");
         POKEMON_IMAGES.put("Zubat", "/resources/Pokemones/Volador/Zubat.gif");
+        POKEMON_IMAGES.put("Pikachu","/resources/Pokemones/Pikachu.gif");
 
         // Ítems
         ITEM_IMAGES.put("Poción", "/resources/potion.png");
