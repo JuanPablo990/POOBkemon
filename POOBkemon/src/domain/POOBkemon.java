@@ -2,6 +2,7 @@ package domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class POOBkemon {
@@ -10,7 +11,7 @@ public class POOBkemon {
     private Batalla batallaActual;
     private Entrenador jugador1;
     private Entrenador jugador2;
-    private boolean turnoJugador1 = true;
+    private boolean turnoJugador1;
     private boolean modoSupervivencia = false;
     
     // Constructores
@@ -30,9 +31,12 @@ public class POOBkemon {
             this.jugador1 = crearEntrenador(nombreJugador1);
             this.jugador2 = crearEntrenador(nombreJugador2);
         }
+        
+        // Inicializar el turno de forma aleatoria
+        this.turnoJugador1 = new Random().nextBoolean();
     }
 
-    // Método para crear entrenador con equipo aleatorio (ahora público)
+    // Método para crear entrenador con equipo aleatorio
     public Entrenador crearEntrenadorConEquipoAleatorio(String nombre) {
         Entrenador entrenador = new Entrenador(nombre);
         entrenador.generarEquipoAleatorioCompleto();
@@ -50,7 +54,7 @@ public class POOBkemon {
         return modoSupervivencia;
     }
 
-    // Métodos existentes
+    // Métodos para manejar Pokémon
     public Pokemon crearPokemon(String nombrePokemon) {
         return poquedex.crearPokemon(nombrePokemon);
     }
@@ -75,6 +79,7 @@ public class POOBkemon {
         return poquedex;
     }
 
+    // Métodos para manejar entrenadores
     public Entrenador crearEntrenador(String nombre) {
         Entrenador entrenador = new Entrenador(nombre);
         entrenadores.add(entrenador);
@@ -94,9 +99,12 @@ public class POOBkemon {
         entrenador.asignarMovimientosAPokemon(indicePokemon, movimientos);
     }
 
+    // Métodos para manejar batallas
     public void iniciarBatalla() {
         if (jugador1 != null && jugador2 != null) {
             this.batallaActual = new Batalla(jugador1, jugador2, null);
+            // Sincronizar el turno con la batalla
+            this.turnoJugador1 = batallaActual.isTurnoJugador1();
             batallaActual.iniciarBatalla();
         }
     }
@@ -110,6 +118,8 @@ public class POOBkemon {
         if (!entrenadores.contains(jugador2)) {
             entrenadores.add(jugador2);
         }
+        // Establecer turno inicial aleatorio al asignar nuevos jugadores
+        this.turnoJugador1 = new Random().nextBoolean();
     }
 
     public void prepararBatalla() {
@@ -140,6 +150,7 @@ public class POOBkemon {
         return batallaActual.getPokemonActivo(entrenador);
     }
 
+    // Métodos para manejar turnos y acciones
     public List<Movimiento> getMovimientosDisponibles(Pokemon pokemon) {
         if (pokemon == null) return new ArrayList<>();
         return pokemon.getMovimientos().stream()
@@ -185,6 +196,10 @@ public class POOBkemon {
 
     public void cambiarTurno() {
         turnoJugador1 = !turnoJugador1;
+        // Sincronizar con la batalla actual si existe
+        if (batallaActual != null) {
+            batallaActual.cambiarTurno();
+        }
     }
 
     public Entrenador getEntrenadorEnTurno() {
@@ -196,7 +211,8 @@ public class POOBkemon {
         this.batallaActual = null;
         this.jugador1 = null;
         this.jugador2 = null;
-        this.turnoJugador1 = true;
+        // Establecer turno inicial aleatorio al reiniciar
+        this.turnoJugador1 = new Random().nextBoolean();
         this.modoSupervivencia = false;
     }
 

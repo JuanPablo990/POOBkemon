@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import presentation.VentanaBatalla;
 
@@ -14,11 +15,13 @@ public class Batalla {
         this.entrenador1 = entrenador1;
         this.entrenador2 = entrenador2;
         this.ventanaBatalla = ventanaBatalla;
-        this.turnoJugador1 = true; // Inicializar el turno
+        // Determinar aleatoriamente quién comienza primero
+        this.turnoJugador1 = new Random().nextBoolean();
     }
 
     public void iniciarBatalla() {
         ventanaBatalla.mostrarMensaje("¡Comienza la batalla entre " + entrenador1.getNombre() + " y " + entrenador2.getNombre() + "!");
+        ventanaBatalla.mostrarMensaje("El turno inicial es para: " + (turnoJugador1 ? entrenador1.getNombre() : entrenador2.getNombre()));
         enviarPrimerPokemon(entrenador1);
         enviarPrimerPokemon(entrenador2);
         ventanaBatalla.cargarPokemonesIniciales();
@@ -100,7 +103,7 @@ public class Batalla {
     }
 
     private void ejecutarMovimiento(Movimiento movimiento, Pokemon atacante, Pokemon objetivo) {
-    	ventanaBatalla.mostrarMensaje("¡" + atacante.getNombre() + " usa " + movimiento.getNombre() + "!");
+        ventanaBatalla.mostrarMensaje("¡" + atacante.getNombre() + " usa " + movimiento.getNombre() + "!");
         double efectividad = calcularEfectividad(movimiento, objetivo);
         String mensajeEfectividad = obtenerMensajeEfectividad(efectividad);
         ventanaBatalla.agregarMensaje(mensajeEfectividad); // Usamos agregarMensaje en lugar de mostrarMensaje
@@ -117,7 +120,7 @@ public class Batalla {
     }
     
     private String obtenerMensajeEfectividad(double efectividad) {
-    	String mensaje = String.format("[Multiplicador: x%.1f]%n", efectividad);
+        String mensaje = String.format("[Multiplicador: x%.1f]%n", efectividad);
         if (efectividad <= 0.0) {
             mensaje += "INEFECTIVO";
         } else if (efectividad >= 2.0) {
@@ -175,7 +178,7 @@ public class Batalla {
         ventanaBatalla.mostrarVentanaCambioPokemon();
     }
 
-    private void cambiarTurno() {
+    public void cambiarTurno() {
         turnoJugador1 = !turnoJugador1;
         ventanaBatalla.actualizarVistaJugador();
     }

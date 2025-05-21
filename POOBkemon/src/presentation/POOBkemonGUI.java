@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.awt.*;
 import java.awt.event.*;
 import domain.*;
@@ -35,12 +36,14 @@ public class POOBkemonGUI {
 
     // Estados del juego
     private static boolean mostrandoMovimientosJugador1 = true;
-    private static boolean turnoJugador1 = true;
+    private static boolean turnoJugador1;
     private static boolean modoSupervivencia = false;
     private static boolean modoDebug = false;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            // Determinar aleatoriamente quién comienza primero
+            turnoJugador1 = new Random().nextBoolean();
             mostrarVentanaInicio();
             if (modoDebug) {
                 mostrarVentanaDebug();
@@ -52,6 +55,8 @@ public class POOBkemonGUI {
     public static POOBkemon getPoobkemon() {
         if (poobkemon == null) {
             poobkemon = new POOBkemon();
+            // Establecer turno inicial aleatorio
+            poobkemon.cambiarTurno();
         }
         return poobkemon;
     }
@@ -201,7 +206,8 @@ public class POOBkemonGUI {
         movimientosJugador1.clear();
         movimientosJugador2.clear();
         mostrandoMovimientosJugador1 = true;
-        turnoJugador1 = true;
+        // Establecer turno inicial aleatorio al reiniciar
+        turnoJugador1 = new Random().nextBoolean();
         modoSupervivencia = false;
     }
 
@@ -225,7 +231,7 @@ public class POOBkemonGUI {
 
     // Métodos para mostrar ventanas
     public static void mostrarVentanaInicio() {
-    	if (ventanaInicio != null) {
+        if (ventanaInicio != null) {
             ventanaInicio.dispose();
         }
         ventanaInicio = new VentanaInicio();

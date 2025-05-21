@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import domain.*;
 
 public class VentanaBatalla extends Ventana {
@@ -19,7 +20,7 @@ public class VentanaBatalla extends Ventana {
     private JProgressBar progressBar1;
     private JProgressBar progressBar2;
     private JLabel labelJugador;
-    private boolean turnoJugador1 = true;
+    private boolean turnoJugador1;
     private JTextArea areaMensajes;
     private JScrollPane scrollMensajes;
     private Map<Entrenador, List<Item>> mochilaLocal = new HashMap<>();
@@ -29,6 +30,8 @@ public class VentanaBatalla extends Ventana {
 
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
+        // Selección aleatoria del jugador que comienza
+        this.turnoJugador1 = new Random().nextBoolean();
         mostrarAnimacionInicial();
         setSize(800, 600);
         setLocationRelativeTo(null);
@@ -45,16 +48,14 @@ public class VentanaBatalla extends Ventana {
         dialog.setLocationRelativeTo(null);
         
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource("/resources/iniciopelea.gif"));
-            JLabel animacion = new JLabel(icon);
-            animacion.setHorizontalAlignment(JLabel.CENTER);
-            animacion.setVerticalAlignment(JLabel.CENTER);
-            
+            FondoPanel fondo = new FondoPanel("/resources/iniciopelea.gif");
+            fondo.setLayout(new BorderLayout());
+
             Timer timer = new Timer(6000, e -> dialog.dispose());
             timer.setRepeats(false);
             timer.start();
             
-            animacion.addMouseListener(new MouseAdapter() {
+            fondo.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     timer.stop();
@@ -62,7 +63,7 @@ public class VentanaBatalla extends Ventana {
                 }
             });
             
-            dialog.add(animacion);
+            dialog.add(fondo);
             dialog.setVisible(true);
         } catch (Exception e) {
             System.err.println("Error al cargar la animación inicial: " + e.getMessage());
@@ -78,83 +79,72 @@ public class VentanaBatalla extends Ventana {
             "Subir Velocidad", "%s aumentó su velocidad!"
         );
 
+    private void mostrarAnimacionFinal(Entrenador ganador) {
+        JDialog dialog = new JDialog(this, "", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setUndecorated(true);
+        dialog.setSize(800, 600);
+        dialog.setLocationRelativeTo(null);
+        
+        try {
+            FondoPanel fondo = new FondoPanel("/resources/endgame.gif");
+            fondo.setLayout(new BorderLayout());
 
+            Color dorado = new Color(255, 215, 0); 
+            
+            JLabel labelGanador = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
+            labelGanador.setHorizontalAlignment(SwingConstants.CENTER);
+            labelGanador.setFont(new Font("Arial", Font.BOLD, 36));
+            labelGanador.setForeground(dorado);
+            
+            labelGanador.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(139, 69, 19), 2),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            ));
+            
+            JPanel panelTexto = new JPanel(new GridBagLayout());
+            panelTexto.setOpaque(false);
+            panelTexto.setBorder(BorderFactory.createEmptyBorder(0, 0, 80, 0));
+            
+            JLabel sombraTexto = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
+            sombraTexto.setHorizontalAlignment(SwingConstants.CENTER);
+            sombraTexto.setFont(new Font("Arial", Font.BOLD, 36));
+            sombraTexto.setForeground(new Color(0, 0, 0, 150));
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(2, 2, 0, 0);
+            panelTexto.add(sombraTexto, gbc);
+            
+            gbc.insets = new Insets(0, 0, 2, 2);
+            panelTexto.add(labelGanador, gbc);
 
-private void mostrarAnimacionFinal(Entrenador ganador) {
-    JDialog dialog = new JDialog(this, "", Dialog.ModalityType.APPLICATION_MODAL);
-    dialog.setUndecorated(true);
-    dialog.setSize(800, 600);
-    dialog.setLocationRelativeTo(null);
-    
-    try {
-        // 1. Fondo con el GIF usando FondoPanel
-        FondoPanel fondo = new FondoPanel("/resources/endgame.gif");
-        fondo.setLayout(new BorderLayout());
+            fondo.add(panelTexto, BorderLayout.SOUTH);
 
-        // 2. Color dorado profesional (RGB: 255, 215, 0)
-        Color dorado = new Color(255, 215, 0); 
-        // Alternativa dorado oscuro: new Color(212, 175, 55)
-        
-        // 3. Texto del ganador con estilo dorado
-        JLabel labelGanador = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
-        labelGanador.setHorizontalAlignment(SwingConstants.CENTER);
-        labelGanador.setFont(new Font("Arial", Font.BOLD, 36));
-        labelGanador.setForeground(dorado);
-        
-        // Efecto de borde para mejor legibilidad
-        labelGanador.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(139, 69, 19), 2), // Borde marrón
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
-        
-        // 4. Panel para el texto con sombra
-        JPanel panelTexto = new JPanel(new GridBagLayout());
-        panelTexto.setOpaque(false);
-        panelTexto.setBorder(BorderFactory.createEmptyBorder(0, 0, 80, 0));
-        
-        // Sombra del texto
-        JLabel sombraTexto = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
-        sombraTexto.setHorizontalAlignment(SwingConstants.CENTER);
-        sombraTexto.setFont(new Font("Arial", Font.BOLD, 36));
-        sombraTexto.setForeground(new Color(0, 0, 0, 150)); // Negro semitransparente
-        
-        // Posicionamiento con superposición
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(2, 2, 0, 0); // Desplazamiento sombra
-        panelTexto.add(sombraTexto, gbc);
-        
-        gbc.insets = new Insets(0, 0, 2, 2);
-        panelTexto.add(labelGanador, gbc);
+            MouseAdapter clickListener = new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    dialog.dispose();
+                    // Reiniciar con turno aleatorio
+                    POOBkemonGUI.reiniciarAplicacion();
+                }
+            };
+            fondo.addMouseListener(clickListener);
 
-        // 5. Añadir componentes
-        fondo.add(panelTexto, BorderLayout.SOUTH);
+            dialog.add(fondo);
+            dialog.setVisible(true);
 
-        // 6. Listener para clic en cualquier lugar
-        MouseAdapter clickListener = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
+            new Timer(10000, e -> {
                 dialog.dispose();
+                // Reiniciar con turno aleatorio
                 POOBkemonGUI.reiniciarAplicacion();
-            }
-        };
-        fondo.addMouseListener(clickListener);
+            }).start();
 
-        dialog.add(fondo);
-        dialog.setVisible(true);
-
-        // 7. Timer de cierre automático
-        new Timer(10000, e -> {
-            dialog.dispose();
+        } catch (Exception e) {
+            System.err.println("Error al cargar la animación final: " + e.getMessage());
             POOBkemonGUI.reiniciarAplicacion();
-        }).start();
-
-    } catch (Exception e) {
-        System.err.println("Error al cargar la animación final: " + e.getMessage());
-        POOBkemonGUI.reiniciarAplicacion();
+        }
     }
-}
     
     private void verificarFinDeBatalla() {
         Entrenador j1 = POOBkemonGUI.getJugador1();
@@ -224,7 +214,7 @@ private void mostrarAnimacionFinal(Entrenador ganador) {
         panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         panelBotones.setOpaque(false);
 
-        labelJugador = new JLabel("Turno: " + POOBkemonGUI.getJugador1().getNombre(), SwingConstants.CENTER);
+        labelJugador = new JLabel("Turno: " + (turnoJugador1 ? POOBkemonGUI.getJugador1().getNombre() : POOBkemonGUI.getJugador2().getNombre()), SwingConstants.CENTER);
         labelJugador.setFont(new Font("Arial", Font.BOLD, 20));
         panelBotones.add(labelJugador);
 
@@ -272,10 +262,8 @@ private void mostrarAnimacionFinal(Entrenador ganador) {
         Entrenador jugador = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
         labelJugador.setText("Turno: " + jugador.getNombre());
 
-        // Cambiar imagen de fondo según el jugador
         String fondoPath = turnoJugador1 ? "/resources/abajo.png" : "/resources/abajo2.png";
         
-        // Solución sin modificar FondoPanel - recrear el panel
         panelArenaContainer.removeAll();
         panelArena = new FondoPanel(fondoPath);
         panelArena.setLayout(new BorderLayout());
@@ -302,10 +290,7 @@ private void mostrarAnimacionFinal(Entrenador ganador) {
             }
         }
         
-        // Actualizar posiciones de los Pokémon
         actualizarPosicionPanelImagen();
-        
-        // Verificar si la batalla ha terminado
         verificarFinDeBatalla();
     }
 
@@ -314,17 +299,14 @@ private void mostrarAnimacionFinal(Entrenador ganador) {
         int panelHeight = panelGif.getHeight();
         if (panelWidth == 0 || panelHeight == 0) return;
 
-        // Posiciones dependiendo del turno
         int x1, y1, x2, y2;
         
         if (turnoJugador1) {
-            // Jugador 1 a la izquierda, jugador 2 a la derecha
             x1 = (int)(panelWidth * 0.3) - (ANCHO_PANEL / 2);
             y1 = (int)(panelHeight * 0.47);
             x2 = (int)(panelWidth * 0.7) - (ANCHO_PANEL / 2);
             y2 = (int)(panelHeight * 0.2);
         } else {
-            // Jugador 2 a la izquierda, jugador 1 a la derecha
             x2 = (int)(panelWidth * 0.3) - (ANCHO_PANEL / 2);
             y2 = (int)(panelHeight * 0.47);
             x1 = (int)(panelWidth * 0.7) - (ANCHO_PANEL / 2);
@@ -405,7 +387,7 @@ private void mostrarAnimacionFinal(Entrenador ganador) {
     }
 
     private void ejecutarAtaque(Movimiento movimiento) {
-    	Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+        Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
         Entrenador defensor = turnoJugador1 ? POOBkemonGUI.getJugador2() : POOBkemonGUI.getJugador1();
         Pokemon pokemonAtacante = atacante.getPokemonActivo();
         Pokemon pokemonDefensor = defensor.getPokemonActivo();
