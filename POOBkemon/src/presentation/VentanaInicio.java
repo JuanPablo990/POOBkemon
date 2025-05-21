@@ -21,23 +21,14 @@ public class VentanaInicio extends Ventana {
     private void inicializarComponentes() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel);
-
-        // Panel de fondo animado
         fondoPanel = new FondoPanel("/resources/inicio.gif");
-        
-        // Cargar imagen del título
         cargarImagenTitulo();
-        
-        // Configurar layered pane
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(getSize());
-        
         fondoPanel.setBounds(0, 0, getWidth(), getHeight());
         layeredPane.add(fondoPanel, JLayeredPane.DEFAULT_LAYER);
-        
         tituloPanel.setBounds(0, 0, getWidth(), getHeight());
         layeredPane.add(tituloPanel, JLayeredPane.PALETTE_LAYER);
-        
         mainPanel.add(layeredPane, BorderLayout.CENTER);
     }
 
@@ -57,27 +48,17 @@ public class VentanaInicio extends Ventana {
                         double scale = (double)getWidth() / tituloImage.getWidth() * 0.6;
                         int newWidth = (int)(tituloImage.getWidth() * scale);
                         int newHeight = (int)(tituloImage.getHeight() * scale);
-                        g.drawImage(tituloImage, 
-                                   (getWidth() - newWidth)/2, 
-                                   getHeight()/3, 
-                                   newWidth, 
-                                   newHeight, 
-                                   null);
+                        g.drawImage(tituloImage,(getWidth() - newWidth)/2, getHeight()/3, newWidth, newHeight, null);
                     }
                 }
             };
             tituloPanel.setOpaque(false);
-            
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Error al cargar recursos: " + e.getMessage(), 
-                "Error", 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al cargar recursos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void configurarListeners() {
-        // Listener para redimensionamiento
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -88,16 +69,12 @@ public class VentanaInicio extends Ventana {
                 tituloPanel.repaint();
             }
         });
-
-        // Listener para clic en cualquier parte del fondo
         fondoPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 abrirVentanaOpciones();
             }
         });
-
-        // Timer para animación del fondo
         new Timer(100, e -> fondoPanel.repaint()).start();
     }
 

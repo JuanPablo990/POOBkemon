@@ -83,14 +83,10 @@ public class Poquedex {
         registrarMovimiento(new ChargeBeam());
         registrarMovimiento(new Charm());
         registrarMovimiento(new CloseCombat());
-
         registrarMovimiento(new Counter());
         registrarMovimiento(new Crabhammer());
-
         registrarMovimiento(new CrushClaw());
-
         registrarMovimiento(new DragonBreath());
-
         registrarMovimiento(new Explosion());
         registrarMovimiento(new ExtremeSpeed());
         registrarMovimiento(new FakeOut());
@@ -119,23 +115,16 @@ public class Poquedex {
         registrarMovimiento(new Moonblast());
         registrarMovimiento(new NightSlash());
         registrarMovimiento(new PainSplit());
-
         registrarMovimiento(new PoisonFang());
-
         registrarMovimiento(new PsychoCut());
-
-
-
         registrarMovimiento(new RockSlide());
         registrarMovimiento(new RockThrow());
         registrarMovimiento(new RockTomb());
         registrarMovimiento(new Roost());
         registrarMovimiento(new Safeguard());
-
         registrarMovimiento(new Sandstorm());
         registrarMovimiento(new SeedBomb());
         registrarMovimiento(new SelfDestruct());
-
         registrarMovimiento(new ShadowClaw());
         registrarMovimiento(new ShadowSneak());
         registrarMovimiento(new ShellSmash());
@@ -143,14 +132,12 @@ public class Poquedex {
         registrarMovimiento(new SludgeBomb());
         registrarMovimiento(new SludgeWave());
         registrarMovimiento(new SolarBeam());
-
         registrarMovimiento(new Splash());
         registrarMovimiento(new Spore());
         registrarMovimiento(new SteelWing());
         registrarMovimiento(new StoneEdge());
         registrarMovimiento(new SuckerPunch());
         registrarMovimiento(new Superpower());
-
         registrarMovimiento(new Synthesis());
         registrarMovimiento(new Tackle());
         registrarMovimiento(new ThunderFang());
@@ -164,6 +151,16 @@ public class Poquedex {
         registrarMovimiento(new Yawn());
         registrarMovimiento(new ZapCannon());
         registrarMovimiento(new ZenHeadbutt());
+        registrarMovimiento(new SubirAtaque());
+        registrarMovimiento(new BajarAtaque());
+        registrarMovimiento(new SubirDefensa());
+        registrarMovimiento(new BajarDefensa());
+        registrarMovimiento(new SubirVelocidad());
+        registrarMovimiento(new BajarVelocidad());
+        registrarMovimiento(new SubirAtaqueEspecial());
+        registrarMovimiento(new BajarAtaqueEspecial());
+        registrarMovimiento(new SubirDefensaEspecial());
+        registrarMovimiento(new BajarDefensaEspecial()); 
     }
 
 

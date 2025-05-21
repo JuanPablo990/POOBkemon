@@ -68,6 +68,16 @@ public class VentanaBatalla extends Ventana {
             System.err.println("Error al cargar la animación inicial: " + e.getMessage());
         }
     }
+    
+    private static final Map<String, String> MENSAJES_MOVIMIENTOS = Map.of(
+            "Bajar Ataque", "%s bajó su ataque!",
+            "Subir Ataque", "%s aumentó su ataque!",
+            "Bajar Defensa", "%s bajó su defensa!",
+            "Subir Defensa", "%s aumentó su defensa!",
+            "Bajar Velocidad", "%s bajó su velocidad!",
+            "Subir Velocidad", "%s aumentó su velocidad!"
+        );
+
 
 
 private void mostrarAnimacionFinal(Entrenador ganador) {
@@ -395,56 +405,49 @@ private void mostrarAnimacionFinal(Entrenador ganador) {
     }
 
     private void ejecutarAtaque(Movimiento movimiento) {
-        Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+    	Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
         Entrenador defensor = turnoJugador1 ? POOBkemonGUI.getJugador2() : POOBkemonGUI.getJugador1();
         Pokemon pokemonAtacante = atacante.getPokemonActivo();
         Pokemon pokemonDefensor = defensor.getPokemonActivo();
-        if (movimiento.getPp() <= 0) {
-            agregarMensaje("¡No quedan PP para " + movimiento.getNombre() + "!");
-            return;
-        }
         agregarMensaje("¡" + atacante.getNombre() + " usó " + movimiento.getNombre() + "!");
-        double efectividad = Efectividad.calcular(
-            movimiento.getTipo().toLowerCase().replace("é", "e"),
-            pokemonDefensor.getTipoPrincipal().toLowerCase().replace("é", "e")
-        );
-        if (pokemonDefensor.getTipoSecundario() != null && !pokemonDefensor.getTipoSecundario().isEmpty()) {
-            efectividad *= Efectividad.calcular(
-                movimiento.getTipo().toLowerCase().replace("é", "e"),
-                pokemonDefensor.getTipoSecundario().toLowerCase().replace("é", "e")
-            );
-        }
-        
+        double efectividad = calcularEfectividad(movimiento, pokemonDefensor);
         mostrarEfectividad(efectividad);
-        
         boolean exito = movimiento.ejecutar(pokemonAtacante, pokemonDefensor, efectividad);
-        
         if (exito) {
-            int danio = (int)(Math.random() * 150) + 50;
-            agregarMensaje("¡El ataque hizo " + danio + " de daño!");
-            
-            actualizarVidaPokemon1(POOBkemonGUI.getJugador1().getPokemonActivo().getPs());
-            actualizarVidaPokemon2(POOBkemonGUI.getJugador2().getPokemonActivo().getPs());
-            
+            if (movimiento.getPotencia() > 0) {
+                int danio = pokemonDefensor.getPsMaximos() - pokemonDefensor.getPs();
+                agregarMensaje("¡El ataque hizo " + danio + " de daño!");
+            }
+            if (MENSAJES_MOVIMIENTOS.containsKey(movimiento.getNombre())) {
+                String objetivo = movimiento.getNombre().startsWith("Subir") ? 
+                    pokemonAtacante.getNombre() : pokemonDefensor.getNombre();
+                agregarMensaje(String.format(MENSAJES_MOVIMIENTOS.get(movimiento.getNombre()), objetivo));
+            }
             if (pokemonDefensor.estaDebilitado()) {
                 agregarMensaje("¡" + pokemonDefensor.getNombre() + " fue debilitado!");
-                agregarMensaje(pokemonDefensor.getNombre() + " regresó después del ataque. ¡Es momento de cambiar!");
                 if (!equipoDebilitado(defensor)) {
                     mostrarVentanaCambioObligatorio(defensor);
                 }
             }
-            
-            if (movimiento.getNombre().contains("Cabeza")) {
-                agregarMensaje(pokemonAtacante.getNombre() + " sufrió " + (danio/4) + " de daño por retroceso!");
-            }
-            
-            if (movimiento.getNombre().contains("Umbrío")) {
-                agregarMensaje(pokemonDefensor.getNombre() + " redujo su Precisión.");
-            }
-            
-            turnoJugador1 = !turnoJugador1;
-            actualizarVistaJugador();
+        } else {
+            agregarMensaje(movimiento.getPp() <= 0 ? 
+                "¡No quedan PP para este movimiento!" : "¡El ataque falló!");
         }
+        actualizarVidaPokemones();
+        turnoJugador1 = !turnoJugador1;
+        actualizarVistaJugador();
+    }
+    
+    private double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
+        String tipoAtaque = movimiento.getTipo().toLowerCase().replace("é", "e");
+        String tipoDefensa = objetivo.getTipoPrincipal().toLowerCase().replace("é", "e");
+        double efectividad = Efectividad.calcular(tipoAtaque, tipoDefensa);
+
+        if (objetivo.getTipoSecundario() != null && !objetivo.getTipoSecundario().isEmpty()) {
+            String tipoSecundario = objetivo.getTipoSecundario().toLowerCase().replace("é", "e");
+            efectividad *= Efectividad.calcular(tipoAtaque, tipoSecundario);
+        }
+        return efectividad;
     }
     
     private boolean equipoDebilitado(Entrenador entrenador) {
