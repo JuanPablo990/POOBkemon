@@ -18,8 +18,8 @@ public class PoobkemonGifs {
         // Pokémon
         POKEMON_IMAGES.put("Aron", "/resources/Pokemones/Acero/Aron.gif");
         POKEMON_IMAGES.put("Metang", "/resources/Pokemones/Acero/Metangross.gif");
-        POKEMON_IMAGES.put("corphish", "/resources/Pokemones/Agua/corphish.gif");
-        POKEMON_IMAGES.put("magikarp", "/resources/Pokemones/Agua/magikarp.gif");
+        POKEMON_IMAGES.put("Corphish", "/resources/Pokemones/Agua/corphish.gif");
+        POKEMON_IMAGES.put("Magikarp", "/resources/Pokemones/Agua/magikarp.gif");
         POKEMON_IMAGES.put("Scizor", "/resources/Pokemones/Bicho/Scizor.gif");
         POKEMON_IMAGES.put("Shedinja", "/resources/Pokemones/Bicho/Shedinja.gif");
         POKEMON_IMAGES.put("Dratini", "/resources/Pokemones/Dragon/Dratini.gif");
@@ -38,8 +38,8 @@ public class PoobkemonGifs {
         POKEMON_IMAGES.put("Hitmonlee", "/resources/Pokemones/Lucha/Hitmonlee.gif");
         POKEMON_IMAGES.put("Skitty", "/resources/Pokemones/Normal/Skitty.gif");
         POKEMON_IMAGES.put("Zangoose", "/resources/Pokemones/Normal/Zangoose.gif");
-        POKEMON_IMAGES.put("shroomish", "/resources/Pokemones/Planta/shroomish.gif");
-        POKEMON_IMAGES.put("tropius", "/resources/Pokemones/Planta/tropius.gif");
+        POKEMON_IMAGES.put("Shroomish", "/resources/Pokemones/Planta/shroomish.gif");
+        POKEMON_IMAGES.put("Tropius", "/resources/Pokemones/Planta/tropius.gif");
         POKEMON_IMAGES.put("Spoink", "/resources/Pokemones/Psiquico/Spoink.gif");
         POKEMON_IMAGES.put("Wobbuffet", "/resources/Pokemones/Psiquico/Wobbuffet.gif");
         POKEMON_IMAGES.put("Geodude", "/resources/Pokemones/Roca/Geodude.gif");
