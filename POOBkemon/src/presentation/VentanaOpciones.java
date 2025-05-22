@@ -209,68 +209,102 @@ public class VentanaOpciones extends Ventana {
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
         panelBotones.setOpaque(false);
         Dimension tamanoBotones = new Dimension(150, 60);
-        JButton btnNormal = crearBotonDialogo(NORMAL_IMAGE, tamanoBotones, "Normal");
-        JButton btnSupervivencia = crearBotonDialogo(SUPERVIVENCIA_IMAGE, tamanoBotones, "Supervivencia");
         
-        btnNormal.addActionListener(e -> {
-            boolean nombresValidos = true;
-            if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
-                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
-                nombresValidos = false;
-            }
-            if (titulo.equals("Player vs Machine") && selectedMachineType == null) {
-                JOptionPane.showMessageDialog(dialog,"Por favor seleccione un tipo de máquina","Tipo de máquina requerido",JOptionPane.WARNING_MESSAGE);
-                nombresValidos = false;
-            }
-            if (nombresValidos) {
-                String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
-                String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
-                
-                // Crear entrenadores sin equipos (se seleccionarán después)
-                Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
-                Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
-                
-                POOBkemonGUI.setJugador1(jugador1);
-                POOBkemonGUI.setJugador2(jugador2);
-                POOBkemonGUI.setModoSupervivencia(false);
-                
-                dialog.dispose();
-                this.setVisible(false);
-                POOBkemonGUI.setMostrandoMovimientosJugador1(true);
-                POOBkemonGUI.mostrarVentanaSeleccion(true);
-            }
-        });
+        // Determinar qué botón mostrar según el modo
+        if (titulo.equals("Player vs Player")) {
+            // Para PvP, mantener los dos botones originales
+            JButton btnNormal = crearBotonDialogo(NORMAL_IMAGE, tamanoBotones, "Normal");
+            JButton btnSupervivencia = crearBotonDialogo(SUPERVIVENCIA_IMAGE, tamanoBotones, "Supervivencia");
+            
+            btnNormal.addActionListener(e -> {
+                boolean nombresValidos = true;
+                if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
+                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                    nombresValidos = false;
+                }
+                if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
+                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                    nombresValidos = false;
+                }
+                if (nombresValidos) {
+                    String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
+                    String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
+                    
+                    Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
+                    Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
+                    
+                    POOBkemonGUI.setJugador1(jugador1);
+                    POOBkemonGUI.setJugador2(jugador2);
+                    POOBkemonGUI.setModoSupervivencia(false);
+                    
+                    dialog.dispose();
+                    this.setVisible(false);
+                    POOBkemonGUI.setMostrandoMovimientosJugador1(true);
+                    POOBkemonGUI.mostrarVentanaSeleccion(true);
+                }
+            });
 
-        btnSupervivencia.addActionListener(e -> {
-            boolean nombresValidos = true;
-            if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
-                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
-                nombresValidos = false;
-            }
-            if (titulo.equals("Player vs Machine") && selectedMachineType == null) {
-                JOptionPane.showMessageDialog(dialog,"Por favor seleccione un tipo de máquina","Tipo de máquina requerido",JOptionPane.WARNING_MESSAGE);
-                nombresValidos = false;
-            }
-            if (nombresValidos) {
-                String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
-                String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
-                
-                // Crear entrenadores con equipos aleatorios completos
-                Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player1Name);
-                Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player2Name);
-                
-                POOBkemonGUI.setJugador1(jugador1);
-                POOBkemonGUI.setJugador2(jugador2);
-                POOBkemonGUI.setModoSupervivencia(true);
-                
-                dialog.dispose();
-                this.setVisible(false);
-                POOBkemonGUI.iniciarBatalla();
-            }
-        });
+            btnSupervivencia.addActionListener(e -> {
+                boolean nombresValidos = true;
+                if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
+                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                    nombresValidos = false;
+                }
+                if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
+                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                    nombresValidos = false;
+                }
+                if (nombresValidos) {
+                    String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
+                    String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
+                    
+                    Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player1Name);
+                    Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player2Name);
+                    
+                    POOBkemonGUI.setJugador1(jugador1);
+                    POOBkemonGUI.setJugador2(jugador2);
+                    POOBkemonGUI.setModoSupervivencia(true);
+                    
+                    dialog.dispose();
+                    this.setVisible(false);
+                    POOBkemonGUI.iniciarBatalla();
+                }
+            });
 
-        panelBotones.add(btnNormal);
-        panelBotones.add(btnSupervivencia);
+            panelBotones.add(btnNormal);
+            panelBotones.add(btnSupervivencia);
+        } else {
+            // Para PvM y MvM, mostrar solo el botón Start
+        	JButton btnStart = crearBotonDialogo("/resources/start.png", tamanoBotones, "Start");
+            
+            btnStart.addActionListener(e -> {
+                boolean nombresValidos = true;
+                if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
+                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                    nombresValidos = false;
+                }
+                if (titulo.equals("Player vs Machine") && selectedMachineType == null) {
+                    JOptionPane.showMessageDialog(dialog,"Por favor seleccione un tipo de máquina","Tipo de máquina requerido",JOptionPane.WARNING_MESSAGE);
+                    nombresValidos = false;
+                }
+                if (nombresValidos) {
+                    String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
+                    String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
+                    Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player1Name);
+                    Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player2Name);
+                    POOBkemonGUI.setJugador1(jugador1);
+                    POOBkemonGUI.setJugador2(jugador2);
+                    POOBkemonGUI.setModoSupervivencia(true);
+                    
+                    dialog.dispose();
+                    this.setVisible(false);
+                    POOBkemonGUI.iniciarBatalla();
+                }
+            });
+            
+            panelBotones.add(btnStart);
+        }
+
         panelPrincipal.add(panelBotones);
         fondoDialog.add(panelPrincipal, BorderLayout.CENTER);
         dialog.setVisible(true);
