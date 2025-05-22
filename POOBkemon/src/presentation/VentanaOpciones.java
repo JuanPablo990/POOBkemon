@@ -11,6 +11,8 @@ public class VentanaOpciones extends Ventana {
     private FondoPanel fondoPanel;
     private JButton btnPvP, btnPvM, btnMvM, btnCreditos;
     private JTextField txtPlayer1, txtPlayer2;
+    private JButton defensiveTrainer, attackingTrainer, changingTrainer, expertTrainer;
+    private String selectedMachineType = null;
 
     private static final String PVP_IMAGE = "/resources/pvp.png";
     private static final String PVM_IMAGE = "/resources/pvm.png";
@@ -127,7 +129,7 @@ public class VentanaOpciones extends Ventana {
 
     private void mostrarVentanaModo(String titulo, boolean mostrarPlayer1, boolean mostrarPlayer2) {
         JDialog dialog = new JDialog(this, titulo, true);
-        dialog.setSize(500, mostrarPlayer1 || mostrarPlayer2 ? 400 : 300);
+        dialog.setSize(500, mostrarPlayer1 || mostrarPlayer2 ? 500 : 300);
         dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
 
@@ -178,6 +180,32 @@ public class VentanaOpciones extends Ventana {
             panelPrincipal.add(panelNombres);
         }
 
+        // Panel para los botones de selección de máquina (solo en PvM)
+        if (titulo.equals("Player vs Machine")) {
+            JPanel panelMachineSelection = new JPanel(new GridLayout(2, 2, 10, 10));
+            panelMachineSelection.setBorder(new EmptyBorder(10, 50, 20, 50));
+            panelMachineSelection.setOpaque(false);
+            
+            JLabel lblMachineType = new JLabel("Seleccione tipo de máquina:", SwingConstants.CENTER);
+            lblMachineType.setForeground(Color.WHITE);
+            lblMachineType.setFont(new Font("Arial", Font.BOLD, 16));
+            
+            panelPrincipal.add(lblMachineType);
+            
+            // Crear botones de selección de máquina
+            defensiveTrainer = createMachineButton("Defensive Trainer");
+            attackingTrainer = createMachineButton("Attacking Trainer");
+            changingTrainer = createMachineButton("Changing Trainer");
+            expertTrainer = createMachineButton("Expert Trainer");
+            
+            panelMachineSelection.add(defensiveTrainer);
+            panelMachineSelection.add(attackingTrainer);
+            panelMachineSelection.add(changingTrainer);
+            panelMachineSelection.add(expertTrainer);
+            
+            panelPrincipal.add(panelMachineSelection);
+        }
+
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
         panelBotones.setOpaque(false);
         Dimension tamanoBotones = new Dimension(150, 60);
@@ -190,8 +218,8 @@ public class VentanaOpciones extends Ventana {
                 JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
-            if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
-                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+            if (titulo.equals("Player vs Machine") && selectedMachineType == null) {
+                JOptionPane.showMessageDialog(dialog,"Por favor seleccione un tipo de máquina","Tipo de máquina requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
             if (nombresValidos) {
@@ -200,9 +228,7 @@ public class VentanaOpciones extends Ventana {
                 
                 // Crear entrenadores sin equipos (se seleccionarán después)
                 Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
-                Entrenador jugador2 = mostrarPlayer2 ? 
-                    POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name) : 
-                    POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
+                Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
                 
                 POOBkemonGUI.setJugador1(jugador1);
                 POOBkemonGUI.setJugador2(jugador2);
@@ -221,8 +247,8 @@ public class VentanaOpciones extends Ventana {
                 JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
-            if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
-                JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
+            if (titulo.equals("Player vs Machine") && selectedMachineType == null) {
+                JOptionPane.showMessageDialog(dialog,"Por favor seleccione un tipo de máquina","Tipo de máquina requerido",JOptionPane.WARNING_MESSAGE);
                 nombresValidos = false;
             }
             if (nombresValidos) {
@@ -250,6 +276,29 @@ public class VentanaOpciones extends Ventana {
         dialog.setVisible(true);
     }
 
+    private JButton createMachineButton(String text) {
+        JButton button = new JButton(text);
+        button.setBackground(Color.YELLOW);
+        button.setForeground(Color.BLACK);
+        button.setFont(new Font("Arial", Font.BOLD, 12));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        
+        button.addActionListener(e -> {
+            // Resetear todos los botones a amarillo
+            defensiveTrainer.setBackground(Color.YELLOW);
+            attackingTrainer.setBackground(Color.YELLOW);
+            changingTrainer.setBackground(Color.YELLOW);
+            expertTrainer.setBackground(Color.YELLOW);
+            
+            // Poner el botón seleccionado en verde
+            button.setBackground(Color.GREEN);
+            selectedMachineType = text;
+        });
+        
+        return button;
+    }
+
     private JButton crearBotonDialogo(String imagenPath, Dimension size, String textoAlternativo) {
         JButton boton = new JButton() {
             @Override
@@ -267,7 +316,7 @@ public class VentanaOpciones extends Ventana {
         boton.setPreferredSize(size);
         try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
-            Image img = iconoOriginal.getImage().getScaledInstance(size.width,size.height,Image.SCALE_SMOOTH);
+            Image img = iconoOriginal.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
             boton.setIcon(new ImageIcon(img));
         } catch (Exception e) {
             System.err.println("Error al cargar imagen: " + imagenPath);
@@ -296,7 +345,7 @@ public class VentanaOpciones extends Ventana {
     private void escalarImagenBoton(JButton boton, String imagenPath, Dimension size) {
         try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
-            Image img = iconoOriginal.getImage().getScaledInstance(size.width,size.height,Image.SCALE_SMOOTH);
+            Image img = iconoOriginal.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
             boton.setIcon(new ImageIcon(img));
         } catch (Exception e) {
             System.err.println("Error al escalar imagen: " + imagenPath);
@@ -315,25 +364,25 @@ public class VentanaOpciones extends Ventana {
 
     @Override
     protected void accionAbrir() {
-        mostrarFileChooser("Abrir configuración",new String[]{"cfg"},"Archivos de configuración (*.cfg)",
+        mostrarFileChooser("Abrir configuración", new String[]{"cfg"}, "Archivos de configuración (*.cfg)",
                 e -> JOptionPane.showMessageDialog(this, "Configuración cargada"));
     }
 
     @Override
     protected void accionGuardar() {
-        mostrarFileChooser("Guardar configuración",new String[]{"cfg"},"Archivos de configuración (*.cfg)",
+        mostrarFileChooser("Guardar configuración", new String[]{"cfg"}, "Archivos de configuración (*.cfg)",
                 e -> JOptionPane.showMessageDialog(this, "Configuración guardada"));
     }
 
     @Override
     protected void accionExportar() {
-        mostrarFileChooser("Exportar opciones", new String[]{"opt"},"Archivos de opciones (*.opt)",
+        mostrarFileChooser("Exportar opciones", new String[]{"opt"}, "Archivos de opciones (*.opt)",
                 e -> JOptionPane.showMessageDialog(this, "Opciones exportadas"));
     }
 
     @Override
     protected void accionImportar() {
-        mostrarFileChooser("Importar opciones",new String[]{"opt"}, "Archivos de opciones (*.opt)",
+        mostrarFileChooser("Importar opciones", new String[]{"opt"}, "Archivos de opciones (*.opt)",
                 e -> JOptionPane.showMessageDialog(this, "Opciones importadas"));
     }
 
