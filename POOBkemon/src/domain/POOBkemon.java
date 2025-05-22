@@ -14,12 +14,17 @@ public class POOBkemon {
     private boolean turnoJugador1;
     private boolean modoSupervivencia = false;
     
-    // Constructores
+    // ========================
+    // ** CONSTRUCTORES **
+    // ========================
+    
+    // Constructor por defecto
     public POOBkemon() {
         this.poquedex = Poquedex.getInstancia();
         this.entrenadores = new ArrayList<>();
     }
 
+    // Constructor original (para humanos)
     public POOBkemon(String nombreJugador1, String nombreJugador2, boolean modoSupervivencia) {
         this();
         this.modoSupervivencia = modoSupervivencia;
@@ -32,11 +37,61 @@ public class POOBkemon {
             this.jugador2 = crearEntrenador(nombreJugador2);
         }
         
-        // Inicializar el turno de forma aleatoria
         this.turnoJugador1 = new Random().nextBoolean();
     }
 
-    // Método para crear entrenador con equipo aleatorio
+    // Nuevo constructor: Humano vs IA
+    public POOBkemon(Entrenador jugador1, Machine jugador2, boolean modoSupervivencia) {
+        this();
+        this.modoSupervivencia = modoSupervivencia;
+        this.jugador1 = jugador1;
+        this.jugador2 = jugador2.getEntrenador();
+        entrenadores.add(jugador1);
+        entrenadores.add(this.jugador2);
+        
+        if (modoSupervivencia) {
+            generarEquiposAleatorios();
+        }
+        
+        this.turnoJugador1 = new Random().nextBoolean();
+    }
+
+    // Nuevo constructor: IA vs IA
+    public POOBkemon(Machine jugador1, Machine jugador2, boolean modoSupervivencia) {
+        this();
+        this.modoSupervivencia = modoSupervivencia;
+        this.jugador1 = jugador1.getEntrenador();
+        this.jugador2 = jugador2.getEntrenador();
+        entrenadores.add(this.jugador1);
+        entrenadores.add(this.jugador2);
+        
+        if (modoSupervivencia) {
+            generarEquiposAleatorios();
+        }
+        
+        this.turnoJugador1 = new Random().nextBoolean();
+    }
+
+    // ========================
+    // ** MÉTODOS PRIVADOS **
+    // ========================
+    
+    private void generarEquiposAleatorios() {
+        if (jugador1 != null) jugador1.generarEquipoAleatorioCompleto();
+        if (jugador2 != null) jugador2.generarEquipoAleatorioCompleto();
+    }
+
+    // ========================
+    // ** MÉTODOS PÚBLICOS **
+    // ========================
+    
+    // ** Métodos para entrenadores **
+    public Entrenador crearEntrenador(String nombre) {
+        Entrenador entrenador = new Entrenador(nombre);
+        entrenadores.add(entrenador);
+        return entrenador;
+    }
+
     public Entrenador crearEntrenadorConEquipoAleatorio(String nombre) {
         Entrenador entrenador = new Entrenador(nombre);
         entrenador.generarEquipoAleatorioCompleto();
@@ -45,16 +100,12 @@ public class POOBkemon {
         return entrenador;
     }
 
-    // Métodos para gestionar el modo supervivencia
-    public void setModoSupervivencia(boolean modo) {
-        this.modoSupervivencia = modo;
+    public void agregarPokemonAEntrenador(Entrenador entrenador, String nombrePokemon) {
+        Pokemon pokemon = crearPokemon(nombrePokemon);
+        entrenador.agregarPokemon(pokemon);
     }
 
-    public boolean isModoSupervivencia() {
-        return modoSupervivencia;
-    }
-
-    // Métodos para manejar Pokémon
+    // ** Métodos para Pokémon **
     public Pokemon crearPokemon(String nombrePokemon) {
         return poquedex.crearPokemon(nombrePokemon);
     }
@@ -62,7 +113,12 @@ public class POOBkemon {
     public List<String> obtenerNombresPokemonDisponibles() {
         return poquedex.obtenerNombresPokemonDisponibles();
     }
-    
+
+    public Pokemon getPokemonPorNombre(Entrenador entrenador, String nombre) {
+        return entrenador.getPokemonPorNombre(nombre);
+    }
+
+    // ** Métodos para movimientos **
     public Movimiento crearMovimiento(String nombreMovimiento) {
         return poquedex.crearMovimiento(nombreMovimiento);
     }
@@ -75,35 +131,17 @@ public class POOBkemon {
         return poquedex.obtenerMovimientosPorTipo(tipo);
     }
 
-    public Poquedex getPoquedex() {
-        return poquedex;
-    }
-
-    // Métodos para manejar entrenadores
-    public Entrenador crearEntrenador(String nombre) {
-        Entrenador entrenador = new Entrenador(nombre);
-        entrenadores.add(entrenador);
-        return entrenador;
-    }
-
-    public void agregarPokemonAEntrenador(Entrenador entrenador, String nombrePokemon) {
-        Pokemon pokemon = crearPokemon(nombrePokemon);
-        entrenador.agregarPokemon(pokemon);
-    }
-
     public void asignarMovimientosAPokemon(Entrenador entrenador, int indicePokemon, List<String> nombresMovimientos) {
-        List<Movimiento> movimientos = new ArrayList<>();
-        for (String nombre : nombresMovimientos) {
-            movimientos.add(crearMovimiento(nombre));
-        }
+        List<Movimiento> movimientos = nombresMovimientos.stream()
+            .map(this::crearMovimiento)
+            .collect(Collectors.toList());
         entrenador.asignarMovimientosAPokemon(indicePokemon, movimientos);
     }
 
-    // Métodos para manejar batallas
+    // ** Métodos para batallas **
     public void iniciarBatalla() {
         if (jugador1 != null && jugador2 != null) {
             this.batallaActual = new Batalla(jugador1, jugador2, null);
-            // Sincronizar el turno con la batalla
             this.turnoJugador1 = batallaActual.isTurnoJugador1();
             batallaActual.iniciarBatalla();
         }
@@ -112,13 +150,8 @@ public class POOBkemon {
     public void setJugadores(Entrenador jugador1, Entrenador jugador2) {
         this.jugador1 = jugador1;
         this.jugador2 = jugador2;
-        if (!entrenadores.contains(jugador1)) {
-            entrenadores.add(jugador1);
-        }
-        if (!entrenadores.contains(jugador2)) {
-            entrenadores.add(jugador2);
-        }
-        // Establecer turno inicial aleatorio al asignar nuevos jugadores
+        if (!entrenadores.contains(jugador1)) entrenadores.add(jugador1);
+        if (!entrenadores.contains(jugador2)) entrenadores.add(jugador2);
         this.turnoJugador1 = new Random().nextBoolean();
     }
 
@@ -127,6 +160,12 @@ public class POOBkemon {
         iniciarBatalla();
     }
 
+    // ** Métodos para items **
+    public String usarItem(Entrenador entrenador, int indiceItem, int indicePokemon) {
+        return entrenador.usarItem(indiceItem, indicePokemon);
+    }
+
+    // ** Getters y utilidades **
     public Entrenador getEntrenador1() {
         return jugador1 != null ? jugador1 : (batallaActual != null ? batallaActual.getEntrenador1() : null);
     }
@@ -136,36 +175,33 @@ public class POOBkemon {
     }
 
     public boolean isBatallaTerminada() {
-        if (batallaActual == null) return true;
-        return batallaActual.isBatallaTerminada();
+        return batallaActual != null && batallaActual.isBatallaTerminada();
     }
 
     public Entrenador getGanador() {
-        if (batallaActual == null) return null;
-        return batallaActual.getGanador();
+        return batallaActual != null ? batallaActual.getGanador() : null;
     }
 
     public Pokemon getPokemonActivo(Entrenador entrenador) {
-        if (batallaActual == null) return null;
-        return batallaActual.getPokemonActivo(entrenador);
+        return batallaActual != null ? batallaActual.getPokemonActivo(entrenador) : null;
     }
 
-    // Métodos para manejar turnos y acciones
     public List<Movimiento> getMovimientosDisponibles(Pokemon pokemon) {
-        if (pokemon == null) return new ArrayList<>();
-        return pokemon.getMovimientos().stream()
-               .filter(m -> m.getPp() > 0)
-               .collect(Collectors.toList());
+        return pokemon != null ? 
+            pokemon.getMovimientos().stream()
+                .filter(m -> m.getPp() > 0)
+                .collect(Collectors.toList()) : 
+            new ArrayList<>();
     }
 
     public List<String> getOpcionesTurno(Entrenador entrenador) {
         List<String> opciones = new ArrayList<>();
         opciones.add("ATACAR");
+        
         if (entrenador != null) {
-            boolean puedeCambiar = entrenador.getEquipoPokemon().stream()
-                                  .filter(p -> !p.equals(entrenador.getPokemonActivo()))
-                                  .anyMatch(p -> !p.estaDebilitado());
-            if (puedeCambiar) {
+            if (entrenador.getEquipoPokemon().stream()
+                .filter(p -> !p.equals(entrenador.getPokemonActivo()))
+                .anyMatch(p -> !p.estaDebilitado())) {
                 opciones.add("CAMBIAR_POKEMON");
             }
             if (!entrenador.getMochilaItems().isEmpty()) {
@@ -176,10 +212,11 @@ public class POOBkemon {
     }
 
     public List<Pokemon> getPokemonsDisponiblesParaCambio(Entrenador entrenador) {
-        if (entrenador == null) return new ArrayList<>();
-        return entrenador.getEquipoPokemon().stream()
-               .filter(p -> !p.equals(entrenador.getPokemonActivo()) && !p.estaDebilitado())
-               .collect(Collectors.toList());
+        return entrenador != null ? 
+            entrenador.getEquipoPokemon().stream()
+                .filter(p -> !p.equals(entrenador.getPokemonActivo()) && !p.estaDebilitado())
+                .collect(Collectors.toList()) : 
+            new ArrayList<>();
     }
 
     public List<Entrenador> getEntrenadores() {
@@ -196,10 +233,7 @@ public class POOBkemon {
 
     public void cambiarTurno() {
         turnoJugador1 = !turnoJugador1;
-        // Sincronizar con la batalla actual si existe
-        if (batallaActual != null) {
-            batallaActual.cambiarTurno();
-        }
+        if (batallaActual != null) batallaActual.cambiarTurno();
     }
 
     public Entrenador getEntrenadorEnTurno() {
@@ -211,39 +245,23 @@ public class POOBkemon {
         this.batallaActual = null;
         this.jugador1 = null;
         this.jugador2 = null;
-        // Establecer turno inicial aleatorio al reiniciar
         this.turnoJugador1 = new Random().nextBoolean();
         this.modoSupervivencia = false;
     }
 
-    // Métodos para equipos aleatorios
+    // ** Métodos para equipos aleatorios **
     public void generarEquipoAleatorio(Entrenador entrenador, int cantidad) {
-        if (entrenador == null) {
-            throw new IllegalArgumentException("El entrenador no puede ser nulo");
-        }
+        if (entrenador == null) throw new IllegalArgumentException("Entrenador no puede ser nulo");
         entrenador.generarEquipoAleatorio(cantidad);
     }
 
     public void generarEquipoAleatorioCompleto(Entrenador entrenador) {
-        if (entrenador == null) {
-            throw new IllegalArgumentException("El entrenador no puede ser nulo");
-        }
+        if (entrenador == null) throw new IllegalArgumentException("Entrenador no puede ser nulo");
         entrenador.generarEquipoAleatorioCompleto();
     }
 
-    // Método para obtener pokémon por nombre
-    public Pokemon getPokemonPorNombre(Entrenador entrenador, String nombre) {
-        if (entrenador == null || nombre == null) {
-            return null;
-        }
-        return entrenador.getPokemonPorNombre(nombre);
-    }
-
-    // Método para usar items
-    public String usarItem(Entrenador entrenador, int indiceItem, int indicePokemon) {
-        if (entrenador == null) {
-            throw new IllegalArgumentException("El entrenador no puede ser nulo");
-        }
-        return entrenador.usarItem(indiceItem, indicePokemon);
+    // ** Getters adicionales **
+    public Poquedex getPoquedex() {
+        return poquedex;
     }
 }

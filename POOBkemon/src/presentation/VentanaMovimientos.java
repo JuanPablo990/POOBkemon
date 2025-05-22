@@ -27,23 +27,23 @@ public class VentanaMovimientos extends Ventana {
 
     private static final Map<String, List<String>> COMPATIBILIDAD_MOVIMIENTOS = new HashMap<>();
     static {
-        COMPATIBILIDAD_MOVIMIENTOS.put("Acero", List.of("Acero", "Roca", "Tierra"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Agua", List.of("Agua", "Hielo"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Bicho", List.of("Bicho", "Planta", "Veneno"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Dragón", List.of("Dragón", "Agua", "Eléctrico"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Acero", List.of("Acero", "Roca", "Tierra", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Agua", List.of("Agua", "Hielo", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Bicho", List.of("Bicho", "Planta", "Veneno", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Dragón", List.of("Dragón", "Agua", "Eléctrico", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Eléctrico", List.of("Eléctrico", "Normal"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Fantasma", List.of("Fantasma", "Siniestro"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Fuego", List.of("Fuego", "Volador", "Acero"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Hada", List.of("Hada", "Psíquico", "Planta"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Hielo", List.of("Hielo", "Agua"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Lucha", List.of("Lucha", "Roca", "Siniestro"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Fantasma", List.of("Fantasma", "Siniestro", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Fuego", List.of("Fuego", "Volador", "Acero", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Hada", List.of("Hada", "Psíquico", "Planta", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Hielo", List.of("Hielo", "Agua", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Lucha", List.of("Lucha", "Roca", "Siniestro", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Normal", List.of("Normal"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Planta", List.of("Planta", "Bicho", "Hada"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Psíquico", List.of("Psíquico", "Hada"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Roca", List.of("Roca", "Tierra", "Acero"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Siniestro", List.of("Siniestro", "Fantasma", "Lucha"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Tierra", List.of("Tierra", "Roca", "Acero"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Veneno", List.of("Veneno", "Planta", "Bicho"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Planta", List.of("Planta", "Bicho", "Hada", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Psíquico", List.of("Psíquico", "Hada", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Roca", List.of("Roca", "Tierra", "Acero", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Siniestro", List.of("Siniestro", "Fantasma", "Lucha", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Tierra", List.of("Tierra", "Roca", "Acero", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Veneno", List.of("Veneno", "Planta", "Bicho", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Volador", List.of("Volador", "Normal", "Lucha"));
     }
 

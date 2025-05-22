@@ -177,23 +177,23 @@ public class Pokemon {
     
     static {
         
-        COMPATIBILIDAD_MOVIMIENTOS.put("Acero", Arrays.asList("Acero", "Roca", "Tierra"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Agua", Arrays.asList("Agua", "Hielo"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Bicho", Arrays.asList("Bicho", "Planta", "Veneno"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Dragón", Arrays.asList("Dragón", "Agua", "Eléctrico"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Acero", Arrays.asList("Acero", "Roca", "Tierra", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Agua", Arrays.asList("Agua", "Hielo", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Bicho", Arrays.asList("Bicho", "Planta", "Veneno", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Dragón", Arrays.asList("Dragón", "Agua", "Eléctrico", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Eléctrico", Arrays.asList("Eléctrico", "Normal"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Fantasma", Arrays.asList("Fantasma", "Siniestro"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Fuego", Arrays.asList("Fuego", "Volador", "Acero"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Hada", Arrays.asList("Hada", "Psíquico", "Planta"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Hielo", Arrays.asList("Hielo", "Agua"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Lucha", Arrays.asList("Lucha", "Roca", "Siniestro"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Fantasma", Arrays.asList("Fantasma", "Siniestro", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Fuego", Arrays.asList("Fuego", "Volador", "Acero", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Hada", Arrays.asList("Hada", "Psíquico", "Planta", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Hielo", Arrays.asList("Hielo", "Agua", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Lucha", Arrays.asList("Lucha", "Roca", "Siniestro", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Normal", Arrays.asList("Normal"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Planta", Arrays.asList("Planta", "Bicho", "Hada"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Psíquico", Arrays.asList("Psíquico", "Hada"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Roca", Arrays.asList("Roca", "Tierra", "Acero"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Siniestro", Arrays.asList("Siniestro", "Fantasma", "Lucha"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Tierra", Arrays.asList("Tierra", "Roca", "Acero"));
-        COMPATIBILIDAD_MOVIMIENTOS.put("Veneno", Arrays.asList("Veneno", "Planta", "Bicho"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Planta", Arrays.asList("Planta", "Normal", "Bicho", "Hada"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Psíquico", Arrays.asList("Psíquico", "Hada", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Roca", Arrays.asList("Roca", "Tierra", "Acero", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Siniestro", Arrays.asList("Siniestro", "Fantasma", "Lucha", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Tierra", Arrays.asList("Tierra", "Roca", "Acero", "Normal"));
+        COMPATIBILIDAD_MOVIMIENTOS.put("Veneno", Arrays.asList("Veneno", "Planta", "Bicho", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Volador", Arrays.asList("Volador", "Normal", "Lucha"));
     }
 
