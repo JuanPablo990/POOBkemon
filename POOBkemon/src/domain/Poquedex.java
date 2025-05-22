@@ -171,7 +171,6 @@ public class Poquedex {
         if (clasePokemon == null) {
             throw new IllegalArgumentException("La clase de Pokémon no puede ser nula");
         }
-        // Guardar el nombre original para mantener la visualización correcta
         pokemonesDisponibles.put(nombre.toLowerCase(), clasePokemon);
     }
 
@@ -179,7 +178,6 @@ public class Poquedex {
         if (movimiento == null) {
             throw new IllegalArgumentException("El movimiento no puede ser nulo");
         }
-        // Guardar el nombre en minúsculas como clave
         movimientosDisponibles.put(movimiento.getNombre().toLowerCase(), movimiento);
     }
 
@@ -199,10 +197,7 @@ public class Poquedex {
         if (nombre == null) {
             throw new IllegalArgumentException("El nombre del Pokémon no puede ser nulo");
         }
-        
-        // Buscar directamente usando el nombre en minúsculas
         Class<? extends Pokemon> pokemonClass = pokemonesDisponibles.get(nombre.toLowerCase());
-        
         if (pokemonClass != null) {
             try {
                 return pokemonClass.getDeclaredConstructor().newInstance();
@@ -210,7 +205,6 @@ public class Poquedex {
                 throw new RuntimeException("Error al crear el Pokémon: " + e.getMessage(), e);
             }
         }
-        
         throw new IllegalArgumentException("El Pokémon " + nombre + " no existe en la Poquedex");
     }
 
@@ -218,14 +212,11 @@ public class Poquedex {
         if (nombre == null) {
             throw new IllegalArgumentException("El nombre del movimiento no puede ser nulo");
         }
-        
-        // Buscar directamente usando el nombre en minúsculas
         Movimiento original = movimientosDisponibles.get(nombre.toLowerCase());
         
         if (original == null) {
             throw new IllegalArgumentException("El movimiento " + nombre + " no existe en la Poquedex");
         }
-        
         try {
             return original.getClass().getDeclaredConstructor().newInstance();
         } catch (Exception e) {
@@ -245,9 +236,7 @@ public class Poquedex {
         List<String> pokemonFiltrados = new ArrayList<>();
         for (String nombre : pokemonesDisponibles.keySet()) {
             Pokemon pokemon = crearPokemon(nombre);
-            if (pokemon.getTipoPrincipal().equalsIgnoreCase(tipo) ||
-                (pokemon.getTipoSecundario() != null &&
-                 pokemon.getTipoSecundario().equalsIgnoreCase(tipo))) {
+            if (pokemon.getTipoPrincipal().equalsIgnoreCase(tipo) ||(pokemon.getTipoSecundario() != null && pokemon.getTipoSecundario().equalsIgnoreCase(tipo))) {
                 pokemonFiltrados.add(nombre);
             }
         }
@@ -257,8 +246,7 @@ public class Poquedex {
     public List<String> obtenerMovimientosPorTipo(String tipo) {
         List<String> movimientosFiltrados = new ArrayList<>();
         for (Movimiento movimiento : movimientosDisponibles.values()) {
-            if (movimiento.getTipo().equalsIgnoreCase(tipo)) {
-                movimientosFiltrados.add(movimiento.getNombre());
+            if (movimiento.getTipo().equalsIgnoreCase(tipo)) {movimientosFiltrados.add(movimiento.getNombre());
             }
         }
         return movimientosFiltrados;

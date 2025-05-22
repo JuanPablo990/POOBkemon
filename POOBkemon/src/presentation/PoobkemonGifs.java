@@ -4,18 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PoobkemonGifs {
-    // Mapa de nombres de Pokémon a sus rutas de imagen
     public static final Map<String, String> POKEMON_IMAGES = new HashMap<>();
-    
-    // Mapa de nombres de ítems a sus rutas de imagen
     public static final Map<String, String> ITEM_IMAGES = new HashMap<>();
-    
-    // Rutas de fondos
     public static final String FONDO_SELECCION = "/resources/seleccion.jpg";
     public static final String FONDO_MOVIMIENTOS = "/resources/movimientos.gif";
 
     static {
-        // Pokémon
         POKEMON_IMAGES.put("Aron", "/resources/Pokemones/Acero/Aron.gif");
         POKEMON_IMAGES.put("Metang", "/resources/Pokemones/Acero/Metangross.gif");
         POKEMON_IMAGES.put("Corphish", "/resources/Pokemones/Agua/corphish.gif");
@@ -53,8 +47,6 @@ public class PoobkemonGifs {
         POKEMON_IMAGES.put("Skarmory", "/resources/Pokemones/Volador/Skarmory.gif");
         POKEMON_IMAGES.put("Zubat", "/resources/Pokemones/Volador/Zubat.gif");
         POKEMON_IMAGES.put("Pikachu","/resources/Pokemones/Pikachu.gif");
-
-        // Ítems
         ITEM_IMAGES.put("Poción", "/resources/potion.png");
         ITEM_IMAGES.put("Hiperpoción", "/resources/hyperpotion.png");
         ITEM_IMAGES.put("Superpoción", "/resources/superpotion.png");

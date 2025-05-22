@@ -17,22 +17,17 @@ public class Pokemon {
     protected int velocidadBase;
     protected int ataqueEspecialBase;
     protected int defensaEspecialBase;
-    
-   
     protected int etapaAtaque;
     protected int etapaDefensa;
     protected int etapaVelocidad;
     protected int etapaAtaqueEspecial;
     protected int etapaDefensaEspecial;
-
-
     private static final double MULTIPLICADOR_BASE = 1.5;
     private static final double MULTIPLICADOR_MINIMO = 0.25;
     private static final double MULTIPLICADOR_MAXIMO = 4.0;
+    private List<Movimiento> movimientos = new ArrayList<>();
 
-    public Pokemon(String nombre, String tipoPrincipal, String tipoSecundario, 
-                   int psMaximos, int ataqueBase, int defensaBase, int velocidadBase, 
-                   int ataqueEspecialBase, int defensaEspecialBase) {
+    public Pokemon(String nombre,String tipoPrincipal,String tipoSecundario,int psMaximos,int ataqueBase,int defensaBase,int velocidadBase,int ataqueEspecialBase, int defensaEspecialBase) {
         this.nombre = nombre;
         this.tipoPrincipal = tipoPrincipal;
         this.tipoSecundario = tipoSecundario;
@@ -43,8 +38,6 @@ public class Pokemon {
         this.velocidadBase = velocidadBase;
         this.ataqueEspecialBase = ataqueEspecialBase;
         this.defensaEspecialBase = defensaEspecialBase;
-        
-      
         this.etapaAtaque = 0;
         this.etapaDefensa = 0;
         this.etapaVelocidad = 0;
@@ -55,7 +48,6 @@ public class Pokemon {
    
     public int aumentarPS(int cantidad) {
         if (cantidad <= 0) return 0;
-        
         int psAntes = this.ps;
         this.ps = Math.min(this.ps + cantidad, this.psMaximos);
         return this.ps - psAntes;
@@ -63,7 +55,6 @@ public class Pokemon {
 
     public int reducirPS(int cantidad) {
         if (cantidad <= 0) return 0;
-        
         int psAntes = this.ps;
         this.ps = Math.max(this.ps - cantidad, 0);
         return psAntes - this.ps;
@@ -72,7 +63,6 @@ public class Pokemon {
     public boolean estaDebilitado() {
         return this.ps <= 0;
     }
-
     
     public void aumentarAtaque(int cantidad) {
         this.etapaAtaque += cantidad;
@@ -114,10 +104,8 @@ public class Pokemon {
         this.etapaDefensaEspecial -= cantidad;
     }
 
-   
     private double calcularMultiplicador(int etapa) {
         double multiplicador;
-        
         if (etapa > 0) {
             multiplicador = 1.0 + (Math.abs(etapa) * (MULTIPLICADOR_BASE - 1.0));
         } else if (etapa < 0) {
@@ -125,12 +113,9 @@ public class Pokemon {
         } else {
             return 1.0; 
         }
-        
-  
         return Math.max(MULTIPLICADOR_MINIMO, Math.min(MULTIPLICADOR_MAXIMO, multiplicador));
     }
 
-  
     public int getAtaque() {
         return (int)(this.ataqueBase * calcularMultiplicador(this.etapaAtaque));
     }
@@ -151,7 +136,6 @@ public class Pokemon {
         return (int)(this.defensaEspecialBase * calcularMultiplicador(this.etapaDefensaEspecial));
     }
 
-   
     public String getNombre() {
         return nombre;
     }
@@ -172,11 +156,8 @@ public class Pokemon {
         return psMaximos;
     }
 
-      
     private static final Map<String, List<String>> COMPATIBILIDAD_MOVIMIENTOS = new HashMap<>();
-    
     static {
-        
         COMPATIBILIDAD_MOVIMIENTOS.put("Acero", Arrays.asList("Acero", "Roca", "Tierra", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Agua", Arrays.asList("Agua", "Hielo", "Normal"));
         COMPATIBILIDAD_MOVIMIENTOS.put("Bicho", Arrays.asList("Bicho", "Planta", "Veneno", "Normal"));
@@ -197,53 +178,24 @@ public class Pokemon {
         COMPATIBILIDAD_MOVIMIENTOS.put("Volador", Arrays.asList("Volador", "Normal", "Lucha"));
     }
 
-    
-    private List<Movimiento> movimientos = new ArrayList<>();
-
-    /**
-     * Asigna movimientos al Pokémon, verificando las restricciones:
-     * - Entre 1 y 4 movimientos
-     * - Compatibilidad con los tipos del Pokémon según la tabla
-     * 
-     * @param nuevosMovimientos Lista de movimientos a asignar
-     * @throws IllegalArgumentException Si no se cumplen las restricciones
-     */
     public void asignarMovimientos(List<Movimiento> nuevosMovimientos) {
         if (nuevosMovimientos == null || nuevosMovimientos.isEmpty() || nuevosMovimientos.size() > 4) {
             throw new IllegalArgumentException("Un Pokémon debe tener entre 1 y 4 movimientos");
         }
-        
         this.movimientos = new ArrayList<>(nuevosMovimientos);
     }
 
-    /**
-     * Verifica si un movimiento es compatible con los tipos del Pokémon
-     * 
-     * @param movimiento Movimiento a verificar
-     * @return true si es compatible, false si no
-     */
     private boolean esMovimientoCompatible(Movimiento movimiento) {
         String tipoMovimiento = movimiento.getTipo();
-        
-        
         if (COMPATIBILIDAD_MOVIMIENTOS.containsKey(tipoMovimiento)) {
             List<String> tiposCompatibles = COMPATIBILIDAD_MOVIMIENTOS.get(tipoMovimiento);
-            
-            if (tiposCompatibles.contains(this.tipoPrincipal) || 
-                (this.tipoSecundario != null && tiposCompatibles.contains(this.tipoSecundario))) {
+            if (tiposCompatibles.contains(this.tipoPrincipal) || (this.tipoSecundario != null && tiposCompatibles.contains(this.tipoSecundario))) {
                 return true;
             }
         }
-        
         return false;
     }
-
-    /**
-     * Añade un movimiento individual al Pokémon, verificando las restricciones
-     * 
-     * @param movimiento Movimiento a añadir
-     * @throws IllegalArgumentException Si no se cumplen las restricciones
-     */
+    
     public void aprenderMovimiento(Movimiento movimiento) {
         if (movimiento == null) {
             throw new IllegalArgumentException("El movimiento no puede ser nulo");
@@ -251,29 +203,19 @@ public class Pokemon {
         if (movimientos.size() >= 4) {
             throw new IllegalArgumentException("El Pokémon ya tiene 4 movimientos");
         }
-
         movimientos.add(movimiento);
     }
 
-    /**
-     * Reemplaza un movimiento existente por uno nuevo
-     * 
-     * @param indice Índice del movimiento a reemplazar (0-3)
-     * @param nuevoMovimiento Nuevo movimiento
-     * @throws IllegalArgumentException Si no se cumplen las restricciones
-     */
     public void reemplazarMovimiento(int indice, Movimiento nuevoMovimiento) {
         if (indice < 0 || indice >= movimientos.size()) {
-            throw new IllegalArgumentException("Índice de movimiento inválido");
+        	throw new IllegalArgumentException("Índice de movimiento inválido");
         }
         movimientos.set(indice, nuevoMovimiento);
     }
 
-   
     public List<Movimiento> getMovimientos() {
         return new ArrayList<>(movimientos); 
     }
-    
         
     public int getEtapaAtaque() {
         return this.etapaAtaque;
@@ -295,7 +237,6 @@ public class Pokemon {
         return this.etapaDefensaEspecial;
     }
     
- 
     @Override
     public String toString() {
         return String.format(
@@ -319,12 +260,12 @@ public class Pokemon {
     public void setMovimientosDesdeNombres(List<String> nombres) {
         List<Movimiento> lista = new ArrayList<>();
         for (String nombre : nombres) {
-            Movimiento m = Poquedex.getInstancia().crearMovimiento(nombre); // o MovimientoFactory
+            Movimiento m = Poquedex.getInstancia().crearMovimiento(nombre);
             if (m != null) {
                 lista.add(m);
             }
         }
-        asignarMovimientos(lista); // Usa tu método ya implementado con validaciones
+        asignarMovimientos(lista);
     }
 
 }

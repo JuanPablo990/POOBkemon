@@ -92,34 +92,22 @@ public class VentanaInicio extends Ventana {
 
     @Override
     protected void accionAbrir() {
-        mostrarFileChooser("Abrir partida", 
-                         new String[]{"pkm"}, 
-                         "Archivos POOBkemon (*.pkm)",
-                         e -> JOptionPane.showMessageDialog(this, "Partida cargada"));
+        mostrarFileChooser("Abrir partida",new String[]{"pkm"},"Archivos POOBkemon (*.pkm)",e -> JOptionPane.showMessageDialog(this, "Partida cargada"));
     }
 
     @Override
     protected void accionGuardar() {
-        mostrarFileChooser("Guardar partida", 
-                         new String[]{"pkm"}, 
-                         "Archivos POOBkemon (*.pkm)",
-                         e -> JOptionPane.showMessageDialog(this, "Partida guardada"));
+        mostrarFileChooser("Guardar partida",new String[]{"pkm"},"Archivos POOBkemon (*.pkm)",e -> JOptionPane.showMessageDialog(this, "Partida guardada"));
     }
 
     @Override
     protected void accionExportar() {
-        mostrarFileChooser("Exportar imagen", 
-                         new String[]{"png"}, 
-                         "Imágenes PNG (*.png)",
-                         e -> JOptionPane.showMessageDialog(this, "Imagen exportada"));
+        mostrarFileChooser("Exportar imagen",new String[]{"png"},"Imágenes PNG (*.png)",e -> JOptionPane.showMessageDialog(this, "Imagen exportada"));
     }
 
     @Override
     protected void accionImportar() {
-        mostrarFileChooser("Importar imagen", 
-                         new String[]{"png", "jpg"}, 
-                         "Imágenes (*.png, *.jpg)",
-                         e -> JOptionPane.showMessageDialog(this, "Imagen importada"));
+        mostrarFileChooser("Importar imagen",new String[]{"png", "jpg"},"Imágenes (*.png, *.jpg)",e -> JOptionPane.showMessageDialog(this, "Imagen importada"));
     }
 
     public void mostrar() {

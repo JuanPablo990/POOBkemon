@@ -18,37 +18,21 @@ public class Entrenador {
         this.pokemonActivo = null;
     }
 
-    /**
-     * Genera un equipo aleatorio de Pokémon con movimientos únicos para cada uno.
-     * @param cantidad Número de Pokémon en el equipo (1-6)
-     */
     public void generarEquipoAleatorio(int cantidad) {
         if (cantidad < 1 || cantidad > 6) {
             throw new IllegalArgumentException("La cantidad debe estar entre 1 y 6");
         }
-        
-        // Limpiar equipo actual
         equipoPokemon.clear();
         pokemonActivo = null;
-        
-        // Obtener todos los Pokémon disponibles
         List<String> nombresPokemon = obtenerListaPokemonDisponibles();
         Collections.shuffle(nombresPokemon);
-        
-        // Obtener todos los movimientos disponibles
         List<String> nombresMovimientos = obtenerListaMovimientosDisponibles();
         Collections.shuffle(nombresMovimientos);
-        
-        // Lista para llevar registro de movimientos ya asignados
         List<String> movimientosAsignados = new ArrayList<>();
-        
-        // Seleccionar Pokémon aleatorios
         for (int i = 0; i < cantidad && i < nombresPokemon.size(); i++) {
             String nombrePokemon = nombresPokemon.get(i);
             Pokemon pokemon = Poquedex.getInstancia().crearPokemon(nombrePokemon);
             agregarPokemon(pokemon);
-            
-            // Seleccionar 4 movimientos aleatorios únicos para este Pokémon
             List<String> movimientosPokemon = new ArrayList<>();
             for (int j = 0; j < 4 && j < nombresMovimientos.size(); j++) {
                 String movimiento = nombresMovimientos.get((i * 4 + j) % nombresMovimientos.size());
@@ -57,58 +41,35 @@ public class Entrenador {
                     movimientosAsignados.add(movimiento);
                 }
             }
-            
-            // Si no conseguimos 4 movimientos únicos, completar con repetidos pero únicos para el Pokémon
             while (movimientosPokemon.size() < 4 && !nombresMovimientos.isEmpty()) {
                 String movimiento;
                 do {
                     movimiento = nombresMovimientos.get((int)(Math.random() * nombresMovimientos.size()));
                 } while (movimientosPokemon.contains(movimiento));
-                
                 movimientosPokemon.add(movimiento);
             }
-            
             asignarMovimientosPorNombre(i, movimientosPokemon);
         }
     }
 
-    /**
-     * Genera un equipo aleatorio completo de 6 Pokémon con movimientos únicos.
-     */
     public void generarEquipoAleatorioCompleto() {
         generarEquipoAleatorio(6);
     }
 
-    /**
-     * Da items aleatorios al entrenador siguiendo las reglas:
-     * - Máximo 1 Revive
-     * - Máximo 2 pociones en total
-     * - Solo 2 tipos de pociones (no se pueden tener las 3 tipos)
-     */
     public void darItemsAleatorios() {
         Random random = new Random();
-        mochilaItems.clear(); // Limpiar mochila antes de agregar nuevos items
-        
-        // Decidir si dar un Revive (50% de probabilidad)
+        mochilaItems.clear(); 
         if (random.nextBoolean()) {
             mochilaItems.add(new Revive());
         }
-        
-        // Decidir cuántas pociones dar (0, 1 o 2)
-        int cantidadPociones = random.nextInt(3); // 0, 1 o 2
-        
+        int cantidadPociones = random.nextInt(3);
         if (cantidadPociones > 0) {
-            // Elegir qué tipos de pociones se pueden usar (seleccionar 2 de los 3 tipos)
             List<Class<? extends Item>> tiposPociones = new ArrayList<>();
             tiposPociones.add(Potion.class);
             tiposPociones.add(SuperPotion.class);
             tiposPociones.add(HyperPotion.class);
             Collections.shuffle(tiposPociones);
-            
-            // Seleccionar solo 2 tipos de pociones
             List<Class<? extends Item>> tiposSeleccionados = tiposPociones.subList(0, 2);
-            
-            // Repartir las pociones entre los tipos seleccionados
             for (int i = 0; i < cantidadPociones; i++) {
                 Class<? extends Item> tipoPocion = tiposSeleccionados.get(i % tiposSeleccionados.size());
                 try {
@@ -235,11 +196,7 @@ public class Entrenador {
 
     @Override
     public String toString() {
-        return String.format(
-            "Entrenador %s - Pokémon: %d/%d - Items: %d - Activo: %s",
-            nombre, equipoPokemon.size(), 6, mochilaItems.size(),
-            pokemonActivo != null ? pokemonActivo.getNombre() : "Ninguno"
-        );
+        return String.format("Entrenador %s - Pokémon: %d/%d - Items: %d - Activo: %s",nombre, equipoPokemon.size(), 6, mochilaItems.size(),pokemonActivo != null ? pokemonActivo.getNombre() : "Ninguno");
     }
 
     private void buscarNuevoPokemonActivo() {

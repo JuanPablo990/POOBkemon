@@ -11,7 +11,6 @@ import java.awt.event.*;
 import domain.*;
 
 public class POOBkemonGUI {
-    // Ventanas
     private static VentanaInicio ventanaInicio;
     private static VentanaOpciones ventanaOpciones;
     private static VentanaCreditos ventanaCreditos;
@@ -19,22 +18,14 @@ public class POOBkemonGUI {
     private static VentanaMovimientos ventanaMovimientos;
     private static VentanaBatalla ventanaBatalla;
     private static VentanaDebug ventanaDebug;
-
-    // Modelo del juego
     private static POOBkemon poobkemon;
     private static Entrenador jugador1;
     private static Entrenador jugador2;
     private static Batalla batallaActual;
-
-    // Datos de selección
     private static List<String> seleccionPokemonJugador1 = new ArrayList<>();
     private static List<String> seleccionPokemonJugador2 = new ArrayList<>();
-
-    // Movimientos seleccionados
     private static Map<String, List<String>> movimientosJugador1 = new HashMap<>();
     private static Map<String, List<String>> movimientosJugador2 = new HashMap<>();
-
-    // Estados del juego
     private static boolean mostrandoMovimientosJugador1 = true;
     private static boolean turnoJugador1;
     private static boolean modoSupervivencia = false;
@@ -42,7 +33,6 @@ public class POOBkemonGUI {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            // Determinar aleatoriamente quién comienza primero
             turnoJugador1 = new Random().nextBoolean();
             mostrarVentanaInicio();
             if (modoDebug) {
@@ -51,11 +41,9 @@ public class POOBkemonGUI {
         });
     }
 
-    // Getters y setters mejorados con validación
     public static POOBkemon getPoobkemon() {
         if (poobkemon == null) {
             poobkemon = new POOBkemon();
-            // Establecer turno inicial aleatorio
             poobkemon.cambiarTurno();
         }
         return poobkemon;
@@ -134,10 +122,7 @@ public class POOBkemonGUI {
     }
 
     public static List<String> getMovimientosDePokemon(String nombrePokemon, boolean esJugador1) {
-        List<String> movimientos = esJugador1 ? 
-            movimientosJugador1.get(nombrePokemon) : 
-            movimientosJugador2.get(nombrePokemon);
-            
+        List<String> movimientos = esJugador1 ? movimientosJugador1.get(nombrePokemon) : movimientosJugador2.get(nombrePokemon);     
         return movimientos != null ? new ArrayList<>(movimientos) : null;
     }
 
@@ -206,7 +191,6 @@ public class POOBkemonGUI {
         movimientosJugador1.clear();
         movimientosJugador2.clear();
         mostrandoMovimientosJugador1 = true;
-        // Establecer turno inicial aleatorio al reiniciar
         turnoJugador1 = new Random().nextBoolean();
         modoSupervivencia = false;
     }
@@ -219,7 +203,6 @@ public class POOBkemonGUI {
         if (ventanaMovimientos != null) ventanaMovimientos.dispose();
         if (ventanaBatalla != null) ventanaBatalla.dispose();
         if (ventanaDebug != null) ventanaDebug.dispose();
-        
         ventanaInicio = null;
         ventanaOpciones = null;
         ventanaCreditos = null;
@@ -229,7 +212,6 @@ public class POOBkemonGUI {
         ventanaDebug = null;
     }
 
-    // Métodos para mostrar ventanas
     public static void mostrarVentanaInicio() {
         if (ventanaInicio != null) {
             ventanaInicio.dispose();
@@ -264,7 +246,6 @@ public class POOBkemonGUI {
         if (seleccion == null || seleccion.isEmpty() || seleccion.size() > 6) {
             throw new IllegalArgumentException("La selección debe contener entre 1 y 6 Pokémon");
         }
-        
         cerrarOtrasVentanas(null);
         if (mostrandoMovimientosJugador1) {
             setSeleccionPokemonJugador1(seleccion);
@@ -280,7 +261,6 @@ public class POOBkemonGUI {
         if (nombresPokemonSeleccionados == null || nombresPokemonSeleccionados.isEmpty()) {
             throw new IllegalArgumentException("La lista de Pokémon seleccionados no puede estar vacía");
         }
-        
         cerrarOtrasVentanas(null);
         getPoobkemon().setJugadores(jugador1, jugador2);
         ventanaBatalla = new VentanaBatalla(nombresPokemonSeleccionados);
@@ -311,16 +291,13 @@ public class POOBkemonGUI {
         if (ventanaDebug != null) {
             ventanaDebug.dispose();
         }
-        
         ventanaDebug = new VentanaDebug();
-        
         JButton botonActualizar = new JButton("Actualizar");
         botonActualizar.addActionListener(e -> {
             ventanaDebug.dispose();
             ventanaDebug = new VentanaDebug();
             ventanaDebug.setVisible(true);
         });
-        
         ventanaDebug.add(botonActualizar, BorderLayout.SOUTH);
         ventanaDebug.setVisible(true);
     }

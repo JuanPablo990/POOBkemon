@@ -33,21 +33,16 @@ public class VentanaCreditos extends Ventana {
         fondoPanel = new FondoPanel("/resources/creditos.gif");
         fondoPanel.setLayout(new BorderLayout());
         setContentPane(fondoPanel);
-
-        // Configurar el texto de créditos
         lblCreditos = new JLabel();
         lblCreditos.setForeground(Color.BLACK);
         lblCreditos.setFont(new Font("Arial", Font.BOLD, 24));
         lblCreditos.setHorizontalAlignment(SwingConstants.CENTER);
         lblCreditos.setDoubleBuffered(true);
         actualizarTextoCreditos();
-
         JPanel panelCreditos = new JPanel(null);
         panelCreditos.setOpaque(false);
         panelCreditos.add(lblCreditos);
         lblCreditos.setBounds(0, getHeight(), getWidth(), 400);
-
-        // Botón volver con imagen
         btnVolver = new JButton();
         ImageIcon volverIcon = loadScaledIcon("/resources/volver.png", 120, 60);
         if (volverIcon != null) {
@@ -56,16 +51,13 @@ public class VentanaCreditos extends Ventana {
             btnVolver.setText("Volver");
             System.err.println("Error al cargar imagen de volver");
         }
-        
         btnVolver.setContentAreaFilled(false);
         btnVolver.setBorderPainted(false);
         btnVolver.setFocusPainted(false);
         btnVolver.setOpaque(false);
-
         JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 20));
         panelBoton.setOpaque(false);
         panelBoton.add(btnVolver);
-
         fondoPanel.add(panelCreditos, BorderLayout.CENTER);
         fondoPanel.add(panelBoton, BorderLayout.SOUTH);
     }
@@ -100,18 +92,14 @@ public class VentanaCreditos extends Ventana {
 
     private void iniciarAnimacionCreditos() {
         detenerAnimacion();
-        
         yPos = getHeight();
         lblCreditos.setLocation(0, yPos);
-        
         timer = new Timer(30, e -> {
             yPos -= velocidad;
             lblCreditos.setLocation(0, yPos);
-            
             if (yPos < -lblCreditos.getHeight()) {
                 yPos = getHeight();
             }
-            
             lblCreditos.repaint();
         });
         timer.setRepeats(true);
@@ -122,7 +110,6 @@ public class VentanaCreditos extends Ventana {
         btnVolver.addActionListener(e -> {
             volverAVentanaOpciones();
         });
-        
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -130,18 +117,15 @@ public class VentanaCreditos extends Ventana {
                 lblCreditos.setFont(new Font("Arial", Font.BOLD, getWidth()/25));
             }
         });
-
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 detenerAnimacion();
             }
-            
             @Override
             public void windowDeiconified(WindowEvent e) {
                 iniciarAnimacionCreditos();
             }
-            
             @Override
             public void windowIconified(WindowEvent e) {
                 detenerAnimacion();
@@ -168,9 +152,7 @@ public class VentanaCreditos extends Ventana {
 
     @Override
     protected void accionAbrir() {
-        mostrarFileChooser("Abrir desde créditos", 
-            new String[]{"sav"}, "Archivos de guardado (*.sav)",
-            e -> JOptionPane.showMessageDialog(this, "Partida cargada desde créditos"));
+        mostrarFileChooser("Abrir desde créditos",new String[]{"sav"}, "Archivos de guardado (*.sav)",e -> JOptionPane.showMessageDialog(this, "Partida cargada desde créditos"));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.List;
+
 import java.util.Random;
 import java.util.stream.Collectors;
 import presentation.VentanaBatalla;
@@ -15,7 +16,6 @@ public class Batalla {
         this.entrenador1 = entrenador1;
         this.entrenador2 = entrenador2;
         this.ventanaBatalla = ventanaBatalla;
-        // Determinar aleatoriamente quién comienza primero
         this.turnoJugador1 = new Random().nextBoolean();
     }
 
@@ -37,7 +37,6 @@ public class Batalla {
         if (entrenador.getEquipoPokemon().isEmpty()) {
             throw new IllegalStateException("El entrenador " + entrenador.getNombre() + " no tiene Pokémon en su equipo");
         }
-        
         Pokemon activo = entrenador.getEquipoPokemon().get(0);
         entrenador.setPokemonActivo(activo);
         ventanaBatalla.mostrarMensaje("¡" + entrenador.getNombre() + " envía a " + activo.getNombre() + "!");
@@ -46,14 +45,12 @@ public class Batalla {
     public void ejecutarTurno(int opcion) {
         Entrenador atacante = turnoJugador1 ? entrenador1 : entrenador2;
         Entrenador defensor = turnoJugador1 ? entrenador2 : entrenador1;
-
         switch (opcion) {
             case 1 -> atacar(atacante, defensor);
             case 2 -> usarItem(atacante);
             case 3 -> cambiarPokemon(atacante);
             default -> ventanaBatalla.mostrarMensaje("Opción inválida. Pierdes tu turno.");
         }
-
         if (!batallaTerminada()) {
             cambiarTurno();
         }
@@ -62,16 +59,13 @@ public class Batalla {
     private void atacar(Entrenador atacante, Entrenador defensor) {
         Pokemon pokemonAtacante = atacante.getPokemonActivo();
         Pokemon objetivo = defensor.getPokemonActivo();
-
         if (!validarPokemonActivo(pokemonAtacante, objetivo)) {
             return;
         }
-
         Movimiento movimiento = obtenerMovimiento(pokemonAtacante);
         if (movimiento == null) {
             return;
         }
-
         ejecutarMovimiento(movimiento, pokemonAtacante, objetivo);
         verificarEstadoBatalla(defensor);
     }
@@ -97,8 +91,6 @@ public class Batalla {
             ventanaBatalla.mostrarMensaje("No hay movimientos disponibles.");
             return null;
         }
-        
-        // Devolver el primer movimiento disponible (la selección se hará en la interfaz)
         return movimientos.get(0);
     }
 
@@ -106,7 +98,7 @@ public class Batalla {
         ventanaBatalla.mostrarMensaje("¡" + atacante.getNombre() + " usa " + movimiento.getNombre() + "!");
         double efectividad = calcularEfectividad(movimiento, objetivo);
         String mensajeEfectividad = obtenerMensajeEfectividad(efectividad);
-        ventanaBatalla.agregarMensaje(mensajeEfectividad); // Usamos agregarMensaje en lugar de mostrarMensaje
+        ventanaBatalla.agregarMensaje(mensajeEfectividad);
         int psAntes = objetivo.getPs();
         boolean exito = movimiento.ejecutar(atacante, objetivo, efectividad);
         if (exito) {
@@ -137,7 +129,6 @@ public class Batalla {
         String tipoAtaque = movimiento.getTipo().toLowerCase().replace("é", "e");
         String tipoDefensa = objetivo.getTipoPrincipal().toLowerCase().replace("é", "e");
         double efectividad = Efectividad.calcular(tipoAtaque, tipoDefensa);
-
         if (objetivo.getTipoSecundario() != null && !objetivo.getTipoSecundario().isEmpty()) {
             String tipoSecundario = objetivo.getTipoSecundario().toLowerCase().replace("é", "e");
             efectividad *= Efectividad.calcular(tipoAtaque, tipoSecundario);
@@ -192,8 +183,7 @@ public class Batalla {
     }
 
     private boolean equipoDebilitado(Entrenador entrenador) {
-        return entrenador.getEquipoPokemon().stream()
-                .allMatch(Pokemon::estaDebilitado);
+        return entrenador.getEquipoPokemon().stream().allMatch(Pokemon::estaDebilitado);
     }
 
     private void determinarGanador() {
@@ -202,23 +192,15 @@ public class Batalla {
     }
     
     public Entrenador getGanador() {
-        return this.isBatallaTerminada() ?
-               (this.equipoDebilitado(entrenador1) ? entrenador2 : entrenador1) :
-               null;
+        return this.isBatallaTerminada() ? (this.equipoDebilitado(entrenador1) ? entrenador2 : entrenador1) :null;
     }
 
-    // Métodos de acceso para la interfaz
     public List<Movimiento> getMovimientosDisponibles(Pokemon pokemon) {
-        return pokemon.getMovimientos().stream()
-                .filter(m -> m.getPp() > 0)
-                .collect(Collectors.toList());
+        return pokemon.getMovimientos().stream().filter(m -> m.getPp() > 0).collect(Collectors.toList());
     }
 
     public List<Pokemon> getPokemonsDisponiblesParaCambio(Entrenador entrenador) {
-        return entrenador.getEquipoPokemon().stream()
-                .filter(p -> !p.equals(entrenador.getPokemonActivo()))
-                .filter(p -> !p.estaDebilitado())
-                .collect(Collectors.toList());
+        return entrenador.getEquipoPokemon().stream().filter(p -> !p.equals(entrenador.getPokemonActivo())).filter(p -> !p.estaDebilitado()).collect(Collectors.toList());
     }
 
     public Entrenador getEntrenador1() {
