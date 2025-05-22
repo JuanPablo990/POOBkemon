@@ -133,7 +133,7 @@ public class Batalla {
         return mensaje;
     }
 
-    private double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
+    public double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
         String tipoAtaque = movimiento.getTipo().toLowerCase().replace("é", "e");
         String tipoDefensa = objetivo.getTipoPrincipal().toLowerCase().replace("é", "e");
         double efectividad = Efectividad.calcular(tipoAtaque, tipoDefensa);
