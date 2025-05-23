@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 public class VentanaSeleccion extends Ventana {
-	
+    
     private FondoPanel fondoPanel;
     private JButton btnSiguiente;
     private JPanel panelContenedorPrincipal;
@@ -25,12 +25,13 @@ public class VentanaSeleccion extends Ventana {
     private JPanel panelDerecho;
     private JPanel panelAbajoIzquierda;
     private JSpinner[] spinnersItems;
-    private JButton[] botonesMatriz = new JButton[36];
+    private JButton[] botonesMatriz;
     private JLabel lblEntrenador;
     private boolean esJugador1 = true;
     private static final int ESPACIO_MATRIZ = 2;
     private static final int NUM_COLUMNAS_MATRIZ = 6;
-    private static final int NUM_FILAS_MATRIZ = 6;
+    private static final int NUM_FILAS_MATRIZ = 7;
+    private static final int TOTAL_BOTONES_MATRIZ = NUM_COLUMNAS_MATRIZ * NUM_FILAS_MATRIZ;
     private static final int PREF_ANCHO_BOTON_ITEM = 80;
     private static final int PREF_ALTO_BOTON_ITEM = 45;
     private static final int ESPACIO_BOTONES_ITEMS = 5;
@@ -67,7 +68,7 @@ public class VentanaSeleccion extends Ventana {
         agregarResizeListener();
         actualizarEtiquetaEntrenador();
     }
-    
+
     private void inicializarComponentes() {
         setLayout(new BorderLayout());
         fondoPanel = new FondoPanel(PoobkemonGifs.FONDO_SELECCION);
@@ -97,7 +98,8 @@ public class VentanaSeleccion extends Ventana {
         panelDerecho.add(panelMatriz, BorderLayout.CENTER);
         String[] nombresPokemon = PoobkemonGifs.POKEMON_IMAGES.keySet().toArray(new String[0]);
         Arrays.sort(nombresPokemon);
-        for (int i = 0; i < botonesMatriz.length; i++) {
+        botonesMatriz = new JButton[TOTAL_BOTONES_MATRIZ];
+        for (int i = 0; i < TOTAL_BOTONES_MATRIZ; i++) {
             JButton boton = crearBotonPokemon(i < nombresPokemon.length ? nombresPokemon[i] : null);
             botonesMatriz[i] = boton;
             panelMatriz.add(boton);
@@ -142,46 +144,46 @@ public class VentanaSeleccion extends Ventana {
         configurarListenersSpinners();
     }
 
-	private void configurarListenersSpinners() {
-	    for (JSpinner spinner : spinnersItems) {
-	        spinner.addChangeListener(e -> {
-	            JPanel itemPanel = (JPanel) spinner.getParent();
-	            String tipoItem = (String) itemPanel.getClientProperty("tipoItem");
-	            int nuevoValor = (int) spinner.getValue();
-	            if (tipoItem.equals("Revivir") && nuevoValor > 1) {
-	                spinner.setValue(0);
-	                JOptionPane.showMessageDialog(this,
-	                    "Solo puedes llevar 1 Revivir como máximo",
-	                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
-	                return;
-	            }
-	            if (!tipoItem.equals("Revivir") && nuevoValor > 2) {
-                spinner.setValue(0);
-                JOptionPane.showMessageDialog(this,
-                    "Máximo 2 " + tipoItem + " por tipo",
-                    "Límite excedido", JOptionPane.WARNING_MESSAGE);
-                	return;
-	            }
-	            int tiposPocionesUsados = contarTiposPocionesSeleccionados();
-	            if (!tipoItem.equals("Revivir") && nuevoValor > 0 && tiposPocionesUsados > 2) {
-	            	spinner.setValue(0);
-	            	JOptionPane.showMessageDialog(this,"Solo puedes seleccionar 2 tipos diferentes de pociones\n" +"(Ej: Poción y Superpoción, o Hiperpoción y Poción, etc.)","Límite de tipos", JOptionPane.WARNING_MESSAGE);
-	            }
-	        });
-	    }
-	}
+    private void configurarListenersSpinners() {
+        for (JSpinner spinner : spinnersItems) {
+            spinner.addChangeListener(e -> {
+                JPanel itemPanel = (JPanel) spinner.getParent();
+                String tipoItem = (String) itemPanel.getClientProperty("tipoItem");
+                int nuevoValor = (int) spinner.getValue();
+                if (tipoItem.equals("Revivir") && nuevoValor > 1) {
+                    spinner.setValue(0);
+                    JOptionPane.showMessageDialog(this,
+                        "Solo puedes llevar 1 Revivir como máximo",
+                        "Límite excedido", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (!tipoItem.equals("Revivir") && nuevoValor > 2) {
+                    spinner.setValue(0);
+                    JOptionPane.showMessageDialog(this,
+                        "Máximo 2 " + tipoItem + " por tipo",
+                        "Límite excedido", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                int tiposPocionesUsados = contarTiposPocionesSeleccionados();
+                if (!tipoItem.equals("Revivir") && nuevoValor > 0 && tiposPocionesUsados > 2) {
+                    spinner.setValue(0);
+                    JOptionPane.showMessageDialog(this,"Solo puedes seleccionar 2 tipos diferentes de pociones\n" +"(Ej: Poción y Superpoción, o Hiperpoción y Poción, etc.)","Límite de tipos", JOptionPane.WARNING_MESSAGE);
+                }
+            });
+        }
+    }
 
-	private int contarTiposPocionesSeleccionados() {
-	    int count = 0;
-	    for (JSpinner spinner : spinnersItems) {
-	        JPanel panel = (JPanel) spinner.getParent();
-	        String tipoItem = (String) panel.getClientProperty("tipoItem");
-	        if (!tipoItem.equals("Revivir") && (int) spinner.getValue() > 0) {
-	            count++;
-	        }
-	    }
-	    return count;
-	}
+    private int contarTiposPocionesSeleccionados() {
+        int count = 0;
+        for (JSpinner spinner : spinnersItems) {
+            JPanel panel = (JPanel) spinner.getParent();
+            String tipoItem = (String) panel.getClientProperty("tipoItem");
+            if (!tipoItem.equals("Revivir") && (int) spinner.getValue() > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     private JPanel crearPanelItem(String nombreItem) {
         JPanel panel = new JPanel(new BorderLayout());
@@ -189,7 +191,8 @@ public class VentanaSeleccion extends Ventana {
         try {
             String rutaImagen = PoobkemonGifs.getItemImage(nombreItem);
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(rutaImagen));
-            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
+            Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(
+                PREF_ANCHO_BOTON_ITEM - 20, PREF_ALTO_BOTON_ITEM - 15, Image.SCALE_SMOOTH);
             JLabel iconoLabel = new JLabel(new ImageIcon(imagenEscalada));
             iconoLabel.setToolTipText(nombreItem);
             int maximo = nombreItem.equals("Revivir") ? MAX_REVIVE_SELECTED : MAX_POR_TIPO_POCION;
@@ -231,35 +234,38 @@ public class VentanaSeleccion extends Ventana {
     }
 
     private JButton crearBotonPokemon(String nombrePokemon) {
-        JButton boton = new JButton();
-        boton.setFocusPainted(false);
-        boton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-        boton.setOpaque(false);
-        boton.setContentAreaFilled(false);
-        if (nombrePokemon != null) {
-            try {
-                String rutaImagen = PoobkemonGifs.getPokemonImage(nombrePokemon);
-                URL url = getClass().getResource(rutaImagen);
-                if (url != null) {
-                    ImageIcon icono = new ImageIcon(url);
-                    boton.setIcon(icono);
-                    boton.setToolTipText(nombrePokemon);
-                } else {
-                    mostrarBotonError(boton, "No encontrado");
-                }
-            } catch (Exception e) {
-                mostrarBotonError(boton, "Error");
-            }
-        } else {
-            mostrarBotonError(boton, "No disponible");
-        }
-        return boton;
+    	 JButton boton = new JButton();
+    	    boton.setFocusPainted(false);
+    	    boton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+    	    boton.setOpaque(false);
+    	    boton.setContentAreaFilled(false);
+    	    
+    	    if (nombrePokemon != null) {
+    	        try {
+    	            String rutaImagen = PoobkemonGifs.getPokemonImage(nombrePokemon);
+    	            URL url = getClass().getResource(rutaImagen);
+    	            if (url != null) {
+    	                ImageIcon icono = new ImageIcon(url);
+    	                boton.setIcon(icono);
+    	                boton.setToolTipText(nombrePokemon);
+    	            } else {
+    	                mostrarBotonError(boton, "No encontrado");
+    	            }
+    	        } catch (Exception e) {
+    	            mostrarBotonError(boton, "Error");
+    	        }
+    	    } else {
+    	        boton.setVisible(false);
+    	    }
+    	    return boton;
     }
     
     private void mostrarBotonError(JButton boton, String mensaje) {
-        boton.setText(mensaje);
-        boton.setForeground(Color.RED);
-        boton.setFont(new Font("Arial", Font.BOLD, 10));
+    	 if (boton.isVisible()) {
+    	        boton.setText(mensaje);
+    	        boton.setForeground(Color.RED);
+    	        boton.setFont(new Font("Arial", Font.BOLD, 10));
+    	    }
     }
 
     private JButton crearBotonSiguiente(String texto) {
@@ -289,7 +295,7 @@ public class VentanaSeleccion extends Ventana {
     }
 
     private void redimensionarBotonesMatriz() {
-        if (panelDerecho != null) {
+        if (panelDerecho != null && botonesMatriz != null) {
             int anchoPanel = panelDerecho.getWidth();
             int altoPanel = panelDerecho.getHeight();
             int anchoBoton = Math.min(anchoPanel / NUM_COLUMNAS_MATRIZ, altoPanel / NUM_FILAS_MATRIZ) - ESPACIO_MATRIZ * 2;
@@ -300,7 +306,8 @@ public class VentanaSeleccion extends Ventana {
                 if (boton.getIcon() instanceof ImageIcon) {
                     ImageIcon originalIcon = (ImageIcon) boton.getIcon();
                     Image originalImage = originalIcon.getImage();
-                    Image scaledImage = originalImage.getScaledInstance(anchoBoton - 4, anchoBoton - 4, Image.SCALE_DEFAULT);
+                    Image scaledImage = originalImage.getScaledInstance(
+                        anchoBoton - 4, anchoBoton - 4, Image.SCALE_DEFAULT);
                     ImageIcon scaledIcon = new ImageIcon(scaledImage);
                     scaledIcon.setImageObserver(boton);
                     boton.setIcon(scaledIcon);
@@ -397,6 +404,9 @@ public class VentanaSeleccion extends Ventana {
     }
     
     private void manejarSeleccionPokemon(JButton boton) {
+    	if (!boton.isVisible()) {
+            return;
+        }
         String nombrePokemon = boton.getToolTipText();
         if (nombrePokemon == null || nombrePokemon.equals("No disponible") || 
             nombrePokemon.equals("No encontrado") || nombrePokemon.equals("Error")) {
@@ -431,12 +441,12 @@ public class VentanaSeleccion extends Ventana {
 
     @Override
     protected void accionAbrir() {
-        mostrarFileChooser("Abrir selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)",e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon cargada"));
+        mostrarFileChooser("Abrir selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)", e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon cargada"));
     }
 
     @Override
     protected void accionGuardar() {
-        mostrarFileChooser("Guardar selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)",e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon guardada"));
+        mostrarFileChooser("Guardar selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)", e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon guardada"));
     }
 
     @Override
