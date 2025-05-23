@@ -27,6 +27,8 @@ public class VentanaBatalla extends Ventana {
     private JPanel panelArenaContainer;
     private FondoPanel panelArena;
     private JPanel panelBotones;
+    private boolean juegoPausado = false;
+    private JButton btnPausa;
 
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
@@ -62,77 +64,6 @@ public class VentanaBatalla extends Ventana {
             dialog.setVisible(true);
         } catch (Exception e) {
             System.err.println("Error al cargar la animación inicial: " + e.getMessage());
-        }
-    }
-    
-    private static final Map<String, String> MENSAJES_MOVIMIENTOS = Map.of(
-            "Bajar Ataque", "%s bajó su ataque!",
-            "Subir Ataque", "%s aumentó su ataque!",
-            "Bajar Defensa", "%s bajó su defensa!",
-            "Subir Defensa", "%s aumentó su defensa!",
-            "Bajar Velocidad", "%s bajó su velocidad!",
-            "Subir Velocidad", "%s aumentó su velocidad!"
-        );
-
-    private void mostrarAnimacionFinal(Entrenador ganador) {
-        JDialog dialog = new JDialog(this, "", Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setUndecorated(true);
-        dialog.setSize(800, 600);
-        dialog.setLocationRelativeTo(null);
-        try {
-            FondoPanel fondo = new FondoPanel("/resources/endgame.gif");
-            fondo.setLayout(new BorderLayout());
-            Color dorado = new Color(255, 215, 0); 
-            JLabel labelGanador = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
-            labelGanador.setHorizontalAlignment(SwingConstants.CENTER);
-            labelGanador.setFont(new Font("Arial", Font.BOLD, 36));
-            labelGanador.setForeground(dorado);
-            labelGanador.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(139, 69, 19), 2),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-            ));
-            JPanel panelTexto = new JPanel(new GridBagLayout());
-            panelTexto.setOpaque(false);
-            panelTexto.setBorder(BorderFactory.createEmptyBorder(0, 0, 80, 0));
-            JLabel sombraTexto = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
-            sombraTexto.setHorizontalAlignment(SwingConstants.CENTER);
-            sombraTexto.setFont(new Font("Arial", Font.BOLD, 36));
-            sombraTexto.setForeground(new Color(0, 0, 0, 150));
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.insets = new Insets(2, 2, 0, 0);
-            panelTexto.add(sombraTexto, gbc);
-            gbc.insets = new Insets(0, 0, 2, 2);
-            panelTexto.add(labelGanador, gbc);
-            fondo.add(panelTexto, BorderLayout.SOUTH);
-            MouseAdapter clickListener = new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    dialog.dispose();
-                    POOBkemonGUI.reiniciarAplicacion();
-                }
-            };
-            fondo.addMouseListener(clickListener);
-            dialog.add(fondo);
-            dialog.setVisible(true);
-            new Timer(10000, e -> {
-                dialog.dispose();
-                POOBkemonGUI.reiniciarAplicacion();
-            }).start();
-        } catch (Exception e) {
-            System.err.println("Error al cargar la animación final: " + e.getMessage());
-            POOBkemonGUI.reiniciarAplicacion();
-        }
-    }
-    
-    private void verificarFinDeBatalla() {
-        Entrenador j1 = POOBkemonGUI.getJugador1();
-        Entrenador j2 = POOBkemonGUI.getJugador2();
-        if (equipoDebilitado(j1)) {
-            mostrarAnimacionFinal(j2);
-        } else if (equipoDebilitado(j2)) {
-            mostrarAnimacionFinal(j1);
         }
     }
 
@@ -188,24 +119,24 @@ public class VentanaBatalla extends Ventana {
         JButton btnAtaque = crearBotonConImagen("/resources/ataque.png", "Ataque");
         JButton btnCambio = crearBotonConImagen("/resources/cambio.png", "Cambio");
         JButton btnItem = crearBotonConImagen("/resources/item.png", "Item");
-        JButton btnHuida = crearBotonConImagen("/resources/huida.png", "Huida");
-        btnAtaque.addActionListener(e -> mostrarVentanaAtaque());
-        btnCambio.addActionListener(e -> mostrarVentanaCambioPokemon());
-        btnItem.addActionListener(e -> mostrarVentanaItem());
-        btnHuida.addActionListener(e -> {
-            int confirmacion = JOptionPane.showConfirmDialog(this, 
-                "¿Estás seguro de que quieres huir?\nPerderás la batalla.", 
-                "Confirmar huida", 
-                JOptionPane.YES_NO_OPTION);
-            if (confirmacion == JOptionPane.YES_OPTION) {
-                agregarMensaje("¡Has huido de la batalla!");
-                POOBkemonGUI.reiniciarAplicacion();
-            }
+        btnPausa = crearBotonConImagen("/resources/pausa.png", "Pausa");
+        btnAtaque.addActionListener(e -> {
+            if (!juegoPausado) mostrarVentanaAtaque();
+            else mostrarMensaje("El juego está en pausa");
         });
+        btnCambio.addActionListener(e -> {
+            if (!juegoPausado) mostrarVentanaCambioPokemon();
+            else mostrarMensaje("El juego está en pausa");
+        });
+        btnItem.addActionListener(e -> {
+            if (!juegoPausado) mostrarVentanaItem();
+            else mostrarMensaje("El juego está en pausa");
+        });
+        btnPausa.addActionListener(e -> mostrarMenuPausa());
         panelBotones.add(btnAtaque);
         panelBotones.add(btnCambio);
         panelBotones.add(btnItem);
-        panelBotones.add(btnHuida);
+        panelBotones.add(btnPausa);
         panelArena.add(panelBotones, BorderLayout.SOUTH);
         panelArenaContainer.add(panelArena, BorderLayout.CENTER);
         panelInferior.add(panelArenaContainer, BorderLayout.CENTER);
@@ -220,34 +151,124 @@ public class VentanaBatalla extends Ventana {
         });
     }
 
-    public void actualizarVistaJugador() {
-        Entrenador jugador = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
-        labelJugador.setText("Turno: " + jugador.getNombre());
-        String fondoPath = turnoJugador1 ? "/resources/abajo.png" : "/resources/abajo2.png";
-        panelArenaContainer.removeAll();
-        panelArena = new FondoPanel(fondoPath);
-        panelArena.setLayout(new BorderLayout());
-        panelArena.add(scrollMensajes, BorderLayout.CENTER);
-        panelArena.add(panelBotones, BorderLayout.SOUTH);
-        panelArenaContainer.add(panelArena, BorderLayout.CENTER);
-        panelArenaContainer.revalidate();
-        panelArenaContainer.repaint();
-        Pokemon activo = jugador.getPokemonActivo();
-        String rutaGif = PoobkemonGifs.getPokemonImage(activo.getNombre());
-        if (rutaGif != null) {
-            FondoPanel fondoPokemon = new FondoPanel(rutaGif);
-            if (turnoJugador1) {
-                setImagenPokemon(fondoPokemon);
-                progressBar1.setMaximum(activo.getPsMaximos());
-                actualizarVidaPokemon1(activo.getPs());
-            } else {
-                setImagenPokemon2(fondoPokemon);
-                progressBar2.setMaximum(activo.getPsMaximos());
-                actualizarVidaPokemon2(activo.getPs());
+    private void mostrarMenuPausa() {
+        JDialog dialog = new JDialog(this, "Opciones de Pausa", true);
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this);
+        Color verdeAguamarina = new Color(102, 205, 170);
+        Color fondoClaro = new Color(224, 255, 240);
+        dialog.getContentPane().setBackground(fondoClaro);
+        dialog.setLayout(new BorderLayout());
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelPrincipal.setBackground(fondoClaro);
+        JButton btnReanudar = new JButton("Reanudar Juego");
+        estilizarBotonComoItem(btnReanudar, verdeAguamarina);
+        btnReanudar.addActionListener(e -> {
+            dialog.dispose();
+            if (juegoPausado) {
+                reanudarJuego();
+            }
+        });
+        JButton btnHuir = new JButton("Huir de la Batalla");
+        estilizarBotonComoItem(btnHuir, verdeAguamarina);
+        btnHuir.addActionListener(e -> {
+            dialog.dispose();
+            confirmarHuir();
+        });
+        panelPrincipal.add(btnReanudar);
+        panelPrincipal.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelPrincipal.add(btnHuir);
+        dialog.add(panelPrincipal, BorderLayout.CENTER);
+        dialog.setVisible(true);
+    }
+    
+    private void estilizarBotonComoItem(JButton boton, Color colorFondo) {
+        boton.setBackground(colorFondo);
+        boton.setForeground(Color.BLACK);
+        boton.setFont(new Font("Arial", Font.BOLD, 14));
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(colorFondo.darker(), 1),
+            BorderFactory.createEmptyBorder(8, 15, 8, 15)
+        ));
+        boton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, boton.getPreferredSize().height));
+        boton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                boton.setBackground(colorFondo.brighter());
+            }
+            public void mouseExited(MouseEvent e) {
+                boton.setBackground(colorFondo);
+            }
+        });
+    }
+
+    private void pausarJuego() {
+        juegoPausado = true;
+        deshabilitarControles();
+        agregarMensaje("¡El juego está en pausa!");
+    }
+
+    private void reanudarJuego() {
+        juegoPausado = false;
+        habilitarControles();
+        agregarMensaje("¡El juego se ha reanudado!");
+    }
+
+    private void confirmarHuir() {
+    	 Color verdeAguamarina = new Color(102, 205, 170);
+    	    Color fondoClaro = new Color(224, 255, 240);
+    	    UIManager.put("OptionPane.background", fondoClaro);
+    	    UIManager.put("Panel.background", fondoClaro);
+    	    UIManager.put("Button.background", verdeAguamarina);
+    	    UIManager.put("Button.foreground", Color.BLACK);
+    	    UIManager.put("Button.font", new Font("Arial", Font.BOLD, 12));
+    	    int confirmacion = JOptionPane.showConfirmDialog(this,"¿Estás seguro de que quieres huir?\nPerderás la batalla.", "Confirmar huida", JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+    	    UIManager.put("OptionPane.background", null);
+    	    UIManager.put("Panel.background", null);
+    	    UIManager.put("Button.background", null);
+    	    UIManager.put("Button.foreground", null);
+    	    UIManager.put("Button.font", null);
+    	    if (confirmacion == JOptionPane.YES_OPTION) {
+    	        if (juegoPausado) {
+    	            reanudarJuego();
+    	        }
+    	        agregarMensaje("¡Has huido de la batalla!");
+    	        POOBkemonGUI.reiniciarAplicacion();
+    	    } else {
+    	        agregarMensaje("¡Continúa la batalla!");
+    	    }
+    }
+
+    private void deshabilitarControles() {
+        for (Component comp : panelBotones.getComponents()) {
+            if (comp != btnPausa) {
+                comp.setEnabled(false);
             }
         }
-        actualizarPosicionPanelImagen();
-        verificarFinDeBatalla();
+    }
+
+    private void habilitarControles() {
+        for (Component comp : panelBotones.getComponents()) {
+            comp.setEnabled(true);
+        }
+    }
+
+    private JButton crearBotonConImagen(String rutaImagen, String textoAlternativo) {
+        try {
+            ImageIcon icono = new ImageIcon(getClass().getResource(rutaImagen));
+            Image img = icono.getImage().getScaledInstance(110, 60, Image.SCALE_SMOOTH);
+            JButton boton = new JButton(new ImageIcon(img));
+            boton.setPreferredSize(new Dimension(100, 90));
+            boton.setToolTipText(textoAlternativo);
+            boton.setBorder(BorderFactory.createEmptyBorder());
+            boton.setContentAreaFilled(false);
+            return boton;
+        } catch (Exception e) {
+            return new JButton(textoAlternativo);
+        }
     }
 
     private void actualizarPosicionPanelImagen() {
@@ -314,6 +335,7 @@ public class VentanaBatalla extends Ventana {
             ventana.dispose();
             return;
         }
+        
         for (int i = 0; i < 4; i++) {
             JButton btnAtaque;
             if (i < movimientos.size()) {
@@ -370,7 +392,16 @@ public class VentanaBatalla extends Ventana {
         turnoJugador1 = !turnoJugador1;
         actualizarVistaJugador();
     }
-    
+
+    private static final Map<String, String> MENSAJES_MOVIMIENTOS = Map.of(
+        "Bajar Ataque", "%s bajó su ataque!",
+        "Subir Ataque", "%s aumentó su ataque!",
+        "Bajar Defensa", "%s bajó su defensa!",
+        "Subir Defensa", "%s aumentó su defensa!",
+        "Bajar Velocidad", "%s bajó su velocidad!",
+        "Subir Velocidad", "%s aumentó su velocidad!"
+    );
+
     private double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
         String tipoAtaque = (movimiento.getTipo() != null) ? movimiento.getTipo().toLowerCase().replace("é", "e") : "";
         String tipoDefensaPrincipal = (objetivo.getTipoPrincipal() != null) ? objetivo.getTipoPrincipal().toLowerCase().replace("é", "e") : "";
@@ -381,7 +412,7 @@ public class VentanaBatalla extends Ventana {
         }
         return efectividad;
     }
-    
+
     private boolean equipoDebilitado(Entrenador entrenador) {
         for (Pokemon pokemon : entrenador.getEquipoPokemon()) {
             if (!pokemon.estaDebilitado()) {
@@ -548,7 +579,7 @@ public class VentanaBatalla extends Ventana {
         ventana.add(btnCancelar);
         ventana.setVisible(true);
     }
-    
+
     private Pokemon seleccionarPokemonParaItem(Entrenador entrenador, Item item) {
         JDialog ventana = new JDialog(this, "Selecciona un Pokémon", true);
         ventana.setLayout(new GridLayout(0, 1, 10, 10));
@@ -567,6 +598,7 @@ public class VentanaBatalla extends Ventana {
             btn.setFont(new Font("Arial", Font.PLAIN, 12));
             boolean puedeUsar = true;
             String mensajeError = "";
+            
             if (item instanceof Potion || item instanceof SuperPotion || item instanceof HyperPotion) {
                 if (pokemon.estaDebilitado()) {
                     puedeUsar = false;
@@ -647,18 +679,95 @@ public class VentanaBatalla extends Ventana {
         progressBar2.setString(vida + "/" + progressBar2.getMaximum());
     }
 
-    private JButton crearBotonConImagen(String rutaImagen, String textoAlternativo) {
+    public void actualizarVistaJugador() {
+        Entrenador jugador = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
+        labelJugador.setText("Turno: " + jugador.getNombre());
+        String fondoPath = turnoJugador1 ? "/resources/abajo.png" : "/resources/abajo2.png";
+        panelArenaContainer.removeAll();
+        panelArena = new FondoPanel(fondoPath);
+        panelArena.setLayout(new BorderLayout());
+        panelArena.add(scrollMensajes, BorderLayout.CENTER);
+        panelArena.add(panelBotones, BorderLayout.SOUTH);
+        panelArenaContainer.add(panelArena, BorderLayout.CENTER);
+        panelArenaContainer.revalidate();
+        panelArenaContainer.repaint();
+        Pokemon activo = jugador.getPokemonActivo();
+        String rutaGif = PoobkemonGifs.getPokemonImage(activo.getNombre());
+        if (rutaGif != null) {
+            FondoPanel fondoPokemon = new FondoPanel(rutaGif);
+            if (turnoJugador1) {
+                setImagenPokemon(fondoPokemon);
+                progressBar1.setMaximum(activo.getPsMaximos());
+                actualizarVidaPokemon1(activo.getPs());
+            } else {
+                setImagenPokemon2(fondoPokemon);
+                progressBar2.setMaximum(activo.getPsMaximos());
+                actualizarVidaPokemon2(activo.getPs());
+            }
+        }
+        actualizarPosicionPanelImagen();
+        verificarFinDeBatalla();
+    }
+
+    private void verificarFinDeBatalla() {
+        Entrenador j1 = POOBkemonGUI.getJugador1();
+        Entrenador j2 = POOBkemonGUI.getJugador2();
+        if (equipoDebilitado(j1)) {
+            mostrarAnimacionFinal(j2);
+        } else if (equipoDebilitado(j2)) {
+            mostrarAnimacionFinal(j1);
+        }
+    }
+
+    private void mostrarAnimacionFinal(Entrenador ganador) {
+        JDialog dialog = new JDialog(this, "", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setUndecorated(true);
+        dialog.setSize(800, 600);
+        dialog.setLocationRelativeTo(null);
         try {
-            ImageIcon icono = new ImageIcon(getClass().getResource(rutaImagen));
-            Image img = icono.getImage().getScaledInstance(110, 60, Image.SCALE_SMOOTH);
-            JButton boton = new JButton(new ImageIcon(img));
-            boton.setPreferredSize(new Dimension(100, 90));
-            boton.setToolTipText(textoAlternativo);
-            boton.setBorder(BorderFactory.createEmptyBorder());
-            boton.setContentAreaFilled(false);
-            return boton;
+            FondoPanel fondo = new FondoPanel("/resources/endgame.gif");
+            fondo.setLayout(new BorderLayout());
+            Color dorado = new Color(255, 215, 0);
+            JLabel labelGanador = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
+            labelGanador.setHorizontalAlignment(SwingConstants.CENTER);
+            labelGanador.setFont(new Font("Arial", Font.BOLD, 36));
+            labelGanador.setForeground(dorado);
+            labelGanador.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(139, 69, 19), 2),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            ));
+            JPanel panelTexto = new JPanel(new GridBagLayout());
+            panelTexto.setOpaque(false);
+            panelTexto.setBorder(BorderFactory.createEmptyBorder(0, 0, 80, 0));
+            JLabel sombraTexto = new JLabel("¡EL GANADOR ES " + ganador.getNombre().toUpperCase() + "!");
+            sombraTexto.setHorizontalAlignment(SwingConstants.CENTER);
+            sombraTexto.setFont(new Font("Arial", Font.BOLD, 36));
+            sombraTexto.setForeground(new Color(0, 0, 0, 150));
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(2, 2, 0, 0);
+            panelTexto.add(sombraTexto, gbc);
+            gbc.insets = new Insets(0, 0, 2, 2);
+            panelTexto.add(labelGanador, gbc);
+            fondo.add(panelTexto, BorderLayout.SOUTH);
+            MouseAdapter clickListener = new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    dialog.dispose();
+                    POOBkemonGUI.reiniciarAplicacion();
+                }
+            };
+            fondo.addMouseListener(clickListener);
+            dialog.add(fondo);
+            dialog.setVisible(true);
+            new Timer(10000, e -> {
+                dialog.dispose();
+                POOBkemonGUI.reiniciarAplicacion();
+            }).start();
         } catch (Exception e) {
-            return new JButton(textoAlternativo);
+            System.err.println("Error al cargar la animación final: " + e.getMessage());
+            POOBkemonGUI.reiniciarAplicacion();
         }
     }
 
