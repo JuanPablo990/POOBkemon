@@ -1,18 +1,21 @@
 package presentation;
-
+ 
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.EmptyBorder;
 import domain.Entrenador;
-
+ 
 public class VentanaOpciones extends Ventana {
+	
     private FondoPanel fondoPanel;
     private JButton btnPvP, btnPvM, btnMvM, btnCreditos;
     private JTextField txtPlayer1, txtPlayer2;
     private JButton defensiveTrainer, attackingTrainer, changingTrainer, expertTrainer;
+    private JButton defensiveTrainer2, attackingTrainer2, changingTrainer2, expertTrainer2;
     private String selectedMachineType = null;
+    private String selectedMachineType2 = null;
     private static final String PVP_IMAGE = "/resources/pvp.png";
     private static final String PVM_IMAGE = "/resources/pvm.png";
     private static final String MVM_IMAGE = "/resources/mvm.png";
@@ -21,13 +24,14 @@ public class VentanaOpciones extends Ventana {
     private static final String MODO_BACKGROUND = "/resources/modo.gif";
     private static final String NORMAL_IMAGE = "/resources/Normal.png";
     private static final String SUPERVIVENCIA_IMAGE = "/resources/Supervivencia.png";
-
+    private static final String START_IMAGE = "/resources/start.png";
+ 
     public VentanaOpciones() {
         super("Opciones de POOBkemon");
         inicializarComponentes();
         configurarListeners();
     }
-
+ 
     private void inicializarComponentes() {
         fondoPanel = new FondoPanel(BACKGROUND_IMAGE);
         setContentPane(fondoPanel);
@@ -54,7 +58,7 @@ public class VentanaOpciones extends Ventana {
         fondoPanel.add(panelCentro, BorderLayout.CENTER);
         fondoPanel.add(panelCreditos, BorderLayout.SOUTH);
     }
-
+ 
     private JButton crearBotonTransparente(String imagenPath, Dimension size, String textoAlternativo) {
         JButton boton = new JButton() {
             @Override
@@ -86,7 +90,7 @@ public class VentanaOpciones extends Ventana {
         boton.setMargin(new Insets(0, 0, 0, 0));
         return boton;
     }
-
+ 
     private void configurarListeners() {
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -114,10 +118,10 @@ public class VentanaOpciones extends Ventana {
             POOBkemonGUI.mostrarVentanaCreditos();
         });
     }
-
+ 
     private void mostrarVentanaModo(String titulo, boolean mostrarPlayer1, boolean mostrarPlayer2) {
-        JDialog dialog = new JDialog(this, titulo, true);
-        dialog.setSize(500, mostrarPlayer1 || mostrarPlayer2 ? 500 : 300);
+    	JDialog dialog = new JDialog(this, titulo, true);
+        dialog.setSize(500, 400);
         dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
         FondoPanel fondoDialog = new FondoPanel(MODO_BACKGROUND);
@@ -161,102 +165,45 @@ public class VentanaOpciones extends Ventana {
             panelPrincipal.add(panelNombres);
         }
         if (titulo.equals("Player vs Machine")) {
-            JPanel panelMachineSelection = new JPanel(new GridLayout(2, 2, 10, 10));
-            panelMachineSelection.setBorder(new EmptyBorder(10, 50, 20, 50));
-            panelMachineSelection.setOpaque(false);
-            JLabel lblMachineType = new JLabel("Seleccione tipo de máquina:", SwingConstants.CENTER);
-            lblMachineType.setForeground(Color.WHITE);
-            lblMachineType.setFont(new Font("Arial", Font.BOLD, 16));
-            panelPrincipal.add(lblMachineType);
-            defensiveTrainer = createMachineButton("Defensive Trainer");
-            attackingTrainer = createMachineButton("Attacking Trainer");
-            changingTrainer = createMachineButton("Changing Trainer");
-            expertTrainer = createMachineButton("Expert Trainer");
-            panelMachineSelection.add(defensiveTrainer);
-            panelMachineSelection.add(attackingTrainer);
-            panelMachineSelection.add(changingTrainer);
-            panelMachineSelection.add(expertTrainer);
-            panelPrincipal.add(panelMachineSelection);
+            agregarSeleccionMaquina(panelPrincipal, "Seleccione tipo de máquina:", false);
+        } else if (titulo.equals("Machine vs Machine")) {
+            agregarSeleccionMaquina(panelPrincipal, "Seleccion máquina para Jugador 1:", false);
+            agregarSeleccionMaquina(panelPrincipal, "Seleccion máquina para Jugador 2:", true);
         }
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
         panelBotones.setOpaque(false);
+        panelBotones.setBorder(new EmptyBorder(0, 0, 20, 0));
         Dimension tamanoBotones = new Dimension(150, 60);
         if (titulo.equals("Player vs Player")) {
             JButton btnNormal = crearBotonDialogo(NORMAL_IMAGE, tamanoBotones, "Normal");
             JButton btnSupervivencia = crearBotonDialogo(SUPERVIVENCIA_IMAGE, tamanoBotones, "Supervivencia");
-            btnNormal.addActionListener(e -> {
-                boolean nombresValidos = true;
-                if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
-                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
-                    nombresValidos = false;
-                }
-                if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
-                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
-                    nombresValidos = false;
-                }
-                if (nombresValidos) {
-                    String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
-                    String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
-                    Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
-                    Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
-                    POOBkemonGUI.setJugador1(jugador1);
-                    POOBkemonGUI.setJugador2(jugador2);
-                    POOBkemonGUI.setModoSupervivencia(false);
-                    dialog.dispose();
-                    this.setVisible(false);
-                    POOBkemonGUI.setMostrandoMovimientosJugador1(true);
-                    POOBkemonGUI.mostrarVentanaSeleccion(true);
-                }
-            });
-            btnSupervivencia.addActionListener(e -> {
-                boolean nombresValidos = true;
-                if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
-                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
-                    nombresValidos = false;
-                }
-                if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
-                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 2","Nombre requerido",JOptionPane.WARNING_MESSAGE);
-                    nombresValidos = false;
-                }
-                if (nombresValidos) {
-                    String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
-                    String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
-                    Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player1Name);
-                    Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player2Name);
-                    POOBkemonGUI.setJugador1(jugador1);
-                    POOBkemonGUI.setJugador2(jugador2);
-                    POOBkemonGUI.setModoSupervivencia(true);
-                    dialog.dispose();
-                    this.setVisible(false);
-                    POOBkemonGUI.iniciarBatalla();
-                }
-            });
+            btnNormal.addActionListener(e -> iniciarJuego(dialog, mostrarPlayer1, mostrarPlayer2, false));
+            btnSupervivencia.addActionListener(e -> iniciarJuego(dialog, mostrarPlayer1, mostrarPlayer2, true));
             panelBotones.add(btnNormal);
             panelBotones.add(btnSupervivencia);
         } else {
-        	JButton btnStart = crearBotonDialogo("/resources/start.png", tamanoBotones, "Start");
+            JButton btnStart = crearBotonDialogo(START_IMAGE, tamanoBotones, "Start");
             btnStart.addActionListener(e -> {
-                boolean nombresValidos = true;
+                if (titulo.equals("Machine vs Machine")) {
+                    if (selectedMachineType == null || selectedMachineType2 == null) {
+                        JOptionPane.showMessageDialog(dialog,"Por favor seleccione tipos de máquina para ambos jugadores", "Tipos de máquina requeridos", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                } else if (titulo.equals("Player vs Machine")) {
+                    if (selectedMachineType == null) {
+                    	JOptionPane.showMessageDialog(dialog,"Por favor seleccione un tipo de máquina","Tipo de máquina requerido", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
                 if (mostrarPlayer1 && (txtPlayer1.getText() == null || txtPlayer1.getText().trim().isEmpty())) {
-                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1","Nombre requerido",JOptionPane.WARNING_MESSAGE);
-                    nombresValidos = false;
+                    JOptionPane.showMessageDialog(dialog,"Por favor ingrese un nombre para Player 1", "Nombre requerido",JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
-                if (titulo.equals("Player vs Machine") && selectedMachineType == null) {
-                    JOptionPane.showMessageDialog(dialog,"Por favor seleccione un tipo de máquina","Tipo de máquina requerido",JOptionPane.WARNING_MESSAGE);
-                    nombresValidos = false;
+                if (mostrarPlayer2 && (txtPlayer2.getText() == null || txtPlayer2.getText().trim().isEmpty())) {
+                    JOptionPane.showMessageDialog(dialog, "Por favor ingrese un nombre para Player 2","Nombre requerido", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
-                if (nombresValidos) {
-                    String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
-                    String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer";
-                    Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player1Name);
-                    Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenadorConEquipoAleatorio(player2Name);
-                    POOBkemonGUI.setJugador1(jugador1);
-                    POOBkemonGUI.setJugador2(jugador2);
-                    POOBkemonGUI.setModoSupervivencia(true);
-                    dialog.dispose();
-                    this.setVisible(false);
-                    POOBkemonGUI.iniciarBatalla();
-                }
+                iniciarJuego(dialog, mostrarPlayer1, mostrarPlayer2, true);
             });
             panelBotones.add(btnStart);
         }
@@ -264,8 +211,66 @@ public class VentanaOpciones extends Ventana {
         fondoDialog.add(panelPrincipal, BorderLayout.CENTER);
         dialog.setVisible(true);
     }
-
-    private JButton createMachineButton(String text) {
+ 
+    private void iniciarJuego(JDialog dialog, boolean mostrarPlayer1, boolean mostrarPlayer2, boolean isSupervivencia) {
+        String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
+        String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer 2";
+        
+        // Create trainers with empty teams
+        Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
+        Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
+        
+        // Only generate random teams for survival mode
+        if (isSupervivencia) {
+            jugador1.generarEquipoAleatorioCompleto();
+            jugador2.generarEquipoAleatorioCompleto();
+        }
+        
+        POOBkemonGUI.setJugador1(jugador1);
+        POOBkemonGUI.setJugador2(jugador2);
+        POOBkemonGUI.setModoSupervivencia(isSupervivencia);
+        dialog.dispose();
+        this.setVisible(false);
+        
+        if (isSupervivencia) {
+            POOBkemonGUI.iniciarBatalla();
+        } else {
+            POOBkemonGUI.setMostrandoMovimientosJugador1(true);
+            POOBkemonGUI.mostrarVentanaSeleccion(true);
+        }
+    }
+ 
+    private void agregarSeleccionMaquina(JPanel panelPrincipal, String titulo, boolean isPlayer2) {
+        JPanel panelMachineSelection = new JPanel(new GridLayout(2, 2, 10, 10));
+        panelMachineSelection.setBorder(new EmptyBorder(10, 50, 20, 50));
+        panelMachineSelection.setOpaque(false);
+        JLabel lblMachineType = new JLabel(titulo, SwingConstants.CENTER);
+        lblMachineType.setForeground(Color.WHITE);
+        lblMachineType.setFont(new Font("Arial", Font.BOLD, 16));
+        panelPrincipal.add(lblMachineType);
+        if (!isPlayer2) {
+            defensiveTrainer = createMachineButton("Defensive Trainer", false);
+            attackingTrainer = createMachineButton("Attacking Trainer", false);
+            changingTrainer = createMachineButton("Changing Trainer", false);
+            expertTrainer = createMachineButton("Expert Trainer", false);
+            panelMachineSelection.add(defensiveTrainer);
+            panelMachineSelection.add(attackingTrainer);
+            panelMachineSelection.add(changingTrainer);
+            panelMachineSelection.add(expertTrainer);
+        } else {
+            defensiveTrainer2 = createMachineButton("Defensive Trainer", true);
+            attackingTrainer2 = createMachineButton("Attacking Trainer", true);
+            changingTrainer2 = createMachineButton("Changing Trainer", true);
+            expertTrainer2 = createMachineButton("Expert Trainer", true);
+            panelMachineSelection.add(defensiveTrainer2);
+            panelMachineSelection.add(attackingTrainer2);
+            panelMachineSelection.add(changingTrainer2);
+            panelMachineSelection.add(expertTrainer2);
+        }
+        panelPrincipal.add(panelMachineSelection);
+    }
+ 
+    private JButton createMachineButton(String text, boolean isPlayer2) {
         JButton button = new JButton(text);
         button.setBackground(Color.YELLOW);
         button.setForeground(Color.BLACK);
@@ -273,16 +278,24 @@ public class VentanaOpciones extends Ventana {
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         button.addActionListener(e -> {
-            defensiveTrainer.setBackground(Color.YELLOW);
-            attackingTrainer.setBackground(Color.YELLOW);
-            changingTrainer.setBackground(Color.YELLOW);
-            expertTrainer.setBackground(Color.YELLOW);
+            if (!isPlayer2) {
+                defensiveTrainer.setBackground(Color.YELLOW);
+                attackingTrainer.setBackground(Color.YELLOW);
+                changingTrainer.setBackground(Color.YELLOW);
+                expertTrainer.setBackground(Color.YELLOW);
+                selectedMachineType = text;
+            } else {
+                defensiveTrainer2.setBackground(Color.YELLOW);
+                attackingTrainer2.setBackground(Color.YELLOW);
+                changingTrainer2.setBackground(Color.YELLOW);
+                expertTrainer2.setBackground(Color.YELLOW);
+                selectedMachineType2 = text;
+            }
             button.setBackground(Color.GREEN);
-            selectedMachineType = text;
         });
         return button;
     }
-
+ 
     private JButton crearBotonDialogo(String imagenPath, Dimension size, String textoAlternativo) {
         JButton boton = new JButton() {
             @Override
@@ -316,7 +329,6 @@ public class VentanaOpciones extends Ventana {
             public void mouseEntered(MouseEvent e) {
                 boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 boton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -324,7 +336,7 @@ public class VentanaOpciones extends Ventana {
         });
         return boton;
     }
-
+ 
     private void escalarImagenBoton(JButton boton, String imagenPath, Dimension size) {
         try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
@@ -334,37 +346,37 @@ public class VentanaOpciones extends Ventana {
             System.err.println("Error al escalar imagen: " + imagenPath);
         }
     }
-
+ 
     private void volverAVentanaInicio() {
         this.dispose();
         POOBkemonGUI.mostrarVentanaInicio();
     }
-
+ 
     @Override
     protected void accionNuevo() {
         JOptionPane.showMessageDialog(this, "Función Nuevo en Opciones");
     }
-
+ 
     @Override
     protected void accionAbrir() {
         mostrarFileChooser("Abrir configuración", new String[]{"cfg"}, "Archivos de configuración (*.cfg)",e -> JOptionPane.showMessageDialog(this, "Configuración cargada"));
     }
-
+ 
     @Override
     protected void accionGuardar() {
         mostrarFileChooser("Guardar configuración", new String[]{"cfg"}, "Archivos de configuración (*.cfg)",e -> JOptionPane.showMessageDialog(this, "Configuración guardada"));
     }
-
+ 
     @Override
     protected void accionExportar() {
         mostrarFileChooser("Exportar opciones", new String[]{"opt"}, "Archivos de opciones (*.opt)",e -> JOptionPane.showMessageDialog(this, "Opciones exportadas"));
     }
-
+ 
     @Override
     protected void accionImportar() {
         mostrarFileChooser("Importar opciones", new String[]{"opt"}, "Archivos de opciones (*.opt)",e -> JOptionPane.showMessageDialog(this, "Opciones importadas"));
     }
-
+ 
     public void mostrar() {
         setVisible(true);
     }
