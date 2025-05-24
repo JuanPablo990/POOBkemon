@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import domain.items.HyperPotion;
+import domain.items.Potion;
+import domain.items.Revive;
+import domain.items.SuperPotion;
+
 public class ExpertTrainer extends Machine {
     
     public ExpertTrainer(String nombre) {

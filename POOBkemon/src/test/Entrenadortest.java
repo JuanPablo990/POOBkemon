@@ -3,6 +3,8 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import domain.*;
+import domain.pokemones.Aron;
+import domain.pokemones.Zubat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

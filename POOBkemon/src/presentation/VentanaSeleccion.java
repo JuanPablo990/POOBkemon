@@ -1,11 +1,12 @@
 package presentation;
 
 import domain.POOBkemon;
+import domain.items.HyperPotion;
+import domain.items.Potion;
+import domain.items.Revive;
+import domain.items.SuperPotion;
 import domain.Entrenador;
-import domain.Potion;
-import domain.SuperPotion;
-import domain.HyperPotion;
-import domain.Revive;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

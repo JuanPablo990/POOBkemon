@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import domain.*;
+import domain.items.HyperPotion;
+import domain.items.Potion;
+import domain.items.Revive;
+import domain.items.SuperPotion;
 
 public class VentanaBatalla extends Ventana {
 

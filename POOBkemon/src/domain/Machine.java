@@ -3,6 +3,11 @@ package domain;
 import java.util.List;
 import java.util.Random;
 
+import domain.items.HyperPotion;
+import domain.items.Potion;
+import domain.items.Revive;
+import domain.items.SuperPotion;
+
 public abstract class Machine {
     protected Entrenador entrenador;
     protected Batalla batalla;

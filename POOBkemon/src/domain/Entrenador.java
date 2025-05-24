@@ -5,6 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import domain.items.HyperPotion;
+import domain.items.Potion;
+import domain.items.Revive;
+import domain.items.SuperPotion;
+
 public class Entrenador {
     private final String nombre;
     private final List<Pokemon> equipoPokemon;

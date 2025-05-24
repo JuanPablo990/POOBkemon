@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import domain.items.HyperPotion;
+import domain.items.Potion;
+import domain.items.SuperPotion;
+
 public class AttackingTrainer extends Machine {
     private static final String NOMBRE = "AttackingTrainer";
     private static final List<String> MOVIMIENTOS_OFENSIVOS = List.of(

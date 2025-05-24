@@ -3,6 +3,8 @@ package domain;
 import java.util.List;
 import java.util.Random;
 
+import domain.items.Revive;
+
 public class ChangingTrainer extends Machine {
     
     public ChangingTrainer(String nombre) {

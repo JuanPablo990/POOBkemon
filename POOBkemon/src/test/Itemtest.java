@@ -3,6 +3,11 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import domain.*;
+import domain.items.HyperPotion;
+import domain.items.Potion;
+import domain.items.Revive;
+import domain.items.SuperPotion;
+import domain.pokemones.Zubat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
