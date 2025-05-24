@@ -13,12 +13,15 @@ public class POOBkemon {
     private Entrenador jugador2;
     private boolean turnoJugador1;
     private boolean modoSupervivencia = false;
+    private Machine maquina1; // Referencia opcional para jugador1 como máquina
+    private Machine maquina2; // Referencia opcional para jugador2 como máquina
     
     public POOBkemon() {
         this.poquedex = Poquedex.getInstancia();
         this.entrenadores = new ArrayList<>();
     }
 
+    // Constructor para jugador humano vs jugador humano
     public POOBkemon(String nombreJugador1, String nombreJugador2, boolean modoSupervivencia) {
         this();
         this.modoSupervivencia = modoSupervivencia;
@@ -32,10 +35,12 @@ public class POOBkemon {
         this.turnoJugador1 = new Random().nextBoolean();
     }
 
+    // Constructor para jugador humano vs máquina
     public POOBkemon(Entrenador jugador1, Machine jugador2, boolean modoSupervivencia) {
         this();
         this.modoSupervivencia = modoSupervivencia;
         this.jugador1 = jugador1;
+        this.maquina2 = jugador2;
         this.jugador2 = jugador2.getEntrenador();
         entrenadores.add(jugador1);
         entrenadores.add(this.jugador2);
@@ -45,9 +50,12 @@ public class POOBkemon {
         this.turnoJugador1 = new Random().nextBoolean();
     }
 
+    // Constructor para máquina vs máquina
     public POOBkemon(Machine jugador1, Machine jugador2, boolean modoSupervivencia) {
         this();
         this.modoSupervivencia = modoSupervivencia;
+        this.maquina1 = jugador1;
+        this.maquina2 = jugador2;
         this.jugador1 = jugador1.getEntrenador();
         this.jugador2 = jugador2.getEntrenador();
         entrenadores.add(this.jugador1);
@@ -117,20 +125,49 @@ public class POOBkemon {
         if (jugador1 != null && jugador2 != null) {
             this.batallaActual = new Batalla(jugador1, jugador2, null);
             this.turnoJugador1 = batallaActual.isTurnoJugador1();
+            
+            // Configurar máquinas con la batalla actual
+            if (maquina1 != null) maquina1.setBatalla(batallaActual);
+            if (maquina2 != null) maquina2.setBatalla(batallaActual);
+            
             batallaActual.iniciarBatalla();
+            
+            // Ejecutar primer turno automático si es una máquina
+            ejecutarTurnoAutomaticoSiEsMaquina();
+        }
+    }
+
+    private void ejecutarTurnoAutomaticoSiEsMaquina() {
+        Entrenador entrenadorEnTurno = getEntrenadorEnTurno();
+        if ((maquina1 != null && entrenadorEnTurno.equals(maquina1.getEntrenador())) || 
+            (maquina2 != null && entrenadorEnTurno.equals(maquina2.getEntrenador()))) {
+            
+            Machine maquinaEnTurno = maquina1 != null && entrenadorEnTurno.equals(maquina1.getEntrenador()) ? 
+                                   maquina1 : maquina2;
+            maquinaEnTurno.realizarTurno();
         }
     }
 
     public void setJugadores(Entrenador jugador1, Entrenador jugador2) {
         this.jugador1 = jugador1;
         this.jugador2 = jugador2;
+        this.maquina1 = null;
+        this.maquina2 = null;
         if (!entrenadores.contains(jugador1)) entrenadores.add(jugador1);
         if (!entrenadores.contains(jugador2)) entrenadores.add(jugador2);
         this.turnoJugador1 = new Random().nextBoolean();
     }
 
+    public void setJugadores(Entrenador jugador1, Machine jugador2) {
+        this.jugador1 = jugador1;
+        this.maquina2 = jugador2;
+        this.jugador2 = jugador2.getEntrenador();
+        if (!entrenadores.contains(jugador1)) entrenadores.add(jugador1);
+        if (!entrenadores.contains(this.jugador2)) entrenadores.add(this.jugador2);
+        this.turnoJugador1 = new Random().nextBoolean();
+    }
+
     public void prepararBatalla() {
-        setJugadores(jugador1, jugador2);
         iniciarBatalla();
     }
 
@@ -181,7 +218,10 @@ public class POOBkemon {
 
     public List<Pokemon> getPokemonsDisponiblesParaCambio(Entrenador entrenador) {
         return entrenador != null ? 
-            entrenador.getEquipoPokemon().stream().filter(p -> !p.equals(entrenador.getPokemonActivo()) && !p.estaDebilitado()).collect(Collectors.toList()) : new ArrayList<>();
+            entrenador.getEquipoPokemon().stream()
+                .filter(p -> !p.equals(entrenador.getPokemonActivo()))
+                .filter(p -> !p.estaDebilitado())
+                .collect(Collectors.toList()) : new ArrayList<>();
     }
 
     public List<Entrenador> getEntrenadores() {
@@ -198,7 +238,10 @@ public class POOBkemon {
 
     public void cambiarTurno() {
         turnoJugador1 = !turnoJugador1;
-        if (batallaActual != null) batallaActual.cambiarTurno();
+        if (batallaActual != null) {
+            batallaActual.cambiarTurno();
+            ejecutarTurnoAutomaticoSiEsMaquina();
+        }
     }
 
     public Entrenador getEntrenadorEnTurno() {
@@ -210,6 +253,8 @@ public class POOBkemon {
         this.batallaActual = null;
         this.jugador1 = null;
         this.jugador2 = null;
+        this.maquina1 = null;
+        this.maquina2 = null;
         this.turnoJugador1 = new Random().nextBoolean();
         this.modoSupervivencia = false;
     }
@@ -226,5 +271,10 @@ public class POOBkemon {
 
     public Poquedex getPoquedex() {
         return poquedex;
+    }
+
+    public boolean esMaquina(Entrenador entrenador) {
+        return (maquina1 != null && entrenador.equals(maquina1.getEntrenador())) || 
+               (maquina2 != null && entrenador.equals(maquina2.getEntrenador()));
     }
 }
