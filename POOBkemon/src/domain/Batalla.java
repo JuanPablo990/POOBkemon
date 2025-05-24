@@ -1,7 +1,6 @@
 package domain;
 
 import java.util.List;
-
 import java.util.Random;
 import java.util.stream.Collectors;
 import presentation.VentanaBatalla;
@@ -27,11 +26,6 @@ public class Batalla {
         ventanaBatalla.cargarPokemonesIniciales();
         ventanaBatalla.actualizarVistaJugador();
     }
-    
-    public boolean isBatallaTerminada() {
-        return this.batallaTerminada();
-    }
-    
 
     private void enviarPrimerPokemon(Entrenador entrenador) {
         if (entrenador.getEquipoPokemon().isEmpty()) {
@@ -45,12 +39,14 @@ public class Batalla {
     public void ejecutarTurno(int opcion) {
         Entrenador atacante = turnoJugador1 ? entrenador1 : entrenador2;
         Entrenador defensor = turnoJugador1 ? entrenador2 : entrenador1;
+        
         switch (opcion) {
             case 1 -> atacar(atacante, defensor);
             case 2 -> usarItem(atacante);
             case 3 -> cambiarPokemon(atacante);
             default -> ventanaBatalla.mostrarMensaje("Opción inválida. Pierdes tu turno.");
         }
+        
         if (!batallaTerminada()) {
             cambiarTurno();
         }
@@ -59,13 +55,16 @@ public class Batalla {
     private void atacar(Entrenador atacante, Entrenador defensor) {
         Pokemon pokemonAtacante = atacante.getPokemonActivo();
         Pokemon objetivo = defensor.getPokemonActivo();
+        
         if (!validarPokemonActivo(pokemonAtacante, objetivo)) {
             return;
         }
+        
         Movimiento movimiento = obtenerMovimiento(pokemonAtacante);
         if (movimiento == null) {
             return;
         }
+        
         ejecutarMovimiento(movimiento, pokemonAtacante, objetivo);
         verificarEstadoBatalla(defensor);
     }
@@ -99,18 +98,36 @@ public class Batalla {
         double efectividad = calcularEfectividad(movimiento, objetivo);
         String mensajeEfectividad = obtenerMensajeEfectividad(efectividad);
         ventanaBatalla.agregarMensaje(mensajeEfectividad);
+        
         int psAntes = objetivo.getPs();
         boolean exito = movimiento.ejecutar(atacante, objetivo, efectividad);
+        
         if (exito) {
             int danio = psAntes - objetivo.getPs();
             ventanaBatalla.agregarMensaje("¡El ataque hizo " + danio + " de daño!");
-            ventanaBatalla.actualizarVidaPokemon1(entrenador1.getPokemonActivo().getPs());
-            ventanaBatalla.actualizarVidaPokemon2(entrenador2.getPokemonActivo().getPs());
+            actualizarVidasEnVentana();
         } else {
             ventanaBatalla.agregarMensaje("¡El ataque falló!");
         }
     }
-    
+
+    public double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
+        String tipoAtaque = movimiento.getTipo().toLowerCase().replace("é", "e");
+        String tipoDefensa = objetivo.getTipoPrincipal().toLowerCase().replace("é", "e");
+        double efectividad = Efectividad.calcular(tipoAtaque, tipoDefensa);
+        
+        if (objetivo.getTipoSecundario() != null && !objetivo.getTipoSecundario().isEmpty()) {
+            String tipoSecundario = objetivo.getTipoSecundario().toLowerCase().replace("é", "e");
+            efectividad *= Efectividad.calcular(tipoAtaque, tipoSecundario);
+        }
+        return efectividad;
+    }
+
+    private void actualizarVidasEnVentana() {
+        ventanaBatalla.actualizarVidaPokemon1(entrenador1.getPokemonActivo().getPs());
+        ventanaBatalla.actualizarVidaPokemon2(entrenador2.getPokemonActivo().getPs());
+    }
+
     private String obtenerMensajeEfectividad(double efectividad) {
         String mensaje = String.format("[Multiplicador: x%.1f]%n", efectividad);
         if (efectividad <= 0.0) {
@@ -123,17 +140,6 @@ public class Batalla {
             mensaje += "NEUTRAL";
         }
         return mensaje;
-    }
-
-    public double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
-        String tipoAtaque = movimiento.getTipo().toLowerCase().replace("é", "e");
-        String tipoDefensa = objetivo.getTipoPrincipal().toLowerCase().replace("é", "e");
-        double efectividad = Efectividad.calcular(tipoAtaque, tipoDefensa);
-        if (objetivo.getTipoSecundario() != null && !objetivo.getTipoSecundario().isEmpty()) {
-            String tipoSecundario = objetivo.getTipoSecundario().toLowerCase().replace("é", "e");
-            efectividad *= Efectividad.calcular(tipoAtaque, tipoSecundario);
-        }
-        return efectividad;
     }
 
     private void verificarEstadoBatalla(Entrenador defensor) {
@@ -152,13 +158,6 @@ public class Batalla {
             return;
         }
         ventanaBatalla.mostrarVentanaItem();
-    }
-    
-    public Pokemon getPokemonActivo(Entrenador entrenador) {
-        if (!entrenador.equals(entrenador1) && !entrenador.equals(entrenador2)) {
-            throw new IllegalArgumentException("El entrenador no está en esta batalla.");
-        }
-        return entrenador.getPokemonActivo();
     }
 
     private void cambiarPokemon(Entrenador entrenador) {
@@ -182,6 +181,10 @@ public class Batalla {
         return terminada;
     }
 
+    public boolean isBatallaTerminada() {
+        return batallaTerminada();
+    }
+
     private boolean equipoDebilitado(Entrenador entrenador) {
         return entrenador.getEquipoPokemon().stream().allMatch(Pokemon::estaDebilitado);
     }
@@ -190,17 +193,22 @@ public class Batalla {
         Entrenador ganador = equipoDebilitado(entrenador1) ? entrenador2 : entrenador1;
         ventanaBatalla.mostrarMensaje("\n¡" + ganador.getNombre() + " gana la batalla!");
     }
-    
+
     public Entrenador getGanador() {
-        return this.isBatallaTerminada() ? (this.equipoDebilitado(entrenador1) ? entrenador2 : entrenador1) :null;
+        return isBatallaTerminada() ? (equipoDebilitado(entrenador1) ? entrenador2 : entrenador1) : null;
     }
 
     public List<Movimiento> getMovimientosDisponibles(Pokemon pokemon) {
-        return pokemon.getMovimientos().stream().filter(m -> m.getPp() > 0).collect(Collectors.toList());
+        return pokemon.getMovimientos().stream()
+                .filter(m -> m.getPp() > 0)
+                .collect(Collectors.toList());
     }
 
     public List<Pokemon> getPokemonsDisponiblesParaCambio(Entrenador entrenador) {
-        return entrenador.getEquipoPokemon().stream().filter(p -> !p.equals(entrenador.getPokemonActivo())).filter(p -> !p.estaDebilitado()).collect(Collectors.toList());
+        return entrenador.getEquipoPokemon().stream()
+                .filter(p -> !p.equals(entrenador.getPokemonActivo()))
+                .filter(p -> !p.estaDebilitado())
+                .collect(Collectors.toList());
     }
 
     public Entrenador getEntrenador1() {
@@ -213,5 +221,12 @@ public class Batalla {
 
     public boolean isTurnoJugador1() {
         return turnoJugador1;
+    }
+
+    public Pokemon getPokemonActivo(Entrenador entrenador) {
+        if (!entrenador.equals(entrenador1) && !entrenador.equals(entrenador2)) {
+            throw new IllegalArgumentException("El entrenador no está en esta batalla.");
+        }
+        return entrenador.getPokemonActivo();
     }
 }
