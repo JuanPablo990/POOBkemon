@@ -6,6 +6,10 @@ import java.awt.event.*;
 import java.net.URL;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * VentanaCreditos muestra una ventana con los créditos del juego POOBkemon,
+ * incluyendo animación de desplazamiento vertical del texto y un botón para volver.
+ */
 public class VentanaCreditos extends Ventana {
     private FondoPanel fondoPanel;
     private JButton btnVolver;
@@ -14,6 +18,9 @@ public class VentanaCreditos extends Ventana {
     private int yPos;
     private final int velocidad = 2;
 
+    /**
+     * Constructor de la clase VentanaCreditos.
+     */
     public VentanaCreditos() {
         super("Créditos de POOBkemon");
         detenerAnimacion();
@@ -22,6 +29,9 @@ public class VentanaCreditos extends Ventana {
         iniciarAnimacionCreditos();
     }
 
+    /**
+     * Detiene la animación de los créditos si está activa.
+     */
     private void detenerAnimacion() {
         if (timer != null) {
             timer.stop();
@@ -29,6 +39,9 @@ public class VentanaCreditos extends Ventana {
         }
     }
 
+    /**
+     * Inicializa y configura los componentes gráficos de la ventana.
+     */
     private void inicializarComponentes() {
         fondoPanel = new FondoPanel("/resources/creditos.gif");
         fondoPanel.setLayout(new BorderLayout());
@@ -62,6 +75,13 @@ public class VentanaCreditos extends Ventana {
         fondoPanel.add(panelBoton, BorderLayout.SOUTH);
     }
 
+    /**
+     * Carga y escala un icono desde un recurso.
+     * @param path Ruta del recurso de la imagen.
+     * @param width Ancho deseado.
+     * @param height Alto deseado.
+     * @return ImageIcon escalado o null si falla la carga.
+     */
     private ImageIcon loadScaledIcon(String path, int width, int height) {
         try {
             URL resource = getClass().getResource(path);
@@ -77,6 +97,9 @@ public class VentanaCreditos extends Ventana {
         }
     }
 
+    /**
+     * Actualiza el texto HTML de los créditos en la etiqueta.
+     */
     private void actualizarTextoCreditos() {
         String htmlText = "<html><center>" +
                 "<h1 style='color:black;text-shadow:1px 1px 3px white;'>POOBkemon</h1><br><br>" +
@@ -90,6 +113,9 @@ public class VentanaCreditos extends Ventana {
         lblCreditos.setText(htmlText);
     }
 
+    /**
+     * Inicia la animación de desplazamiento vertical de los créditos.
+     */
     private void iniciarAnimacionCreditos() {
         detenerAnimacion();
         yPos = getHeight();
@@ -106,6 +132,9 @@ public class VentanaCreditos extends Ventana {
         timer.start();
     }
 
+    /**
+     * Configura los listeners de los componentes de la ventana.
+     */
     private void configurarListeners() {
         btnVolver.addActionListener(e -> {
             volverAVentanaOpciones();
@@ -133,43 +162,67 @@ public class VentanaCreditos extends Ventana {
         });
     }
 
+    /**
+     * Vuelve a la ventana de opciones principal.
+     */
     private void volverAVentanaOpciones() {
         detenerAnimacion();
         dispose();
         POOBkemonGUI.mostrarVentanaOpciones();
     }
 
+    /**
+     * Libera los recursos y detiene la animación al cerrar la ventana.
+     */
     @Override
     public void dispose() {
         detenerAnimacion();
         super.dispose();
     }
 
+    /**
+     * Acción para nuevo juego desde la ventana de créditos.
+     */
     @Override
     protected void accionNuevo() {
         JOptionPane.showMessageDialog(this, "Nuevo juego desde créditos");
     }
 
+    /**
+     * Acción para abrir archivo desde la ventana de créditos.
+     */
     @Override
     protected void accionAbrir() {
         mostrarFileChooser("Abrir desde créditos",new String[]{"sav"}, "Archivos de guardado (*.sav)",e -> JOptionPane.showMessageDialog(this, "Partida cargada desde créditos"));
     }
 
+    /**
+     * Acción para guardar desde la ventana de créditos.
+     */
     @Override
     protected void accionGuardar() {
         JOptionPane.showMessageDialog(this, "Guardar desde créditos");
     }
 
+    /**
+     * Acción para exportar desde la ventana de créditos.
+     */
     @Override
     protected void accionExportar() {
         JOptionPane.showMessageDialog(this, "Exportar desde créditos");
     }
 
+    /**
+     * Acción para importar desde la ventana de créditos.
+     */
     @Override
     protected void accionImportar() {
         JOptionPane.showMessageDialog(this, "Importar desde créditos");
     }
 
+    /**
+     * Muestra la ventana de créditos y reinicia la animación.
+     */
     public void mostrar() {
         setVisible(true);
         iniciarAnimacionCreditos();

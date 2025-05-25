@@ -34,6 +34,10 @@ public class VentanaBatalla extends Ventana {
     private boolean juegoPausado = false;
     private JButton btnPausa;
 
+    /**
+     * Crea la ventana de batalla e inicializa los componentes.
+     * @param nombresPokemonSeleccionados Lista de nombres de los Pokémon seleccionados.
+     */
     public VentanaBatalla(List<String> nombresPokemonSeleccionados) {
         super("Batalla POOBkemon");
         this.turnoJugador1 = new Random().nextBoolean();
@@ -46,6 +50,9 @@ public class VentanaBatalla extends Ventana {
         actualizarVistaJugador();
     }
 
+    /**
+     * Muestra la animación inicial de la batalla.
+     */
     private void mostrarAnimacionInicial() {
         JDialog dialog = new JDialog(this, "", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setUndecorated(true);
@@ -71,6 +78,9 @@ public class VentanaBatalla extends Ventana {
         }
     }
 
+    /**
+     * Inicializa los componentes gráficos de la ventana.
+     */
     private void inicializarComponentes() {
         Entrenador j1 = POOBkemonGUI.getJugador1();
         Entrenador j2 = POOBkemonGUI.getJugador2();
@@ -155,6 +165,9 @@ public class VentanaBatalla extends Ventana {
         });
     }
 
+    /**
+     * Muestra el menú de pausa durante la batalla.
+     */
     private void mostrarMenuPausa() {
         JDialog dialog = new JDialog(this, "Opciones de Pausa", true);
         dialog.setSize(300, 200);
@@ -188,6 +201,11 @@ public class VentanaBatalla extends Ventana {
         dialog.setVisible(true);
     }
     
+    /**
+     * Aplica el estilo visual a un botón de item.
+     * @param boton Botón a estilizar.
+     * @param colorFondo Color de fondo.
+     */
     private void estilizarBotonComoItem(JButton boton, Color colorFondo) {
         boton.setBackground(colorFondo);
         boton.setForeground(Color.BLACK);
@@ -209,43 +227,55 @@ public class VentanaBatalla extends Ventana {
         });
     }
 
+    /**
+     * Pausa el juego y deshabilita los controles.
+     */
     private void pausarJuego() {
         juegoPausado = true;
         deshabilitarControles();
         agregarMensaje("¡El juego está en pausa!");
     }
 
+    /**
+     * Reanuda el juego y habilita los controles.
+     */
     private void reanudarJuego() {
         juegoPausado = false;
         habilitarControles();
         agregarMensaje("¡El juego se ha reanudado!");
     }
 
+    /**
+     * Muestra un cuadro de confirmación para huir de la batalla.
+     */
     private void confirmarHuir() {
-    	 Color verdeAguamarina = new Color(102, 205, 170);
-    	    Color fondoClaro = new Color(224, 255, 240);
-    	    UIManager.put("OptionPane.background", fondoClaro);
-    	    UIManager.put("Panel.background", fondoClaro);
-    	    UIManager.put("Button.background", verdeAguamarina);
-    	    UIManager.put("Button.foreground", Color.BLACK);
-    	    UIManager.put("Button.font", new Font("Arial", Font.BOLD, 12));
-    	    int confirmacion = JOptionPane.showConfirmDialog(this,"¿Estás seguro de que quieres huir?\nPerderás la batalla.", "Confirmar huida", JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-    	    UIManager.put("OptionPane.background", null);
-    	    UIManager.put("Panel.background", null);
-    	    UIManager.put("Button.background", null);
-    	    UIManager.put("Button.foreground", null);
-    	    UIManager.put("Button.font", null);
-    	    if (confirmacion == JOptionPane.YES_OPTION) {
-    	        if (juegoPausado) {
-    	            reanudarJuego();
-    	        }
-    	        agregarMensaje("¡Has huido de la batalla!");
-    	        POOBkemonGUI.reiniciarAplicacion();
-    	    } else {
-    	        agregarMensaje("¡Continúa la batalla!");
-    	    }
+        Color verdeAguamarina = new Color(102, 205, 170);
+        Color fondoClaro = new Color(224, 255, 240);
+        UIManager.put("OptionPane.background", fondoClaro);
+        UIManager.put("Panel.background", fondoClaro);
+        UIManager.put("Button.background", verdeAguamarina);
+        UIManager.put("Button.foreground", Color.BLACK);
+        UIManager.put("Button.font", new Font("Arial", Font.BOLD, 12));
+        int confirmacion = JOptionPane.showConfirmDialog(this,"¿Estás seguro de que quieres huir?\nPerderás la batalla.", "Confirmar huida", JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.font", null);
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            if (juegoPausado) {
+                reanudarJuego();
+            }
+            agregarMensaje("¡Has huido de la batalla!");
+            POOBkemonGUI.reiniciarAplicacion();
+        } else {
+            agregarMensaje("¡Continúa la batalla!");
+        }
     }
 
+    /**
+     * Deshabilita los controles de la interfaz excepto el de pausa.
+     */
     private void deshabilitarControles() {
         for (Component comp : panelBotones.getComponents()) {
             if (comp != btnPausa) {
@@ -254,12 +284,21 @@ public class VentanaBatalla extends Ventana {
         }
     }
 
+    /**
+     * Habilita todos los controles de la interfaz.
+     */
     private void habilitarControles() {
         for (Component comp : panelBotones.getComponents()) {
             comp.setEnabled(true);
         }
     }
 
+    /**
+     * Crea un botón con una imagen y texto alternativo.
+     * @param rutaImagen Ruta de la imagen.
+     * @param textoAlternativo Texto alternativo.
+     * @return El botón creado.
+     */
     private JButton crearBotonConImagen(String rutaImagen, String textoAlternativo) {
         try {
             ImageIcon icono = new ImageIcon(getClass().getResource(rutaImagen));
@@ -275,6 +314,9 @@ public class VentanaBatalla extends Ventana {
         }
     }
 
+    /**
+     * Actualiza la posición de los paneles de imagen de los Pokémon.
+     */
     private void actualizarPosicionPanelImagen() {
         int panelWidth = panelGif.getWidth();
         int panelHeight = panelGif.getHeight();
@@ -300,15 +342,27 @@ public class VentanaBatalla extends Ventana {
         panelGif.repaint();
     }
 
+    /**
+     * Agrega un mensaje al área de mensajes de la batalla.
+     * @param mensaje Mensaje a agregar.
+     */
     public void agregarMensaje(String mensaje) {
         areaMensajes.append(mensaje + "\n");
         areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
     }
 
+    /**
+     * Muestra un mensaje emergente.
+     * @param mensaje Mensaje a mostrar.
+     */
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
 
+    /**
+     * Muestra la efectividad de un ataque.
+     * @param efectividad Valor de efectividad.
+     */
     public void mostrarEfectividad(double efectividad) {
         String mensaje;
         if (efectividad <= 0.0) {
@@ -323,6 +377,9 @@ public class VentanaBatalla extends Ventana {
         agregarMensaje(mensaje);
     }
 
+    /**
+     * Muestra la ventana para seleccionar un ataque.
+     */
     public void mostrarVentanaAtaque() {
         JDialog ventana = new JDialog(this, "Selecciona un Ataque", true);
         ventana.setLayout(new GridLayout(2, 2, 10, 10));
@@ -363,6 +420,10 @@ public class VentanaBatalla extends Ventana {
         ventana.setVisible(true);
     }
 
+    /**
+     * Ejecuta el ataque seleccionado.
+     * @param movimiento Movimiento a ejecutar.
+     */
     private void ejecutarAtaque(Movimiento movimiento) {
         Entrenador atacante = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
         Entrenador defensor = turnoJugador1 ? POOBkemonGUI.getJugador2() : POOBkemonGUI.getJugador1();
@@ -406,6 +467,12 @@ public class VentanaBatalla extends Ventana {
         "Subir Velocidad", "%s aumentó su velocidad!"
     );
 
+    /**
+     * Calcula la efectividad de un movimiento sobre un Pokémon objetivo.
+     * @param movimiento Movimiento a evaluar.
+     * @param objetivo Pokémon objetivo.
+     * @return Valor de efectividad.
+     */
     private double calcularEfectividad(Movimiento movimiento, Pokemon objetivo) {
         String tipoAtaque = (movimiento.getTipo() != null) ? movimiento.getTipo().toLowerCase().replace("é", "e") : "";
         String tipoDefensaPrincipal = (objetivo.getTipoPrincipal() != null) ? objetivo.getTipoPrincipal().toLowerCase().replace("é", "e") : "";
@@ -417,6 +484,11 @@ public class VentanaBatalla extends Ventana {
         return efectividad;
     }
 
+    /**
+     * Verifica si el equipo de un entrenador está completamente debilitado.
+     * @param entrenador Entrenador a verificar.
+     * @return true si todo el equipo está debilitado, false en caso contrario.
+     */
     private boolean equipoDebilitado(Entrenador entrenador) {
         for (Pokemon pokemon : entrenador.getEquipoPokemon()) {
             if (!pokemon.estaDebilitado()) {
@@ -426,6 +498,9 @@ public class VentanaBatalla extends Ventana {
         return true;
     }
 
+    /**
+     * Muestra la ventana para cambiar de Pokémon.
+     */
     public void mostrarVentanaCambioPokemon() {
         JDialog ventana = new JDialog(this, "Selecciona un Pokémon", true);
         ventana.setLayout(new GridLayout(0, 3, 10, 10));
@@ -473,6 +548,10 @@ public class VentanaBatalla extends Ventana {
         ventana.setVisible(true);
     }
 
+    /**
+     * Muestra la ventana de cambio obligatorio de Pokémon.
+     * @param entrenador Entrenador que debe cambiar de Pokémon.
+     */
     public void mostrarVentanaCambioObligatorio(Entrenador entrenador) {
         JDialog ventana = new JDialog(this, "Selecciona un Pokémon", true);
         ventana.setLayout(new GridLayout(0, 3, 10, 10));
@@ -520,6 +599,9 @@ public class VentanaBatalla extends Ventana {
         ventana.setVisible(true);
     }
 
+    /**
+     * Muestra la ventana para seleccionar y usar un item.
+     */
     public void mostrarVentanaItem() {
         JDialog ventana = new JDialog(this, "Selecciona un Item", true);
         ventana.setLayout(new GridLayout(0, 1, 10, 10));
@@ -584,6 +666,12 @@ public class VentanaBatalla extends Ventana {
         ventana.setVisible(true);
     }
 
+    /**
+     * Muestra la ventana para seleccionar el Pokémon objetivo de un item.
+     * @param entrenador Entrenador que usará el item.
+     * @param item Item a usar.
+     * @return Pokémon seleccionado o null si se cancela.
+     */
     private Pokemon seleccionarPokemonParaItem(Entrenador entrenador, Item item) {
         JDialog ventana = new JDialog(this, "Selecciona un Pokémon", true);
         ventana.setLayout(new GridLayout(0, 1, 10, 10));
@@ -637,11 +725,17 @@ public class VentanaBatalla extends Ventana {
         return seleccionado[0];
     }
 
+    /**
+     * Actualiza la vida de los Pokémon activos en la interfaz.
+     */
     private void actualizarVidaPokemones() {
         actualizarVidaPokemon1(POOBkemonGUI.getJugador1().getPokemonActivo().getPs());
         actualizarVidaPokemon2(POOBkemonGUI.getJugador2().getPokemonActivo().getPs());
     }
 
+    /**
+     * Carga los Pokémon iniciales de ambos jugadores.
+     */
     public void cargarPokemonesIniciales() {
         Entrenador j1 = POOBkemonGUI.getJugador1();
         Entrenador j2 = POOBkemonGUI.getJugador2();
@@ -657,6 +751,10 @@ public class VentanaBatalla extends Ventana {
         progressBar2.setValue(p2.getPs());
     }
 
+    /**
+     * Establece la imagen del Pokémon del jugador 1.
+     * @param fondo Panel de fondo con la imagen.
+     */
     public void setImagenPokemon(FondoPanel fondo) {
         panelImagenPokemon.removeAll();
         panelImagenPokemon.add(fondo, BorderLayout.CENTER);
@@ -665,6 +763,10 @@ public class VentanaBatalla extends Ventana {
         panelImagenPokemon.repaint();
     }
 
+    /**
+     * Establece la imagen del Pokémon del jugador 2.
+     * @param fondo Panel de fondo con la imagen.
+     */
     public void setImagenPokemon2(FondoPanel fondo) {
         panelImagenPokemon2.removeAll();
         panelImagenPokemon2.add(fondo, BorderLayout.CENTER);
@@ -673,16 +775,27 @@ public class VentanaBatalla extends Ventana {
         panelImagenPokemon2.repaint();
     }
 
+    /**
+     * Actualiza la vida del Pokémon activo del jugador 1.
+     * @param vida Nueva cantidad de vida.
+     */
     public void actualizarVidaPokemon1(int vida) {
         progressBar1.setValue(vida);
         progressBar1.setString(vida + "/" + progressBar1.getMaximum());
     }
 
+    /**
+     * Actualiza la vida del Pokémon activo del jugador 2.
+     * @param vida Nueva cantidad de vida.
+     */
     public void actualizarVidaPokemon2(int vida) {
         progressBar2.setValue(vida);
         progressBar2.setString(vida + "/" + progressBar2.getMaximum());
     }
 
+    /**
+     * Actualiza la vista del jugador actual y verifica el fin de la batalla.
+     */
     public void actualizarVistaJugador() {
         Entrenador jugador = turnoJugador1 ? POOBkemonGUI.getJugador1() : POOBkemonGUI.getJugador2();
         labelJugador.setText("Turno: " + jugador.getNombre());
@@ -713,6 +826,9 @@ public class VentanaBatalla extends Ventana {
         verificarFinDeBatalla();
     }
 
+    /**
+     * Verifica si la batalla ha terminado y muestra la animación final si es necesario.
+     */
     private void verificarFinDeBatalla() {
         Entrenador j1 = POOBkemonGUI.getJugador1();
         Entrenador j2 = POOBkemonGUI.getJugador2();
@@ -723,6 +839,10 @@ public class VentanaBatalla extends Ventana {
         }
     }
 
+    /**
+     * Muestra la animación final de la batalla y el ganador.
+     * @param ganador Entrenador ganador.
+     */
     private void mostrarAnimacionFinal(Entrenador ganador) {
         JDialog dialog = new JDialog(this, "", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setUndecorated(true);
@@ -775,6 +895,9 @@ public class VentanaBatalla extends Ventana {
         }
     }
 
+    /**
+     * Muestra la ventana de la batalla.
+     */
     public void mostrar() {
         setVisible(true);
     }

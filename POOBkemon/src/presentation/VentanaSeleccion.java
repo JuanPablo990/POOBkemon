@@ -17,6 +17,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Ventana para la selección de Pokémon y objetos por parte de los jugadores.
+ */
 public class VentanaSeleccion extends Ventana {
     
     private FondoPanel fondoPanel;
@@ -52,6 +55,9 @@ public class VentanaSeleccion extends Ventana {
     private List<String> nombresPokemonJugador1 = new ArrayList<>();
     private List<String> nombresPokemonJugador2 = new ArrayList<>();
     
+    /**
+     * Constructor de la ventana de selección para el Jugador 1.
+     */
     public VentanaSeleccion() {
         super("Selección de POOBkemon");
         this.esJugador1 = true;
@@ -61,6 +67,10 @@ public class VentanaSeleccion extends Ventana {
         actualizarEtiquetaEntrenador();
     }
     
+    /**
+     * Constructor de la ventana de selección indicando si es Jugador 1 o 2.
+     * @param esJugador1 true si es Jugador 1, false si es Jugador 2
+     */
     public VentanaSeleccion(boolean esJugador1) {
         super("Selección de POOBkemon");
         this.esJugador1 = esJugador1;
@@ -70,6 +80,9 @@ public class VentanaSeleccion extends Ventana {
         actualizarEtiquetaEntrenador();
     }
 
+    /**
+     * Inicializa todos los componentes gráficos de la ventana.
+     */
     private void inicializarComponentes() {
         setLayout(new BorderLayout());
         fondoPanel = new FondoPanel(PoobkemonGifs.FONDO_SELECCION);
@@ -145,6 +158,9 @@ public class VentanaSeleccion extends Ventana {
         configurarListenersSpinners();
     }
 
+    /**
+     * Configura los listeners para los spinners de los items.
+     */
     private void configurarListenersSpinners() {
         for (JSpinner spinner : spinnersItems) {
             spinner.addChangeListener(e -> {
@@ -174,6 +190,10 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
+    /**
+     * Cuenta cuántos tipos diferentes de pociones han sido seleccionados.
+     * @return número de tipos de pociones seleccionados
+     */
     private int contarTiposPocionesSeleccionados() {
         int count = 0;
         for (JSpinner spinner : spinnersItems) {
@@ -186,6 +206,11 @@ public class VentanaSeleccion extends Ventana {
         return count;
     }
 
+    /**
+     * Crea un panel para un item con su imagen y spinner.
+     * @param nombreItem nombre del item
+     * @return panel con el item
+     */
     private JPanel crearPanelItem(String nombreItem) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
@@ -224,6 +249,9 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
+    /**
+     * Actualiza la etiqueta del entrenador según el jugador actual.
+     */
     private void actualizarEtiquetaEntrenador() {
         if (esJugador1) {
             String nombreJugador1 = POOBkemonGUI.getJugador1() != null ? POOBkemonGUI.getJugador1().getNombre() : "Jugador 1";
@@ -234,41 +262,56 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
+    /**
+     * Crea un botón para un Pokémon específico.
+     * @param nombrePokemon nombre del Pokémon
+     * @return botón creado
+     */
     private JButton crearBotonPokemon(String nombrePokemon) {
-    	 JButton boton = new JButton();
-    	    boton.setFocusPainted(false);
-    	    boton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-    	    boton.setOpaque(false);
-    	    boton.setContentAreaFilled(false);
-    	    
-    	    if (nombrePokemon != null) {
-    	        try {
-    	            String rutaImagen = PoobkemonGifs.getPokemonImage(nombrePokemon);
-    	            URL url = getClass().getResource(rutaImagen);
-    	            if (url != null) {
-    	                ImageIcon icono = new ImageIcon(url);
-    	                boton.setIcon(icono);
-    	                boton.setToolTipText(nombrePokemon);
-    	            } else {
-    	                mostrarBotonError(boton, "No encontrado");
-    	            }
-    	        } catch (Exception e) {
-    	            mostrarBotonError(boton, "Error");
-    	        }
-    	    } else {
-    	        boton.setVisible(false);
-    	    }
-    	    return boton;
+         JButton boton = new JButton();
+            boton.setFocusPainted(false);
+            boton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+            boton.setOpaque(false);
+            boton.setContentAreaFilled(false);
+            
+            if (nombrePokemon != null) {
+                try {
+                    String rutaImagen = PoobkemonGifs.getPokemonImage(nombrePokemon);
+                    URL url = getClass().getResource(rutaImagen);
+                    if (url != null) {
+                        ImageIcon icono = new ImageIcon(url);
+                        boton.setIcon(icono);
+                        boton.setToolTipText(nombrePokemon);
+                    } else {
+                        mostrarBotonError(boton, "No encontrado");
+                    }
+                } catch (Exception e) {
+                    mostrarBotonError(boton, "Error");
+                }
+            } else {
+                boton.setVisible(false);
+            }
+            return boton;
     }
     
+    /**
+     * Muestra un mensaje de error en el botón si no se encuentra la imagen.
+     * @param boton botón a modificar
+     * @param mensaje mensaje de error
+     */
     private void mostrarBotonError(JButton boton, String mensaje) {
-    	 if (boton.isVisible()) {
-    	        boton.setText(mensaje);
-    	        boton.setForeground(Color.RED);
-    	        boton.setFont(new Font("Arial", Font.BOLD, 10));
-    	    }
+         if (boton.isVisible()) {
+                boton.setText(mensaje);
+                boton.setForeground(Color.RED);
+                boton.setFont(new Font("Arial", Font.BOLD, 10));
+            }
     }
 
+    /**
+     * Crea el botón "Siguiente".
+     * @param texto texto del botón
+     * @return botón creado
+     */
     private JButton crearBotonSiguiente(String texto) {
         JButton boton = new JButton(texto);
         boton.setFont(new Font("Arial", Font.BOLD, 14));
@@ -279,6 +322,9 @@ public class VentanaSeleccion extends Ventana {
         return boton;
     }
 
+    /**
+     * Agrega un listener para redimensionar los componentes al cambiar el tamaño de la ventana.
+     */
     private void agregarResizeListener() {
         this.addComponentListener(new ComponentAdapter() {
             @Override
@@ -288,6 +334,9 @@ public class VentanaSeleccion extends Ventana {
         });
     }
 
+    /**
+     * Redimensiona los componentes principales de la ventana.
+     */
     private void redimensionarComponentes() {
         redimensionarBotonesMatriz();
         redimensionarSpinnersItems();
@@ -295,6 +344,9 @@ public class VentanaSeleccion extends Ventana {
         repaint();
     }
 
+    /**
+     * Redimensiona los botones de la matriz de Pokémon.
+     */
     private void redimensionarBotonesMatriz() {
         if (panelDerecho != null && botonesMatriz != null) {
             int anchoPanel = panelDerecho.getWidth();
@@ -317,6 +369,9 @@ public class VentanaSeleccion extends Ventana {
         }
     }
     
+    /**
+     * Redimensiona los spinners de los items.
+     */
     private void redimensionarSpinnersItems() {
         if (panelIzquierdo != null && spinnersItems != null && spinnersItems.length > 0) {
             int anchoDisponible = panelIzquierdo.getWidth() - MARGEN_IZQUIERDO;
@@ -344,6 +399,9 @@ public class VentanaSeleccion extends Ventana {
         }
     }
 
+    /**
+     * Configura los listeners para los botones y el botón siguiente.
+     */
     private void configurarListeners() {
         btnSiguiente.addActionListener(e -> {
             if (pokemonSelectedCount < 1) {
@@ -404,8 +462,12 @@ public class VentanaSeleccion extends Ventana {
         }
     }
     
+    /**
+     * Maneja la selección y deselección de un Pokémon en la matriz.
+     * @param boton botón del Pokémon seleccionado
+     */
     private void manejarSeleccionPokemon(JButton boton) {
-    	if (!boton.isVisible()) {
+        if (!boton.isVisible()) {
             return;
         }
         String nombrePokemon = boton.getToolTipText();
@@ -435,31 +497,49 @@ public class VentanaSeleccion extends Ventana {
         boton.repaint();
     }
 
+    /**
+     * Acción para iniciar una nueva selección de Pokémon.
+     */
     @Override
     protected void accionNuevo() {
         JOptionPane.showMessageDialog(this, "Nueva selección de Pokémon iniciada");
     }
 
+    /**
+     * Acción para abrir una selección de Pokémon desde archivo.
+     */
     @Override
     protected void accionAbrir() {
         mostrarFileChooser("Abrir selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)", e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon cargada"));
     }
 
+    /**
+     * Acción para guardar la selección de Pokémon en archivo.
+     */
     @Override
     protected void accionGuardar() {
         mostrarFileChooser("Guardar selección de Pokémon", new String[]{"pok"}, "Archivos de Pokémon (*.pok)", e -> JOptionPane.showMessageDialog(this, "Selección de Pokémon guardada"));
     }
 
+    /**
+     * Acción para exportar la selección de Pokémon.
+     */
     @Override
     protected void accionExportar() {
         JOptionPane.showMessageDialog(this, "Exportando selección de Pokémon.");
     }
 
+    /**
+     * Acción para importar una selección de Pokémon.
+     */
     @Override
     protected void accionImportar() {
         JOptionPane.showMessageDialog(this, "Importando selección de Pokémon.");
     }
 
+    /**
+     * Muestra la ventana y redimensiona los componentes.
+     */
     public void mostrar() {
         setVisible(true);
         SwingUtilities.invokeLater(() -> {

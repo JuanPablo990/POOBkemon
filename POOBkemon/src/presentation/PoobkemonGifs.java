@@ -3,12 +3,16 @@ package presentation;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Clase utilitaria para gestionar las rutas de imágenes de los Pokémons e ítems en la aplicación.
+ * Proporciona mapas estáticos y métodos para obtener los recursos de imagen por nombre.
+ */
 public class PoobkemonGifs {
+    
     public static final Map<String, String> POKEMON_IMAGES = new HashMap<>();
     public static final Map<String, String> ITEM_IMAGES = new HashMap<>();
     public static final String FONDO_SELECCION = "/resources/seleccion.jpg";
     public static final String FONDO_MOVIMIENTOS = "/resources/movimientos.gif";
-
     static {
         POKEMON_IMAGES.put("Aron", "/resources/Pokemones/Acero/Aron.gif");
         POKEMON_IMAGES.put("Metang", "/resources/Pokemones/Acero/Metangross.gif");
@@ -53,8 +57,13 @@ public class PoobkemonGifs {
         ITEM_IMAGES.put("Revivir", "/resources/revivir.png");
     }
 
+    /**
+     * Obtiene la ruta de la imagen para un Pokémon dado, ignorando mayúsculas y minúsculas.
+     * @param pokemonName el nombre del Pokémon
+     * @return la ruta de la imagen si se encuentra, de lo contrario null
+     */
     public static String getPokemonImage(String pokemonName) {
-    	for (Map.Entry<String, String> entry : POKEMON_IMAGES.entrySet()) {
+        for (Map.Entry<String, String> entry : POKEMON_IMAGES.entrySet()) {
             if (entry.getKey().equalsIgnoreCase(pokemonName)) {
                 return entry.getValue();
             }
@@ -62,6 +71,11 @@ public class PoobkemonGifs {
         return null;
     }
 
+    /**
+     * Obtiene la ruta de la imagen para un ítem dado.
+     * @param itemName el nombre del ítem
+     * @return la ruta de la imagen si se encuentra, de lo contrario null
+     */
     public static String getItemImage(String itemName) {
         return ITEM_IMAGES.get(itemName);
     }

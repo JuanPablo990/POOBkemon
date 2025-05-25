@@ -31,6 +31,10 @@ public class POOBkemonGUI {
     private static boolean modoSupervivencia = false;
     private static boolean modoDebug = false;
 
+    /**
+     * Método principal de la aplicación. Inicia la interfaz gráfica.
+     * @param args Argumentos de línea de comandos.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             turnoJugador1 = new Random().nextBoolean();
@@ -41,6 +45,10 @@ public class POOBkemonGUI {
         });
     }
 
+    /**
+     * Obtiene la instancia de POOBkemon.
+     * @return la instancia de POOBkemon.
+     */
     public static POOBkemon getPoobkemon() {
         if (poobkemon == null) {
             poobkemon = new POOBkemon();
@@ -49,6 +57,10 @@ public class POOBkemonGUI {
         return poobkemon;
     }
 
+    /**
+     * Obtiene el jugador 1.
+     * @return el Entrenador jugador 1.
+     */
     public static Entrenador getJugador1() {
         if (jugador1 == null) {
             throw new IllegalStateException("Jugador 1 no ha sido inicializado");
@@ -56,6 +68,10 @@ public class POOBkemonGUI {
         return jugador1;
     }
 
+    /**
+     * Obtiene el jugador 2.
+     * @return el Entrenador jugador 2.
+     */
     public static Entrenador getJugador2() {
         if (jugador2 == null && !modoSupervivencia) {
             throw new IllegalStateException("Jugador 2 no ha sido inicializado");
@@ -63,6 +79,10 @@ public class POOBkemonGUI {
         return jugador2;
     }
 
+    /**
+     * Obtiene la batalla actual.
+     * @return la batalla actual.
+     */
     public static Batalla getBatallaActual() {
         if (batallaActual == null) {
             throw new IllegalStateException("No hay una batalla en curso");
@@ -70,6 +90,10 @@ public class POOBkemonGUI {
         return batallaActual;
     }
 
+    /**
+     * Establece el jugador 1.
+     * @param jugador el Entrenador a establecer como jugador 1.
+     */
     public static void setJugador1(Entrenador jugador) {
         if (jugador == null) {
             throw new IllegalArgumentException("El jugador no puede ser nulo");
@@ -77,6 +101,10 @@ public class POOBkemonGUI {
         jugador1 = jugador;
     }
 
+    /**
+     * Establece el jugador 2.
+     * @param jugador el Entrenador a establecer como jugador 2.
+     */
     public static void setJugador2(Entrenador jugador) {
         if (jugador == null && !modoSupervivencia) {
             throw new IllegalArgumentException("El jugador no puede ser nulo");
@@ -84,6 +112,10 @@ public class POOBkemonGUI {
         jugador2 = jugador;
     }
 
+    /**
+     * Establece la selección de Pokémon del jugador 1.
+     * @param seleccion lista de nombres de Pokémon.
+     */
     public static void setSeleccionPokemonJugador1(List<String> seleccion) {
         if (seleccion == null || seleccion.isEmpty() || seleccion.size() > 6) {
             throw new IllegalArgumentException("La selección debe contener entre 1 y 6 Pokémon");
@@ -91,10 +123,18 @@ public class POOBkemonGUI {
         seleccionPokemonJugador1 = new ArrayList<>(seleccion);
     }
 
+    /**
+     * Obtiene la selección de Pokémon del jugador 1.
+     * @return lista de nombres de Pokémon.
+     */
     public static List<String> getSeleccionPokemonJugador1() {
         return new ArrayList<>(seleccionPokemonJugador1);
     }
 
+    /**
+     * Establece la selección de Pokémon del jugador 2.
+     * @param seleccion lista de nombres de Pokémon.
+     */
     public static void setSeleccionPokemonJugador2(List<String> seleccion) {
         if (seleccion == null || seleccion.isEmpty() || seleccion.size() > 6) {
             throw new IllegalArgumentException("La selección debe contener entre 1 y 6 Pokémon");
@@ -102,10 +142,20 @@ public class POOBkemonGUI {
         seleccionPokemonJugador2 = new ArrayList<>(seleccion);
     }
 
+    /**
+     * Obtiene la selección de Pokémon del jugador 2.
+     * @return lista de nombres de Pokémon.
+     */
     public static List<String> getSeleccionPokemonJugador2() {
         return new ArrayList<>(seleccionPokemonJugador2);
     }
 
+    /**
+     * Establece los movimientos de un Pokémon para un jugador.
+     * @param nombrePokemon nombre del Pokémon.
+     * @param movimientos lista de movimientos.
+     * @param esJugador1 true si es para el jugador 1.
+     */
     public static void setMovimientosDePokemon(String nombrePokemon, List<String> movimientos, boolean esJugador1) {
         if (nombrePokemon == null || nombrePokemon.isEmpty()) {
             throw new IllegalArgumentException("El nombre del Pokémon no puede estar vacío");
@@ -121,43 +171,85 @@ public class POOBkemonGUI {
         }
     }
 
+    /**
+     * Obtiene los movimientos de un Pokémon para un jugador.
+     * @param nombrePokemon nombre del Pokémon.
+     * @param esJugador1 true si es para el jugador 1.
+     * @return lista de movimientos.
+     */
     public static List<String> getMovimientosDePokemon(String nombrePokemon, boolean esJugador1) {
         List<String> movimientos = esJugador1 ? movimientosJugador1.get(nombrePokemon) : movimientosJugador2.get(nombrePokemon);     
         return movimientos != null ? new ArrayList<>(movimientos) : null;
     }
 
+    /**
+     * Obtiene el mapa de movimientos del jugador 1.
+     * @return mapa de movimientos.
+     */
     public static Map<String, List<String>> getMovimientosJugador1() {
         return new HashMap<>(movimientosJugador1);
     }
 
+    /**
+     * Obtiene el mapa de movimientos del jugador 2.
+     * @return mapa de movimientos.
+     */
     public static Map<String, List<String>> getMovimientosJugador2() {
         return new HashMap<>(movimientosJugador2);
     }
 
+    /**
+     * Indica si se están mostrando los movimientos del jugador 1.
+     * @return true si se muestran los movimientos del jugador 1.
+     */
     public static boolean isMostrandoMovimientosJugador1() {
         return mostrandoMovimientosJugador1;
     }
 
+    /**
+     * Establece si se muestran los movimientos del jugador 1.
+     * @param valor true para mostrar los movimientos del jugador 1.
+     */
     public static void setMostrandoMovimientosJugador1(boolean valor) {
         mostrandoMovimientosJugador1 = valor;
     }
 
+    /**
+     * Indica si es el turno del jugador 1.
+     * @return true si es el turno del jugador 1.
+     */
     public static boolean isTurnoJugador1() {
         return turnoJugador1;
     }
 
+    /**
+     * Indica si está activado el modo supervivencia.
+     * @return true si está en modo supervivencia.
+     */
     public static boolean isModoSupervivencia() {
         return modoSupervivencia;
     }
 
+    /**
+     * Establece el modo supervivencia.
+     * @param modo true para activar el modo supervivencia.
+     */
     public static void setModoSupervivencia(boolean modo) {
         modoSupervivencia = modo;
     }
 
+    /**
+     * Indica si está activado el modo debug.
+     * @return true si está en modo debug.
+     */
     public static boolean isModoDebug() {
         return modoDebug;
     }
 
+    /**
+     * Establece el modo debug.
+     * @param modo true para activar el modo debug.
+     */
     public static void setModoDebug(boolean modo) {
         modoDebug = modo;
         if (modoDebug && ventanaDebug == null) {
@@ -168,6 +260,9 @@ public class POOBkemonGUI {
         }
     }
 
+    /**
+     * Cambia el turno entre jugadores.
+     */
     public static void cambiarTurno() {
         turnoJugador1 = !turnoJugador1;
         if (ventanaBatalla != null) {
@@ -175,12 +270,18 @@ public class POOBkemonGUI {
         }
     }
 
+    /**
+     * Reinicia la aplicación y sus datos.
+     */
     public static void reiniciarAplicacion() {
         cerrarTodasLasVentanas();
         reiniciarDatos();
         mostrarVentanaInicio();
     }
 
+    /**
+     * Reinicia los datos internos de la aplicación.
+     */
     private static void reiniciarDatos() {
         poobkemon = null;
         jugador1 = null;
@@ -195,6 +296,9 @@ public class POOBkemonGUI {
         modoSupervivencia = false;
     }
 
+    /**
+     * Cierra todas las ventanas de la aplicación.
+     */
     private static void cerrarTodasLasVentanas() {
         if (ventanaInicio != null) ventanaInicio.dispose();
         if (ventanaOpciones != null) ventanaOpciones.dispose();
@@ -212,6 +316,9 @@ public class POOBkemonGUI {
         ventanaDebug = null;
     }
 
+    /**
+     * Muestra la ventana de inicio.
+     */
     public static void mostrarVentanaInicio() {
         if (ventanaInicio != null) {
             ventanaInicio.dispose();
@@ -220,28 +327,45 @@ public class POOBkemonGUI {
         ventanaInicio.mostrar();
     }
 
+    /**
+     * Muestra la ventana de opciones.
+     */
     public static void mostrarVentanaOpciones() {
         cerrarOtrasVentanas(null);
         ventanaOpciones = new VentanaOpciones();
         ventanaOpciones.mostrar();
     }
 
+    /**
+     * Muestra la ventana de créditos.
+     */
     public static void mostrarVentanaCreditos() {
         cerrarOtrasVentanas(null);
         ventanaCreditos = new VentanaCreditos();
         ventanaCreditos.mostrar();
     }
 
+    /**
+     * Muestra la ventana de selección de Pokémon para el jugador 1.
+     */
     public static void mostrarVentanaSeleccion() {
         mostrarVentanaSeleccion(true);
     }
 
+    /**
+     * Muestra la ventana de selección de Pokémon.
+     * @param esJugador1 true si es para el jugador 1.
+     */
     public static void mostrarVentanaSeleccion(boolean esJugador1) {
         cerrarOtrasVentanas(null);
         ventanaSeleccion = new VentanaSeleccion(esJugador1);
         ventanaSeleccion.mostrar();
     }
 
+    /**
+     * Muestra la ventana de selección de movimientos.
+     * @param seleccion lista de nombres de Pokémon seleccionados.
+     */
     public static void mostrarVentanaMovimientos(List<String> seleccion) {
         if (seleccion == null || seleccion.isEmpty() || seleccion.size() > 6) {
             throw new IllegalArgumentException("La selección debe contener entre 1 y 6 Pokémon");
@@ -257,6 +381,10 @@ public class POOBkemonGUI {
         ventanaMovimientos.mostrar();
     }
 
+    /**
+     * Muestra la ventana de batalla.
+     * @param nombresPokemonSeleccionados lista de nombres de Pokémon seleccionados.
+     */
     public static void mostrarVentanaBatalla(List<String> nombresPokemonSeleccionados) {
         if (nombresPokemonSeleccionados == null || nombresPokemonSeleccionados.isEmpty()) {
             throw new IllegalArgumentException("La lista de Pokémon seleccionados no puede estar vacía");
@@ -269,6 +397,9 @@ public class POOBkemonGUI {
         batallaActual.iniciarBatalla();
     }
 
+    /**
+     * Inicia la batalla según el modo de juego.
+     */
     public static void iniciarBatalla() {
         if (isModoSupervivencia()) {
             List<String> nombresPokemon = new ArrayList<>();
@@ -285,6 +416,9 @@ public class POOBkemonGUI {
         }
     }
 
+    /**
+     * Muestra la ventana de debug.
+     */
     public static void mostrarVentanaDebug() {
         if (!modoDebug) return;
         
@@ -302,10 +436,18 @@ public class POOBkemonGUI {
         ventanaDebug.setVisible(true);
     }
 
+    /**
+     * Obtiene la ventana de batalla.
+     * @return la ventana de batalla.
+     */
     public static VentanaBatalla getVentanaBatalla() {
         return ventanaBatalla;
     }
 
+    /**
+     * Cierra todas las ventanas excepto la actual.
+     * @param ventanaActual ventana que no se debe cerrar.
+     */
     private static void cerrarOtrasVentanas(JFrame ventanaActual) {
         if (ventanaInicio != null && ventanaInicio != ventanaActual) {
             ventanaInicio.dispose();

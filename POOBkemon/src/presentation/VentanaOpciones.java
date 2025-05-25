@@ -26,12 +26,18 @@ public class VentanaOpciones extends Ventana {
     private static final String SUPERVIVENCIA_IMAGE = "/resources/Supervivencia.png";
     private static final String START_IMAGE = "/resources/start.png";
  
+    /**
+     * Crea una nueva ventana de opciones para POOBkemon.
+     */
     public VentanaOpciones() {
         super("Opciones de POOBkemon");
         inicializarComponentes();
         configurarListeners();
     }
  
+    /**
+     * Inicializa y configura los componentes gráficos de la ventana.
+     */
     private void inicializarComponentes() {
         fondoPanel = new FondoPanel(BACKGROUND_IMAGE);
         setContentPane(fondoPanel);
@@ -59,6 +65,13 @@ public class VentanaOpciones extends Ventana {
         fondoPanel.add(panelCreditos, BorderLayout.SOUTH);
     }
  
+    /**
+     * Crea un botón transparente con imagen y texto alternativo.
+     * @param imagenPath Ruta de la imagen.
+     * @param size Tamaño del botón.
+     * @param textoAlternativo Texto alternativo si no se carga la imagen.
+     * @return El botón creado.
+     */
     private JButton crearBotonTransparente(String imagenPath, Dimension size, String textoAlternativo) {
         JButton boton = new JButton() {
             @Override
@@ -91,6 +104,9 @@ public class VentanaOpciones extends Ventana {
         return boton;
     }
  
+    /**
+     * Configura los listeners de los botones y componentes de la ventana.
+     */
     private void configurarListeners() {
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -119,6 +135,12 @@ public class VentanaOpciones extends Ventana {
         });
     }
  
+    /**
+     * Muestra el diálogo para seleccionar el modo de juego.
+     * @param titulo Título del diálogo.
+     * @param mostrarPlayer1 Indica si se muestra el campo para el jugador 1.
+     * @param mostrarPlayer2 Indica si se muestra el campo para el jugador 2.
+     */
     private void mostrarVentanaModo(String titulo, boolean mostrarPlayer1, boolean mostrarPlayer2) {
     	JDialog dialog = new JDialog(this, titulo, true);
         dialog.setSize(500, 400);
@@ -212,15 +234,22 @@ public class VentanaOpciones extends Ventana {
         dialog.setVisible(true);
     }
  
+    /**
+     * Inicia el juego según la configuración seleccionada.
+     * @param dialog Diálogo actual.
+     * @param mostrarPlayer1 Si se muestra el jugador 1.
+     * @param mostrarPlayer2 Si se muestra el jugador 2.
+     * @param isSupervivencia Indica si es modo supervivencia.
+     */
     private void iniciarJuego(JDialog dialog, boolean mostrarPlayer1, boolean mostrarPlayer2, boolean isSupervivencia) {
         String player1Name = mostrarPlayer1 ? txtPlayer1.getText().trim() : "Computer 1";
         String player2Name = mostrarPlayer2 ? txtPlayer2.getText().trim() : "Computer 2";
         
-        // Create trainers with empty teams
+        // Crear entrenadores con equipos vacíos
         Entrenador jugador1 = POOBkemonGUI.getPoobkemon().crearEntrenador(player1Name);
         Entrenador jugador2 = POOBkemonGUI.getPoobkemon().crearEntrenador(player2Name);
         
-        // Only generate random teams for survival mode
+        // Solo generar equipos aleatorios para modo supervivencia
         if (isSupervivencia) {
             jugador1.generarEquipoAleatorioCompleto();
             jugador2.generarEquipoAleatorioCompleto();
@@ -240,6 +269,12 @@ public class VentanaOpciones extends Ventana {
         }
     }
  
+    /**
+     * Agrega la selección de tipo de máquina al panel principal.
+     * @param panelPrincipal Panel donde se agrega la selección.
+     * @param titulo Título de la selección.
+     * @param isPlayer2 Indica si es para el jugador 2.
+     */
     private void agregarSeleccionMaquina(JPanel panelPrincipal, String titulo, boolean isPlayer2) {
         JPanel panelMachineSelection = new JPanel(new GridLayout(2, 2, 10, 10));
         panelMachineSelection.setBorder(new EmptyBorder(10, 50, 20, 50));
@@ -270,6 +305,12 @@ public class VentanaOpciones extends Ventana {
         panelPrincipal.add(panelMachineSelection);
     }
  
+    /**
+     * Crea un botón para seleccionar el tipo de máquina.
+     * @param text Texto del botón.
+     * @param isPlayer2 Indica si es para el jugador 2.
+     * @return El botón creado.
+     */
     private JButton createMachineButton(String text, boolean isPlayer2) {
         JButton button = new JButton(text);
         button.setBackground(Color.YELLOW);
@@ -296,6 +337,13 @@ public class VentanaOpciones extends Ventana {
         return button;
     }
  
+    /**
+     * Crea un botón para los diálogos con imagen y texto alternativo.
+     * @param imagenPath Ruta de la imagen.
+     * @param size Tamaño del botón.
+     * @param textoAlternativo Texto alternativo si no se carga la imagen.
+     * @return El botón creado.
+     */
     private JButton crearBotonDialogo(String imagenPath, Dimension size, String textoAlternativo) {
         JButton boton = new JButton() {
             @Override
@@ -337,6 +385,12 @@ public class VentanaOpciones extends Ventana {
         return boton;
     }
  
+    /**
+     * Escala la imagen de un botón al tamaño especificado.
+     * @param boton Botón al que se le escala la imagen.
+     * @param imagenPath Ruta de la imagen.
+     * @param size Tamaño deseado.
+     */
     private void escalarImagenBoton(JButton boton, String imagenPath, Dimension size) {
         try {
             ImageIcon iconoOriginal = new ImageIcon(getClass().getResource(imagenPath));
@@ -347,36 +401,57 @@ public class VentanaOpciones extends Ventana {
         }
     }
  
+    /**
+     * Vuelve a la ventana de inicio.
+     */
     private void volverAVentanaInicio() {
         this.dispose();
         POOBkemonGUI.mostrarVentanaInicio();
     }
  
+    /**
+     * Acción para la opción "Nuevo".
+     */
     @Override
     protected void accionNuevo() {
         JOptionPane.showMessageDialog(this, "Función Nuevo en Opciones");
     }
  
+    /**
+     * Acción para la opción "Abrir".
+     */
     @Override
     protected void accionAbrir() {
         mostrarFileChooser("Abrir configuración", new String[]{"cfg"}, "Archivos de configuración (*.cfg)",e -> JOptionPane.showMessageDialog(this, "Configuración cargada"));
     }
  
+    /**
+     * Acción para la opción "Guardar".
+     */
     @Override
     protected void accionGuardar() {
         mostrarFileChooser("Guardar configuración", new String[]{"cfg"}, "Archivos de configuración (*.cfg)",e -> JOptionPane.showMessageDialog(this, "Configuración guardada"));
     }
  
+    /**
+     * Acción para la opción "Exportar".
+     */
     @Override
     protected void accionExportar() {
         mostrarFileChooser("Exportar opciones", new String[]{"opt"}, "Archivos de opciones (*.opt)",e -> JOptionPane.showMessageDialog(this, "Opciones exportadas"));
     }
  
+    /**
+     * Acción para la opción "Importar".
+     */
     @Override
     protected void accionImportar() {
         mostrarFileChooser("Importar opciones", new String[]{"opt"}, "Archivos de opciones (*.opt)",e -> JOptionPane.showMessageDialog(this, "Opciones importadas"));
     }
  
+    /**
+     * Muestra la ventana de opciones.
+     */
     public void mostrar() {
         setVisible(true);
     }

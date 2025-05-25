@@ -46,6 +46,11 @@ public class VentanaMovimientos extends Ventana {
         COMPATIBILIDAD_MOVIMIENTOS.put("Volador", List.of("Volador", "Normal", "Lucha"));
     }
 
+    /**
+     * Crea una nueva ventana para seleccionar los movimientos de los Pokémon.
+     * @param nombresPokemonSeleccionados Lista de nombres de Pokémon seleccionados.
+     * @param esJugador1 Indica si la ventana es para el jugador 1.
+     */
     public VentanaMovimientos(List<String> nombresPokemonSeleccionados, boolean esJugador1) {
         super("Movimientos de POOBkemon");
         this.nombresPokemonSeleccionados = nombresPokemonSeleccionados;
@@ -58,6 +63,9 @@ public class VentanaMovimientos extends Ventana {
         configurarVentana();
     }
 
+    /**
+     * Inicializa y configura los componentes gráficos de la ventana.
+     */
     private void inicializarComponentes() {
         fondoPanel = new FondoPanel(PoobkemonGifs.FONDO_MOVIMIENTOS);
         fondoPanel.setLayout(new BorderLayout());
@@ -149,6 +157,11 @@ public class VentanaMovimientos extends Ventana {
         setContentPane(fondoPanel);
     }
 
+    /**
+     * Obtiene la lista de movimientos compatibles para un Pokémon dado.
+     * @param pokemon El Pokémon para el cual se buscan movimientos compatibles.
+     * @return Lista de nombres de movimientos compatibles.
+     */
     private List<String> obtenerMovimientosCompatibles(Pokemon pokemon) {
         List<String> tiposCompatibles = new ArrayList<>();
         String tipoPrincipal = pokemon.getTipoPrincipal();
@@ -175,6 +188,11 @@ public class VentanaMovimientos extends Ventana {
         return movimientosCompatibles;
     }
 
+    /**
+     * Configura el JComboBox para seleccionar movimientos, evitando duplicados.
+     * @param comboBox El JComboBox a configurar.
+     * @param nombrePokemon El nombre del Pokémon asociado.
+     */
     private void configurarComboBox(JComboBox<String> comboBox, String nombrePokemon) {
         comboBox.setBackground(new Color(70, 180, 130, 150));
         comboBox.setForeground(Color.BLACK);
@@ -210,6 +228,9 @@ public class VentanaMovimientos extends Ventana {
         });
     }
 
+    /**
+     * Maneja la acción del botón "Siguiente", validando y guardando los movimientos seleccionados.
+     */
     private void manejarBotonSiguiente() {
         if (nombresPokemonSeleccionados != null && !nombresPokemonSeleccionados.isEmpty()) {
             for (String nombre : nombresPokemonSeleccionados) {
@@ -263,12 +284,18 @@ public class VentanaMovimientos extends Ventana {
         }
     }
 
+    /**
+     * Actualiza la etiqueta que muestra el nombre del jugador actual.
+     */
     private void actualizarEtiquetaJugador() {
         String nombre = esJugador1 ?
         (POOBkemonGUI.getJugador1() != null ? POOBkemonGUI.getJugador1().getNombre() : "Jugador 1") :(POOBkemonGUI.getJugador2() != null ? POOBkemonGUI.getJugador2().getNombre() : "Jugador 2");
         lblJugador.setText("Movimientos de: " + nombre);
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setSize(1100, 700);
         setLocationRelativeTo(null);
@@ -281,6 +308,9 @@ public class VentanaMovimientos extends Ventana {
     @Override protected void accionExportar() {}
     @Override protected void accionImportar() {}
 
+    /**
+     * Muestra la ventana de movimientos.
+     */
     public void mostrar() {
         revalidate();
         repaint();

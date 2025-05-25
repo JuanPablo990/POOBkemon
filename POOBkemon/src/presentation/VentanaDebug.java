@@ -5,9 +5,15 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Ventana para mostrar información de depuración de POOBkemonGUI.
+ */
 public class VentanaDebug extends JFrame {
     private JTextArea areaTexto;
 
+    /**
+     * Crea una nueva ventana de depuración.
+     */
     public VentanaDebug() {
         setTitle("Debug de POOBkemonGUI");
         setSize(500, 600);
@@ -17,6 +23,9 @@ public class VentanaDebug extends JFrame {
         cargarDatos();
     }
 
+    /**
+     * Inicializa los componentes gráficos de la ventana.
+     */
     private void initComponents() {
         areaTexto = new JTextArea();
         areaTexto.setEditable(false);
@@ -24,6 +33,9 @@ public class VentanaDebug extends JFrame {
         add(scroll, BorderLayout.CENTER);
     }
 
+    /**
+     * Carga y muestra los datos de los jugadores en el área de texto.
+     */
     private void cargarDatos() {
         StringBuilder sb = new StringBuilder();
         sb.append("=== JUGADOR 1 ===\n");
