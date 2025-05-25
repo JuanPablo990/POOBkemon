@@ -1,11 +1,15 @@
 package domain;
 
+import java.io.Serializable;
+
 /**
  * Excepción personalizada para manejar errores específicos en la aplicación POOBkemon.
  * Esta clase extiende la clase Exception de Java y proporciona mensajes de error predefinidos
  * para diferentes situaciones que pueden ocurrir durante la ejecución del programa.
  */
-public class POOBkemonException extends Exception {
+
+public class POOBkemonException extends Exception implements Serializable { 
+	private static final long serialVersionUID = 1L;
     public static final String POKEMON_DEBILITADO = "El Pokémon está debilitado y no puede realizar acciones";
     public static final String MOVIMIENTO_NO_DISPONIBLE = "No hay movimientos disponibles con PP restante";
     public static final String EQUIPO_DEBILITADO = "Todos los Pokémon del equipo están debilitados";

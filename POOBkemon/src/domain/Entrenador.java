@@ -1,5 +1,6 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,11 @@ import domain.items.SuperPotion;
      * Clase que representa a un entrenador de Pokémon.
      * Contiene un nombre, un equipo de Pokémon y una mochila de items.
      */
-public class Entrenador {
+
+    
+public class Entrenador implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
     private final String nombre;
     private final List<Pokemon> equipoPokemon;
     private final List<Item> mochilaItems;

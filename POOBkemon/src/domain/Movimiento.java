@@ -1,10 +1,15 @@
 package domain;
 
-    /**
+import java.io.Serializable;
+
+/**
      * Clase abstracta que representa un movimiento de un Pokémon.
 	 * Contiene atributos y métodos comunes para todos los movimientos.	
      */
-public abstract class Movimiento {
+   
+public abstract class Movimiento implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
     protected String nombre;
     protected String tipo;
     protected int potencia;

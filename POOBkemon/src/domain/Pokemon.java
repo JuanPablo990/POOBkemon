@@ -1,5 +1,6 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,7 +10,9 @@ import java.util.Map;
     /**
      * Clase que representa un Pokémon.
      */
-public class Pokemon {
+    
+public class Pokemon implements Serializable {
+	private static final long serialVersionUID = 1L;
     protected String nombre;
     protected String tipoPrincipal;
     protected String tipoSecundario;

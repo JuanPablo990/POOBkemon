@@ -1,5 +1,6 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -10,7 +11,9 @@ import java.util.stream.Collectors;
      * Clase principal del juego POOBkemon.
 	 * Maneja la creación de entrenadores, pokémons, movimientos y la lógica de batalla.
      */
-public class POOBkemon {
+    
+public class POOBkemon implements Serializable {
+	private static final long serialVersionUID = 1L;
     private Poquedex poquedex;
     private List<Entrenador> entrenadores;
     private Batalla batallaActual;

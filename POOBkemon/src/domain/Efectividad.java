@@ -1,11 +1,12 @@
 package domain;
 
-    /**
+
+/**
 	 * Clase que representa la efectividad de los ataques de los pokemones.
 	 * Contiene métodos para calcular la efectividad de un ataque en función del tipo de ataque y defensa.
 	 */
-public class Efectividad {
 
+public class Efectividad {
     protected static final double superefectivo = 2.0;
     protected static final double efectivo = 0.5;
     protected static final double inefectivo = 0.0;
