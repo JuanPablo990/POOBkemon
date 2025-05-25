@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.awt.*;
-import java.awt.event.*;
 import domain.*;
 
 public class POOBkemonGUI {
