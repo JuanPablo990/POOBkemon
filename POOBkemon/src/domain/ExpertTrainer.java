@@ -9,12 +9,24 @@ import domain.items.Potion;
 import domain.items.Revive;
 import domain.items.SuperPotion;
 
+
+    /**
+     * Esta clase representa un entrenador experto en el juego.
+     */
 public class ExpertTrainer extends Machine {
     
+	/**
+	 * Constructor de la clase ExpertTrainer.
+	 * @param nombre El nombre del entrenador experto.
+	 */
     public ExpertTrainer(String nombre) {
         super(nombre);
     }
     
+    /**
+	 * Método para seleccionar el equipo de Pokémon del entrenador experto.
+	 * Se seleccionan Pokémon de tipos estratégicos: fuego, agua, planta, eléctrico, tierra y volador.
+	 */
     @Override
     public void seleccionarEquipo() {
         List<String> todosPokemon = Poquedex.getInstancia().obtenerNombresPokemonDisponibles();
@@ -32,6 +44,10 @@ public class ExpertTrainer extends Machine {
         }
     }
     
+    /**
+     * Método para seleccionar los movimientos de los Pokémon del entrenador experto.
+     * 
+     */
     @Override
     public void seleccionarMovimientos() {
         for (Pokemon pokemon : entrenador.getEquipoPokemon()) {
@@ -40,6 +56,12 @@ public class ExpertTrainer extends Machine {
         }
     }
     
+    /**
+	 * Método para seleccionar los mejores movimientos para un Pokémon.
+	 * 
+	 * @param pokemon El Pokémon para el cual se seleccionan los movimientos.
+	 * @return Una lista de los mejores movimientos seleccionados.
+	 */
     private List<Movimiento> seleccionarMejoresMovimientos(Pokemon pokemon) {
         List<String> todosMovimientos = Poquedex.getInstancia().obtenerNombresMovimientosDisponibles();
         List<Movimiento> movimientosSeleccionados = new ArrayList<>();
@@ -57,6 +79,9 @@ public class ExpertTrainer extends Machine {
         return movimientosSeleccionados;
     }
     
+    /**
+     * Método para seleccionar los items del entrenador experto.
+     */
     @Override
     public void seleccionarItems() {
         entrenador.getMochilaItems().clear();
@@ -65,6 +90,11 @@ public class ExpertTrainer extends Machine {
         entrenador.agregarItem(new Revive());
     }
     
+    /**
+	 * Método para seleccionar la estrategia del entrenador experto.
+	 * 
+	 * @return La estrategia seleccionada.
+	 */
     @Override
     protected int tomarDecision() {
         Pokemon activo = entrenador.getPokemonActivo();
@@ -82,6 +112,9 @@ public class ExpertTrainer extends Machine {
         return 1;
     }
     
+    /**
+     * Método para determinar si el entrenador experto debería cambiar de Pokémon.
+     */
     @Override
     protected boolean deberiaCambiarPokemon() {
         Pokemon miPokemon = entrenador.getPokemonActivo();
@@ -105,6 +138,13 @@ public class ExpertTrainer extends Machine {
         return mejorPokemon != null && mejorEfectividad >= efectividadActual * 1.1;
     }
     
+    /**
+	 * Método para calcular la efectividad promedio de un Pokémon contra otro.
+	 * 
+	 * @param pokemon El Pokémon atacante.
+	 * @param oponente El Pokémon defensor.
+	 * @return La efectividad promedio.
+	 */
     @Override
     protected void atacar() {
         Pokemon miPokemon = entrenador.getPokemonActivo();
@@ -128,15 +168,30 @@ public class ExpertTrainer extends Machine {
         }
     }
     
+    /**
+     * Método para obtener el oponente del entrenador experto.
+     * @return
+     */
     private Entrenador getOponente() {
         return batalla.getEntrenador1().equals(entrenador) ? 
               batalla.getEntrenador2() : batalla.getEntrenador1();
     }
     
+    /**
+	 * Método para calcular la efectividad promedio de un Pokémon contra otro.
+	 * 
+	 * @param pokemon El Pokémon atacante.
+	 * @param oponente El Pokémon defensor.
+	 * @return La efectividad promedio.
+	 */
     private boolean tieneRevive() {
         return entrenador.getMochilaItems().stream().anyMatch(i -> i instanceof Revive);
     }
     
+    /**
+     * Método para determinar si el entrenador necesita usar un item estratégico.
+     * @return
+     */
     private boolean necesitaUsarItemEstrategico() {
         Pokemon activo = entrenador.getPokemonActivo();
         if (activo == null) return false;
@@ -146,14 +201,33 @@ public class ExpertTrainer extends Machine {
         return necesitaCuracion && tienePocion;
     }
     
+    /**
+	 * Método para buscar un movimiento por su tipo en una lista de movimientos.
+	 * 
+	 * @param movimientos La lista de movimientos.
+	 * @param tipo El tipo de movimiento a buscar.
+	 * @return El movimiento encontrado o el primero de la lista si no se encuentra ninguno.
+	 */
     private String buscarMovimientoPorTipo(List<String> movimientos, String tipo) {
         return movimientos.stream().filter(m -> Poquedex.getInstancia().crearMovimiento(m).getTipo().equalsIgnoreCase(tipo)).findFirst().orElse(movimientos.get(0));
     }
     
+    /**
+     * Método para buscar el movimiento más fuerte en una lista de movimientos.
+     * @param movimientos
+     * @return
+     */
     private String buscarMovimientoMasFuerte(List<String> movimientos) {
         return movimientos.stream().max((m1, m2) -> Integer.compare(Poquedex.getInstancia().crearMovimiento(m1).getPotencia(),Poquedex.getInstancia().crearMovimiento(m2).getPotencia())).orElse(movimientos.get(0));
     }
     
+    /**
+	 * Método para calcular la efectividad promedio de un Pokémon contra otro.
+	 * 
+	 * @param pokemon El Pokémon atacante.
+	 * @param oponente El Pokémon defensor.
+	 * @return La efectividad promedio.
+	 */
     private List<String> obtenerDebilidades(Pokemon pokemon) {
         return List.of("agua", "tierra", "roca");
     }

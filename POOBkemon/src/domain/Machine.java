@@ -7,28 +7,58 @@ import domain.items.HyperPotion;
 import domain.items.Potion;
 import domain.items.Revive;
 import domain.items.SuperPotion;
-
+    /**
+     * Clase abstracta que representa una máquina de batalla.
+     * Contiene métodos para seleccionar equipo, movimientos e ítems,
+     */
 public abstract class Machine {
     protected Entrenador entrenador;
     protected Batalla batalla;
     protected Random random;
     
+    /**
+	 * Constructor de la clase Machine.
+	 * @param nombre Nombre del entrenador.
+	 */
     public Machine(String nombre) {
         this.entrenador = new Entrenador(nombre);
         this.random = new Random();
     }
+    
+    /**
+     * Método abstracto para seleccionar el equipo de Pokémon.
+     */
     public abstract void seleccionarEquipo();
+    
+    /**
+	 * Método abstracto para seleccionar los movimientos de los Pokémon.
+	 */
     public abstract void seleccionarMovimientos();
+    
+    /**
+     * Método abstracto para seleccionar los ítems de la mochila.
+     */
     public abstract void seleccionarItems();
     
+    /**
+	 * Método abstracto para seleccionar el Pokémon activo.
+	 */
     public void setBatalla(Batalla batalla) {
         this.batalla = batalla;
     }
     
+    /**
+     * Método para obtener el entrenador.
+     * @return
+     */
     public Entrenador getEntrenador() {
         return entrenador;
     }
     
+    /**
+	 * Método para obtener la batalla.
+	 * @return
+	 */
     public void realizarTurno() {
         if (batalla == null || batalla.isBatallaTerminada()) {
             return;
@@ -45,6 +75,10 @@ public abstract class Machine {
         }
     }
     
+    /**
+     * Método para tomar una decisión en la batalla.
+     * @return
+     */
     protected int tomarDecision() {
         Pokemon activo = entrenador.getPokemonActivo();
         if (activo.getMovimientos().stream().noneMatch(m -> m.getPp() > 0)) {
@@ -59,6 +93,10 @@ public abstract class Machine {
         return 1;
     }
     
+    /**
+	 * Método para determinar si se debe cambiar de Pokémon.
+	 * @return
+	 */
     protected boolean deberiaCambiarPokemon() {
         if (batalla == null) return false;
         Pokemon miPokemon = entrenador.getPokemonActivo();
@@ -77,6 +115,12 @@ public abstract class Machine {
         return false;
     }
     
+    /**
+     * Método para calcular la efectividad promedio de los movimientos de un Pokémon contra otro.
+     * @param atacante
+     * @param defensor
+     * @return
+     */
     protected double calcularEfectividadPromedio(Pokemon atacante, Pokemon defensor) {
         double efectividadTotal = 0;
         int movimientosValidos = 0;
@@ -89,10 +133,19 @@ public abstract class Machine {
         return movimientosValidos > 0 ? efectividadTotal / movimientosValidos : 0;
     }
     
+    /**
+	 * Método para determinar si el Pokémon está debilitado.
+	 * @param pokemon
+	 * @return
+	 */
     protected boolean tieneItemsUtiles() {
         return !entrenador.getMochilaItems().isEmpty();
     }
     
+    /**
+     * Método para determinar si se necesita usar un ítem.
+     * @return
+     */
     protected boolean necesitaUsarItem() {
         Pokemon activo = entrenador.getPokemonActivo();
         if (activo == null || activo.estaDebilitado()) {
@@ -102,6 +155,9 @@ public abstract class Machine {
         return porcentajeSalud < 0.5 && entrenador.getMochilaItems().stream().anyMatch(i -> i instanceof Potion || i instanceof SuperPotion || i instanceof HyperPotion);
     }
     
+    /**
+     * Método para atacar al oponente.
+     */
     protected void atacar() {
         Pokemon miPokemon = entrenador.getPokemonActivo();
         Pokemon oponente = batalla.getEntrenador1().equals(entrenador) ? batalla.getEntrenador2().getPokemonActivo() : batalla.getEntrenador1().getPokemonActivo();
@@ -121,6 +177,9 @@ public abstract class Machine {
         }
     }
     
+    /**
+	 * Método para usar un ítem.
+	 */
     protected void usarItem() {
         if (!tieneItemsUtiles()) return;
         if (entrenador.getPokemonActivo() == null || entrenador.getPokemonActivo().estaDebilitado()) {
@@ -154,6 +213,9 @@ public abstract class Machine {
         }
     }
     
+    /**
+     * Método para cambiar de Pokémon.
+     */
     protected void cambiarPokemon() {
         Pokemon oponente = batalla.getEntrenador1().equals(entrenador) ? batalla.getEntrenador2().getPokemonActivo() : batalla.getEntrenador1().getPokemonActivo();
         List<Pokemon> disponibles = batalla.getPokemonsDisponiblesParaCambio(entrenador);

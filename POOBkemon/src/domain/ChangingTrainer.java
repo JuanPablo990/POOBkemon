@@ -5,26 +5,50 @@ import java.util.Random;
 
 import domain.items.Revive;
 
+   /**
+    * Clase que representa un entrenador que cambia de Pokémon en función de la efectividad de los movimientos.
+    * Hereda de la clase abstracta Machine.
+    */
 public class ChangingTrainer extends Machine {
     
+	/**
+	 * Constructor de la clase ChangingTrainer.
+	 * @param nombre
+	 */
     public ChangingTrainer(String nombre) {
         super(nombre);
     }
     
+    /**
+	 * Constructor de la clase ChangingTrainer.
+	 * @param nombre
+	 * @param entrenador
+	 */
     @Override
     public void seleccionarEquipo() {
         entrenador.generarEquipoAleatorioCompleto();
     }
     
+    /**
+     * Método que selecciona los movimientos del Pokémon activo.
+     * En este caso, no se seleccionan movimientos ya que el entrenador cambia de Pokémon.
+     */
     @Override
     public void seleccionarMovimientos() {
     }
     
+    /**
+	 * Método que selecciona los objetos del entrenador.
+	 * En este caso, se seleccionan objetos aleatorios.
+	 */
     @Override
     public void seleccionarItems() {
         entrenador.darItemsAleatorios();
     }
     
+    /**
+     * Método que toma una decisión en función de la situación actual del combate.
+     */
     @Override
     protected int tomarDecision() {
         Pokemon activo = entrenador.getPokemonActivo();
@@ -44,6 +68,12 @@ public class ChangingTrainer extends Machine {
         return 1;
     }
     
+    /**
+	 * Método que calcula la efectividad promedio de un Pokémon contra otro.
+	 * @param atacante El Pokémon atacante.
+	 * @param defensor El Pokémon defensor.
+	 * @return La efectividad promedio.
+	 */
     @Override
     protected boolean deberiaCambiarPokemon() {
         if (batalla == null) return false;
@@ -73,6 +103,10 @@ public class ChangingTrainer extends Machine {
         return mejorOpcion != null && mejorEfectividad >= efectividadActual * 1.25;
     }
     
+    /**
+     * Método que calcula la efectividad promedio de un Pokémon contra otro.
+     * @param atacante El Pokémon atacante.
+     */
     @Override
     protected void cambiarPokemon() {
         Entrenador oponente = batalla.getEntrenador1().equals(entrenador) ? batalla.getEntrenador2() : batalla.getEntrenador1();

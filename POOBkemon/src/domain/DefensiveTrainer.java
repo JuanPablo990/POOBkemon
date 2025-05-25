@@ -12,6 +12,9 @@ import domain.items.Potion;
 import domain.items.Revive;
 import domain.items.SuperPotion;
 
+    /**
+     * Clase que representa un entrenador defensivo en el juego.
+     */
 public class DefensiveTrainer extends Machine {
     private static final String NOMBRE = "DefensiveTrainer";
     private static final List<String> MOVIMIENTOS_DEFENSIVOS = List.of(
@@ -23,16 +26,28 @@ public class DefensiveTrainer extends Machine {
     
     private final Random random = new Random();
 
+    /**
+	 * Constructor de la clase DefensiveTrainer.
+	 * Inicializa el entrenador con un nombre específico.
+	 */
     public DefensiveTrainer() {
         super(NOMBRE);
     }
 
+    /**
+     * Método para seleccionar el equipo de Pokémon del entrenador.
+     * Genera un equipo aleatorio completo y configura los ítems.
+     */
     @Override
     public void seleccionarEquipo() {
         entrenador.generarEquipoAleatorioCompleto();
         configurarItems();
     }
 
+    /**
+	 * Método para seleccionar los movimientos de los Pokémon del entrenador.
+	 * Asigna movimientos defensivos y ofensivos a cada Pokémon.
+	 */
     @Override
     public void seleccionarMovimientos() {
         for (Pokemon pokemon : entrenador.getEquipoPokemon()) {
@@ -52,6 +67,13 @@ public class DefensiveTrainer extends Machine {
         }
     }
     
+    /**
+	 * Método para verificar si un movimiento es compatible con los tipos del Pokémon.
+	 * @param tipoMovimiento Tipo del movimiento a verificar.
+	 * @param tipoPrincipal Tipo principal del Pokémon.
+	 * @param tipoSecundario Tipo secundario del Pokémon (puede ser null).
+	 * @return true si el movimiento es compatible, false en caso contrario.
+	 */
     private boolean esMovimientoCompatible(String tipoMovimiento, String tipoPrincipal, String tipoSecundario) {
         Map<String, List<String>> compatibilidad = new HashMap<>();
         compatibilidad.put("Acero", List.of("Acero", "Roca", "Tierra","Normal"));
@@ -80,6 +102,11 @@ public class DefensiveTrainer extends Machine {
                (tipoSecundario != null && tiposCompatibles.contains(tipoSecundario));
     }
 
+    /**
+     * Método para obtener los movimientos compatibles con el Pokémon.
+     * @param pokemon
+     * @return
+     */
     private List<String> obtenerMovimientosCompatibles(Pokemon pokemon) {
         List<String> movimientosCompatibles = new ArrayList<>();
         List<String> todosMovimientos = Poquedex.getInstancia().obtenerNombresMovimientosDisponibles();
@@ -96,11 +123,18 @@ public class DefensiveTrainer extends Machine {
         return movimientosCompatibles;
     }
 
-
+    /**
+	 * Método para seleccionar los ítems del entrenador.
+	 * En este caso, no se seleccionan ítems adicionales.
+	 */
     @Override
     public void seleccionarItems() {
     }
 
+    /**
+     * Método para configurar los ítems del entrenador.
+     * Agrega un Revive y dos HyperPociones a la mochila del entrenador.
+     */
     private void configurarItems() {
         entrenador.getMochilaItems().clear();
         entrenador.agregarItem(new Revive());
@@ -108,6 +142,10 @@ public class DefensiveTrainer extends Machine {
         entrenador.agregarItem(new HyperPotion());
     }
 
+    /**
+	 * Método para determinar si el entrenador debería cambiar de Pokémon.
+	 * @return true si debería cambiar, false en caso contrario.
+	 */
     @Override
     protected int tomarDecision() {
         if (batalla == null || batalla.isBatallaTerminada()) {
@@ -135,6 +173,10 @@ public class DefensiveTrainer extends Machine {
         return 1;
     }
 
+    /**
+     * Método para determinar si el entrenador debería cambiar de Pokémon.
+     * Verifica si el Pokémon activo tiene menos del 50% de salud y si hay un Pokémon en la reserva.
+     */
     @Override
     protected void atacar() {
         Pokemon activo = entrenador.getPokemonActivo();
@@ -167,25 +209,48 @@ public class DefensiveTrainer extends Machine {
         batalla.ejecutarTurno(1);
     }
 
+    /**
+     * Método para determinar si el entrenador debería cambiar de Pokémon.
+     * @return
+     */
     private Pokemon obtenerPokemonOponente() {
         return batalla.getEntrenador1().equals(entrenador) 
             ? batalla.getEntrenador2().getPokemonActivo() : batalla.getEntrenador1().getPokemonActivo();
     }
 
+    /**
+	 * Método para determinar si el entrenador debería cambiar de Pokémon.
+	 * Verifica si el Pokémon activo tiene menos del 50% de salud y si hay un Pokémon en la reserva.
+	 * @return true si debería cambiar, false en caso contrario.
+	 */
     private boolean esMovimientoDefensivo(Movimiento movimiento) {
         return MOVIMIENTOS_DEFENSIVOS.contains(movimiento.getNombre());
     }
 
+    /**
+	 * Método para determinar si el entrenador debería cambiar de Pokémon.
+	 * Verifica si el Pokémon activo tiene menos del 50% de salud y si hay un Pokémon en la reserva.
+	 * @return true si debería cambiar, false en caso contrario.
+	 */
     private boolean tieneRevive() {
         return entrenador.getMochilaItems().stream()
             .anyMatch(item -> item instanceof Revive);
     }
 
+    /**
+     * Método para determinar si el entrenador tiene pociones.
+     * Verifica si hay pociones, superpociones o hiperpociones en la mochila.
+     * @return
+     */
     private boolean tienePociones() {
         return entrenador.getMochilaItems().stream()
             .anyMatch(item -> item instanceof Potion || item instanceof SuperPotion || item instanceof HyperPotion);
     }
 
+    /**
+     * Método para determinar si el entrenador necesita usar un ítem.
+     * Verifica si el Pokémon activo está debilitado o si tiene menos del 50% de salud.
+     */
     @Override
     protected boolean necesitaUsarItem() {
         Pokemon activo = entrenador.getPokemonActivo();

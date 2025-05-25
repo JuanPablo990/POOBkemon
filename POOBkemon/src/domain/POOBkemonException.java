@@ -1,5 +1,10 @@
 package domain;
 
+/**
+ * Excepción personalizada para manejar errores específicos en la aplicación POOBkemon.
+ * Esta clase extiende la clase Exception de Java y proporciona mensajes de error predefinidos
+ * para diferentes situaciones que pueden ocurrir durante la ejecución del programa.
+ */
 public class POOBkemonException extends Exception {
     public static final String POKEMON_DEBILITADO = "El Pokémon está debilitado y no puede realizar acciones";
     public static final String MOVIMIENTO_NO_DISPONIBLE = "No hay movimientos disponibles con PP restante";
@@ -15,10 +20,19 @@ public class POOBkemonException extends Exception {
     public static final String TURNO_INCORRECTO = "No es el turno de este jugador";
     public static final String DATOS_INVALIDOS = "Datos inválidos proporcionados";
 
+    /**
+	 * Constructor por defecto de la clase POOBkemonException.
+	 * Este constructor crea una nueva instancia de la excepción sin un mensaje específico.
+	 */
     public POOBkemonException(String message) {
         super(message);
     }
 
+    /**
+     * Constructor de la clase POOBkemonException.
+     * @param message
+     * @param cause
+     */
     public POOBkemonException(String message, Throwable cause) {
         super(message, cause);
     }

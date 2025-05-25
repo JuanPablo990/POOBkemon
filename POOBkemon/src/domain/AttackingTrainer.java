@@ -11,6 +11,11 @@ import domain.items.HyperPotion;
 import domain.items.Potion;
 import domain.items.SuperPotion;
 
+    /**
+	 * Esta clase representa un entrenador que se especializa en ataques ofensivos.
+	 * Selecciona un equipo de Pokémon con alta estadística de ataque y movimientos
+	 * ofensivos. También tiene la capacidad de usar pociones para curar a sus Pokémon.
+     */
 public class AttackingTrainer extends Machine {
     private static final String NOMBRE = "AttackingTrainer";
     private static final List<String> MOVIMIENTOS_OFENSIVOS = List.of(
@@ -20,18 +25,31 @@ public class AttackingTrainer extends Machine {
         "Bajar DefensaEspecial"
     );
     
+    /**
+	 * Generador de números aleatorios para seleccionar movimientos y Pokémon.
+	 */
     private final Random random = new Random();
 
+    /**
+     * Constructor de la clase AttackingTrainer.
+     */
     public AttackingTrainer() {
         super(NOMBRE);
     }
 
+    /**
+     * 	* Selecciona un equipo de Pokémon ofensivo y configura los movimientos y
+     */
     @Override
     public void seleccionarEquipo() {
         generarEquipoOfensivo();
         configurarItems();
     }
 
+    /**
+	 * Selecciona movimientos para cada Pokémon del equipo. Selecciona 2 movimientos
+	 * ofensivos y 2 movimientos compatibles con el tipo del Pokémon.
+	 */
     @Override
     public void seleccionarMovimientos() {
         for (Pokemon pokemon : entrenador.getEquipoPokemon()) {
@@ -51,6 +69,13 @@ public class AttackingTrainer extends Machine {
         }
     }
     
+    /**
+     * 	* Verifica si el movimiento es compatible con los tipos del Pokémon.
+     * @param tipoMovimiento
+     * @param tipoPrincipal
+     * @param tipoSecundario
+     * @return
+     */
     private boolean esMovimientoCompatible(String tipoMovimiento, String tipoPrincipal, String tipoSecundario) {
         Map<String, List<String>> compatibilidad = new HashMap<>();
         compatibilidad.put("Acero", List.of("Acero", "Roca", "Tierra","Normal"));
@@ -79,6 +104,11 @@ public class AttackingTrainer extends Machine {
                (tipoSecundario != null && tiposCompatibles.contains(tipoSecundario));
     }
 
+    /**
+	 * 	* Obtiene una lista de movimientos compatibles con los tipos del Pokémon.
+	 * @param pokemon
+	 * @return
+	 */
     private List<String> obtenerMovimientosCompatibles(Pokemon pokemon) {
         List<String> movimientosCompatibles = new ArrayList<>();
         List<String> todosMovimientos = Poquedex.getInstancia().obtenerNombresMovimientosDisponibles();
@@ -94,10 +124,16 @@ public class AttackingTrainer extends Machine {
         return movimientosCompatibles;
     }
 
+    /**
+     * 	* Selecciona los objetos para el equipo del entrenador. En este caso, se
+     */
     @Override
     public void seleccionarItems() {
     }
 
+    /**
+     * Genera un equipo de Pokémon ofensivo para el entrenador. Selecciona los
+     */
     private void generarEquipoOfensivo() {
         entrenador.getEquipoPokemon().clear();
         List<String> nombresPokemon = Poquedex.getInstancia().obtenerNombresPokemonDisponibles().stream()
@@ -112,6 +148,10 @@ public class AttackingTrainer extends Machine {
         }
     }
 
+    /**
+	 * Configura los objetos del entrenador. En este caso, se agregan 3 pociones
+	 * hiper.
+	 */
     private void configurarItems() {
         entrenador.getMochilaItems().clear();
         entrenador.agregarItem(new HyperPotion());
@@ -119,6 +159,9 @@ public class AttackingTrainer extends Machine {
         entrenador.agregarItem(new HyperPotion());
     }
 
+    /**
+     *Toma una decisión en función de la situación actual de la batalla. Puede	
+     */
     @Override
     protected int tomarDecision() {
         if (batalla == null || batalla.isBatallaTerminada()) {
@@ -139,6 +182,10 @@ public class AttackingTrainer extends Machine {
         return 1;
     }
 
+    /**
+	 * Ejecuta el ataque del Pokémon activo. Selecciona un movimiento ofensivo o
+	 * defensivo según la situación actual de la batalla.
+	 */
     @Override
     protected void atacar() {
         Pokemon activo = entrenador.getPokemonActivo();
@@ -171,21 +218,37 @@ public class AttackingTrainer extends Machine {
         batalla.ejecutarTurno(1);
     }
 
+    /**
+     * Obtiene el Pokémon oponente en la batalla actual.
+     * @return
+     */
     private Pokemon obtenerPokemonOponente() {
         return batalla.getEntrenador1().equals(entrenador) 
             ? batalla.getEntrenador2().getPokemonActivo() 
             : batalla.getEntrenador1().getPokemonActivo();
     }
-
+    
+	/**
+	 * Verifica si el movimiento es ofensivo.
+	 * @param movimiento
+	 * @return
+	 */
     private boolean esMovimientoOfensivo(Movimiento movimiento) {
         return MOVIMIENTOS_OFENSIVOS.contains(movimiento.getNombre());
     }
 
+    /**
+	 * Verifica si el entrenador tiene pociones en su mochila.
+	 * @return true si tiene pociones, false en caso contrario.
+	 */
     private boolean tienePociones() {
         return entrenador.getMochilaItems().stream()
             .anyMatch(item -> item instanceof Potion || item instanceof SuperPotion || item instanceof HyperPotion);
     }
 
+    /**
+     * Verifica si el Pokémon activo necesita usar un objeto. En este caso, se
+     */
     @Override
     protected boolean necesitaUsarItem() {
         Pokemon activo = entrenador.getPokemonActivo();
@@ -196,6 +259,10 @@ public class AttackingTrainer extends Machine {
         return porcentajeSalud < 0.6 && tienePociones();
     }
 
+    /**
+	 * Cambia el Pokémon activo por otro del equipo. Selecciona un Pokémon
+	 * disponible para el cambio.
+	 */
     @Override
     protected boolean deberiaCambiarPokemon() {
         if (batalla == null) return false;

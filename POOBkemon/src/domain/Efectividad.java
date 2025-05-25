@@ -1,5 +1,9 @@
 package domain;
 
+    /**
+	 * Clase que representa la efectividad de los ataques de los pokemones.
+	 * Contiene métodos para calcular la efectividad de un ataque en función del tipo de ataque y defensa.
+	 */
 public class Efectividad {
 
     protected static final double superefectivo = 2.0;
@@ -7,6 +11,12 @@ public class Efectividad {
     protected static final double inefectivo = 0.0;
     protected static final double neutral = 1.0;
 
+    /**
+     * Método que calcula la efectividad de un ataque en función del tipo de ataque y defensa.
+     * @param tipoAtaque
+     * @param tipoDefensa
+     * @return
+     */
     public static double calcular(String tipoAtaque, String tipoDefensa) {
         switch (tipoAtaque.toLowerCase()) {
             case "acero": return efectividadAcero(tipoDefensa);
@@ -32,6 +42,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Métodos privados que calculan la efectividad de cada tipo de ataque en función del tipo de defensa.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadAcero(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "hada": case "hielo": case "roca": return superefectivo;
@@ -40,6 +55,11 @@ public class Efectividad {
         }
     }
 
+    /**
+     * 	* Método que calcula la efectividad del ataque de tipo agua.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadAgua(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "fuego": case "roca": case "tierra": return superefectivo;
@@ -48,6 +68,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo bicho.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadBicho(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "planta": case "psiquico": case "siniestro": return superefectivo;
@@ -56,6 +81,11 @@ public class Efectividad {
         }
     }
 
+    /**
+     * Método que calcula la efectividad del ataque de tipo dragon.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadDragon(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "dragon": return superefectivo;
@@ -65,6 +95,11 @@ public class Efectividad {
         }
     }
 
+    /**
+     * Método que calcula la efectividad del ataque de tipo electrico.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadElectrico(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "agua": case "volador": return superefectivo;
@@ -74,6 +109,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo fantasma.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadFantasma(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "fantasma": case "psiquico": return superefectivo;
@@ -82,7 +122,12 @@ public class Efectividad {
             default: return neutral;
         }
     }
-
+    
+    /**
+     * Método que calcula la efectividad del ataque de tipo fuego.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadFuego(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "acero": case "bicho": case "hielo": case "planta": return superefectivo;
@@ -91,6 +136,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo hada.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadHada(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "dragon": case "lucha": case "siniestro": return superefectivo;
@@ -99,6 +149,11 @@ public class Efectividad {
         }
     }
 
+    /**
+     * Método que calcula la efectividad del ataque de tipo hielo.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadHielo(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "dragon": case "planta": case "tierra": case "volador": return superefectivo;
@@ -107,6 +162,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo lucha.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadLucha(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "acero": case "hielo": case "normal": case "roca": case "siniestro": return superefectivo;
@@ -116,6 +176,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo normal.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadNormal(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "acero": case "roca": return efectivo;
@@ -124,6 +189,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo planta.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadPlanta(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "agua": case "tierra": case "roca": return superefectivo;
@@ -132,6 +202,11 @@ public class Efectividad {
         }
     }
 
+    /**
+     * Método que calcula la efectividad del ataque de tipo psiquico.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadPsiquico(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "lucha": case "veneno": return superefectivo;
@@ -141,6 +216,11 @@ public class Efectividad {
         }
     }
 
+    /**
+     * Método que calcula la efectividad del ataque de tipo roca.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadRoca(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "bicho": case "fuego": case "hielo": case "volador": return superefectivo;
@@ -149,6 +229,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo siniestro.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadSiniestro(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "fantasma": case "psiquico": return superefectivo;
@@ -157,6 +242,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo tierra.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadTierra(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "acero": case "electrico": case "fuego": case "roca": case "veneno": return superefectivo;
@@ -166,6 +256,11 @@ public class Efectividad {
         }
     }
 
+    /**
+     * Método que calcula la efectividad del ataque de tipo veneno.
+     * @param tipoDefensa
+     * @return
+     */
     private static double efectividadVeneno(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "hada": case "planta": return superefectivo;
@@ -175,6 +270,11 @@ public class Efectividad {
         }
     }
 
+    /**
+	 * Método que calcula la efectividad del ataque de tipo volador.
+	 * @param tipoDefensa
+	 * @return
+	 */
     private static double efectividadVolador(String tipoDefensa) {
         switch (tipoDefensa.toLowerCase()) {
             case "bicho": case "lucha": case "planta": return superefectivo;

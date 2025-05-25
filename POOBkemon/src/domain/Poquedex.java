@@ -140,11 +140,19 @@ import domain.pokemones.Wobbuffet;
 import domain.pokemones.Zangoose;
 import domain.pokemones.Zubat;
 
+/**
+ * Clase que representa la Poquedex, un singleton que almacena los Pokémon y movimientos disponibles.
+ * Permite registrar, crear y eliminar Pokémon y movimientos, así como obtener información sobre ellos.
+ */
 public class Poquedex {
     private static Poquedex instancia;
     private Map<String, Class<? extends Pokemon>> pokemonesDisponibles;
     private Map<String, Movimiento> movimientosDisponibles;
 
+    /**
+	 * Constructor privado para inicializar la Poquedex.
+	 * Registra los Pokémon y movimientos base disponibles.
+	 */
     private Poquedex() {
         this.pokemonesDisponibles = new HashMap<>();
         this.movimientosDisponibles = new HashMap<>();
@@ -152,6 +160,10 @@ public class Poquedex {
         registrarMovimientosBase();
     }
 
+    /**
+     * Método para obtener la instancia única de la Poquedex.
+     * @return
+     */
     public static synchronized Poquedex getInstancia() {
         if (instancia == null) {
             instancia = new Poquedex();
@@ -159,6 +171,9 @@ public class Poquedex {
         return instancia;
     }
 
+    /**
+	 * Método para registrar los Pokémon base disponibles en la Poquedex.
+	 */
     private void registrarPokemonesBase() {
         registrarPokemon("Absol", Absol.class);
         registrarPokemon("Aron", Aron.class);
@@ -199,6 +214,9 @@ public class Poquedex {
         registrarPokemon("Pikachu", Pikachu.class);
     }
 
+    /**
+     * Método para registrar los movimientos base disponibles en la Poquedex.
+     */
     private void registrarMovimientosBase() {
         registrarMovimiento(new AerialAce());
         registrarMovimiento(new AirCutter());
@@ -299,6 +317,11 @@ public class Poquedex {
         registrarMovimiento(new BajarDefensaEspecial()); 
     }
 
+    /**
+	 * Método para registrar un Pokémon en la Poquedex.
+	 * @param nombre Nombre del Pokémon.
+	 * @param clasePokemon Clase del Pokémon.
+	 */
     public void registrarPokemon(String nombre, Class<? extends Pokemon> clasePokemon) {
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
@@ -309,6 +332,10 @@ public class Poquedex {
         pokemonesDisponibles.put(nombre.toLowerCase(), clasePokemon);
     }
 
+    /**
+     * Método para registrar un movimiento en la Poquedex.
+     * @param movimiento
+     */
     public void registrarMovimiento(Movimiento movimiento) {
         if (movimiento == null) {
             throw new IllegalArgumentException("El movimiento no puede ser nulo");
@@ -322,12 +349,21 @@ public class Poquedex {
         }
     }
 
+    /**
+	 * Método para eliminar un movimiento de la Poquedex.
+	 * @param nombre Nombre del movimiento a eliminar.
+	 */
     public void eliminarMovimientoDisponible(String nombre) {
         if (nombre != null) {
             movimientosDisponibles.remove(nombre.toLowerCase());
         }
     }
 
+    /**
+     * Método para crear un Pokémon a partir de su nombre.
+     * @param nombre
+     * @return
+     */
     public Pokemon crearPokemon(String nombre) {
         if (nombre == null) {
             throw new IllegalArgumentException("El nombre del Pokémon no puede ser nulo");
@@ -343,6 +379,11 @@ public class Poquedex {
         throw new IllegalArgumentException("El Pokémon " + nombre + " no existe en la Poquedex");
     }
 
+    /**
+	 * Método para crear un movimiento a partir de su nombre.
+	 * @param nombre
+	 * @return
+	 */
     public Movimiento crearMovimiento(String nombre) {
         if (nombre == null) {
             throw new IllegalArgumentException("El nombre del movimiento no puede ser nulo");
@@ -359,14 +400,27 @@ public class Poquedex {
         }
     }
 
+    /**
+     * Método para obtener una lista de los nombres de los Pokémon disponibles en la Poquedex.
+     * @return
+     */
     public List<String> obtenerNombresPokemonDisponibles() {
         return new ArrayList<>(pokemonesDisponibles.keySet());
     }
 
+    /**
+	 * Método para obtener una lista de los nombres de los movimientos disponibles en la Poquedex.
+	 * @return
+	 */
     public List<String> obtenerNombresMovimientosDisponibles() {
         return new ArrayList<>(movimientosDisponibles.keySet());
     }
 
+    /**
+     * Método para obtener una lista de los Pokémon que tienen un tipo específico.
+     * @param tipo
+     * @return
+     */
     public List<String> obtenerPokemonPorTipo(String tipo) {
         List<String> pokemonFiltrados = new ArrayList<>();
         for (String nombre : pokemonesDisponibles.keySet()) {
@@ -378,6 +432,11 @@ public class Poquedex {
         return pokemonFiltrados;
     }
 
+    /**
+	 * Método para obtener una lista de los movimientos que tienen un tipo específico.
+	 * @param tipo
+	 * @return
+	 */
     public List<String> obtenerMovimientosPorTipo(String tipo) {
         List<String> movimientosFiltrados = new ArrayList<>();
         for (Movimiento movimiento : movimientosDisponibles.values()) {
@@ -387,6 +446,10 @@ public class Poquedex {
         return movimientosFiltrados;
     }
 
+    /**
+	 * Método para obtener una lista de los tipos de Pokémon disponibles en la Poquedex.
+	 * @return
+	 */
     public List<String> obtenerTiposPokemonDisponibles() {
         List<String> tipos = new ArrayList<>();
         for (String nombre : pokemonesDisponibles.keySet()) {
@@ -402,6 +465,10 @@ public class Poquedex {
         return tipos;
     }
 
+    /**
+     * Método para obtener una lista de los tipos de movimientos disponibles en la Poquedex.
+     * @return
+     */
     public List<String> obtenerTiposMovimientosDisponibles() {
         List<String> tipos = new ArrayList<>();
         for (Movimiento movimiento : movimientosDisponibles.values()) {
@@ -412,6 +479,10 @@ public class Poquedex {
         return tipos;
     }
 
+    /**
+	 * Método para obtener una lista de los tipos de movimientos disponibles en la Poquedex.
+	 * @return
+	 */
     public boolean existePokemon(String nombre) {
         if (nombre == null) {
             return false;
@@ -419,6 +490,11 @@ public class Poquedex {
         return pokemonesDisponibles.containsKey(nombre.toLowerCase());
     }
 
+    /**
+     * Método para verificar si un movimiento existe en la Poquedex.
+     * @param nombre
+     * @return
+     */
     public boolean existeMovimiento(String nombre) {
         if (nombre == null) {
             return false;
