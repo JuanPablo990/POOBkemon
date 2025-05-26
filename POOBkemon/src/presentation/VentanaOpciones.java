@@ -6,8 +6,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.EmptyBorder;
 import domain.Entrenador;
+import java.io.Serializable;
+
  
-public class VentanaOpciones extends Ventana {
+public class VentanaOpciones extends Ventana implements Serializable {
+    private static final long serialVersionUID = 1L;
 	
     private FondoPanel fondoPanel;
     private JButton btnPvP, btnPvM, btnMvM, btnCreditos;

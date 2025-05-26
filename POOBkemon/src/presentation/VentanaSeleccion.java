@@ -16,11 +16,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.io.Serializable;
 /**
  * Ventana para la selección de Pokémon y objetos por parte de los jugadores.
  */
-public class VentanaSeleccion extends Ventana {
+
+public class VentanaSeleccion extends Ventana implements Serializable {
+    private static final long serialVersionUID = 1L;
     
     private FondoPanel fondoPanel;
     private JButton btnSiguiente;

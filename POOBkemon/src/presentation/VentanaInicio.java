@@ -6,13 +6,15 @@ import java.awt.event.*;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
 /**
  * Ventana de inicio de la aplicación POOBkemon.
  * Muestra la pantalla principal con fondo animado y el título.
  * Permite acceder a las opciones y manejar acciones de archivo.
  */
-public class VentanaInicio extends Ventana {
+public class VentanaInicio extends Ventana implements Serializable {
+    private static final long serialVersionUID = 1L;
     /** Panel de fondo animado */
     private FondoPanel fondoPanel;
     /** Panel que contiene la imagen del título */

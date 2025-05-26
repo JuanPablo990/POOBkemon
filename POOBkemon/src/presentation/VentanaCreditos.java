@@ -5,12 +5,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
 import javax.swing.border.EmptyBorder;
+import java.io.Serializable;
 
 /**
  * VentanaCreditos muestra una ventana con los créditos del juego POOBkemon,
  * incluyendo animación de desplazamiento vertical del texto y un botón para volver.
  */
-public class VentanaCreditos extends Ventana {
+
+public class VentanaCreditos extends Ventana implements Serializable {
+    private static final long serialVersionUID = 1L;
     private FondoPanel fondoPanel;
     private JButton btnVolver;
     private JLabel lblCreditos;

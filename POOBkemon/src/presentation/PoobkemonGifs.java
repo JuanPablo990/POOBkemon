@@ -1,13 +1,15 @@
 package presentation;
 
 import java.util.HashMap;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Clase utilitaria para gestionar las rutas de imágenes de los Pokémons e ítems en la aplicación.
  * Proporciona mapas estáticos y métodos para obtener los recursos de imagen por nombre.
  */
-public class PoobkemonGifs {
+public class PoobkemonGifs implements Serializable {
+    private static final long serialVersionUID = 1L;
     
     public static final Map<String, String> POKEMON_IMAGES = new HashMap<>();
     public static final Map<String, String> ITEM_IMAGES = new HashMap<>();

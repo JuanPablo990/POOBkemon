@@ -9,12 +9,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import domain.*;
+import java.io.Serializable;
 import domain.items.HyperPotion;
 import domain.items.Potion;
 import domain.items.Revive;
 import domain.items.SuperPotion;
 
-public class VentanaBatalla extends Ventana {
+public class VentanaBatalla extends Ventana implements Serializable {
+    private static final long serialVersionUID = 1L;
+
 
     private JPanel panelImagenPokemon;
     private JPanel panelImagenPokemon2;

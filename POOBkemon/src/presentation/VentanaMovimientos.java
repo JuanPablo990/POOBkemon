@@ -11,8 +11,10 @@ import java.util.Map;
 import domain.Pokemon;
 import presentation.POOBkemonGUI;
 import domain.Movimiento;
+import java.io.Serializable;
 
-public class VentanaMovimientos extends Ventana {
+public class VentanaMovimientos extends Ventana implements Serializable {
+    private static final long serialVersionUID = 1L;
     private FondoPanel fondoPanel;
     private List<String> nombresPokemonSeleccionados;
     private Map<String, List<JComboBox<String>>> combosPorPokemon;

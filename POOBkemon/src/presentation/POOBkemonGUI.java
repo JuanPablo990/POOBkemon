@@ -1,6 +1,7 @@
 package presentation;
 
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +10,8 @@ import java.util.Random;
 import java.awt.*;
 import domain.*;
 
-public class POOBkemonGUI {
+public class POOBkemonGUI implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static VentanaInicio ventanaInicio;
     private static VentanaOpciones ventanaOpciones;
     private static VentanaCreditos ventanaCreditos;
