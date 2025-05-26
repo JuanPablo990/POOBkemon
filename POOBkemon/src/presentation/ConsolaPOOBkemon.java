@@ -105,6 +105,11 @@ public class ConsolaPOOBkemon {
         // Configura equipos y movimientos aleatorios
         juego.generarEquipoAleatorioCompleto(jugador);
         maquina.seleccionarEquipo();
+        // Asegurar que la máquina tenga 6 Pokémon
+        while (maquina.getEntrenador().getEquipoPokemon().size() < 6) {
+            maquina.seleccionarEquipo();
+        }
+        
         asignarMovimientosAleatorios(jugador);
         maquina.seleccionarMovimientos();
 
@@ -144,7 +149,17 @@ public class ConsolaPOOBkemon {
 
         // Configura equipos, movimientos e ítems
         maquina1.seleccionarEquipo();
+        // Asegurar que la máquina 1 tenga 6 Pokémon
+        while (maquina1.getEntrenador().getEquipoPokemon().size() < 6) {
+            maquina1.seleccionarEquipo();
+        }
+        
         maquina2.seleccionarEquipo();
+        // Asegurar que la máquina 2 tenga 6 Pokémon
+        while (maquina2.getEntrenador().getEquipoPokemon().size() < 6) {
+            maquina2.seleccionarEquipo();
+        }
+        
         maquina1.seleccionarMovimientos();
         maquina2.seleccionarMovimientos();
         maquina1.seleccionarItems();
@@ -204,9 +219,17 @@ public class ConsolaPOOBkemon {
         System.out.println("\n¡Comienza la batalla entre " +
             batalla.getEntrenador1().getNombre() + " y " +
             batalla.getEntrenador2().getNombre() + "!");
+        
         while (!juego.isBatallaTerminada()) {
             Entrenador entrenadorEnTurno = juego.getEntrenadorEnTurno();
             System.out.println("\n--- Turno de " + entrenadorEnTurno.getNombre() + " ---");
+            
+            // Verificar si el entrenador tiene Pokémon disponibles
+            if (!tienePokemonDisponibles(entrenadorEnTurno)) {
+                System.out.println(entrenadorEnTurno.getNombre() + " no tiene Pokémon disponibles!");
+                break;
+            }
+            
             if (entrenadorEnTurno.equals(juego.getEntrenador1())) {
                 turnoJugador(entrenadorEnTurno);
             } else {
@@ -218,8 +241,45 @@ public class ConsolaPOOBkemon {
             }
             juego.cambiarTurno();
         }
-        Entrenador ganador = juego.getGanador();
-        System.out.println("\n¡" + ganador.getNombre() + " ha ganado la batalla!");
+        
+        Entrenador ganador = determinarGanador();
+        if (ganador != null) {
+            System.out.println("\n¡" + ganador.getNombre() + " ha ganado la batalla!");
+        } else {
+            System.out.println("\nLa batalla ha terminado sin un ganador claro.");
+        }
+    }
+
+    /**
+     * Verifica si un entrenador tiene Pokémon disponibles.
+     * @param entrenador El entrenador a verificar.
+     * @return true si tiene Pokémon disponibles, false en caso contrario.
+     */
+    private boolean tienePokemonDisponibles(Entrenador entrenador) {
+        for (Pokemon pokemon : entrenador.getEquipoPokemon()) {
+            if (pokemon.getPs() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determina el ganador de la batalla.
+     * @return El entrenador ganador, o null si no hay un ganador claro.
+     */
+    private Entrenador determinarGanador() {
+        boolean entrenador1TienePokemon = tienePokemonDisponibles(juego.getEntrenador1());
+        boolean entrenador2TienePokemon = tienePokemonDisponibles(juego.getEntrenador2());
+        
+        if (!entrenador1TienePokemon && !entrenador2TienePokemon) {
+            return null; // Empate
+        } else if (!entrenador1TienePokemon) {
+            return juego.getEntrenador2();
+        } else if (!entrenador2TienePokemon) {
+            return juego.getEntrenador1();
+        }
+        return null; // La batalla aún no ha terminado
     }
 
     /**
@@ -230,9 +290,17 @@ public class ConsolaPOOBkemon {
         System.out.println("\n¡Comienza la batalla entre " +
             batalla.getEntrenador1().getNombre() + " y " +
             batalla.getEntrenador2().getNombre() + "!");
+        
         while (!juego.isBatallaTerminada()) {
             Entrenador entrenadorEnTurno = juego.getEntrenadorEnTurno();
             System.out.println("\n--- Turno de " + entrenadorEnTurno.getNombre() + " ---");
+            
+            // Verificar si el entrenador tiene Pokémon disponibles
+            if (!tienePokemonDisponibles(entrenadorEnTurno)) {
+                System.out.println(entrenadorEnTurno.getNombre() + " no tiene Pokémon disponibles!");
+                break;
+            }
+            
             turnoMaquina(entrenadorEnTurno);
             juego.cambiarTurno();
             try {
@@ -241,8 +309,13 @@ public class ConsolaPOOBkemon {
                 e.printStackTrace();
             }
         }
-        Entrenador ganador = juego.getGanador();
-        System.out.println("\n¡" + ganador.getNombre() + " ha ganado la batalla!");
+        
+        Entrenador ganador = determinarGanador();
+        if (ganador != null) {
+            System.out.println("\n¡" + ganador.getNombre() + " ha ganado la batalla!");
+        } else {
+            System.out.println("\nLa batalla ha terminado sin un ganador claro.");
+        }
     }
 
     /**
@@ -251,6 +324,12 @@ public class ConsolaPOOBkemon {
      */
     private void turnoJugador(Entrenador entrenador) {
         Pokemon activo = juego.getPokemonActivo(entrenador);
+        if (activo.getPs() <= 0) {
+            System.out.println("¡" + activo.getNombre() + " está debilitado!");
+            cambiarPokemonDebilitado(entrenador);
+            return;
+        }
+        
         System.out.println("Pokémon activo: " + activo.getNombre() +
                           " (PS: " + activo.getPs() + "/" + activo.getPsMaximos() + ")");
         List<String> opciones = juego.getOpcionesTurno(entrenador);
@@ -324,14 +403,122 @@ public class ConsolaPOOBkemon {
     }
 
     /**
+     * Maneja el cambio de Pokémon cuando el actual está debilitado.
+     * @param entrenador El entrenador que necesita cambiar de Pokémon.
+     */
+    private void cambiarPokemonDebilitado(Entrenador entrenador) {
+        List<Pokemon> disponibles = juego.getPokemonsDisponiblesParaCambio(entrenador);
+        if (disponibles.isEmpty()) {
+            System.out.println("¡" + entrenador.getNombre() + " no tiene más Pokémon disponibles!");
+            return;
+        }
+        
+        System.out.println("Pokémon disponibles:");
+        for (int i = 0; i < disponibles.size(); i++) {
+            Pokemon p = disponibles.get(i);
+            System.out.println((i+1) + ". " + p.getNombre() +
+                             " (PS: " + p.getPs() + "/" + p.getPsMaximos() + ")");
+        }
+        System.out.print("Seleccione un Pokémon: ");
+        int pokemonIndex = scanner.nextInt();
+        scanner.nextLine();
+        if (pokemonIndex > 0 && pokemonIndex <= disponibles.size()) {
+            entrenador.setPokemonActivo(disponibles.get(pokemonIndex-1));
+            System.out.println("¡" + entrenador.getNombre() + " ha cambiado a " +
+                             disponibles.get(pokemonIndex-1).getNombre() + "!");
+        }
+    }
+
+    /**
      * Gestiona la lógica del turno para un entrenador máquina.
      * @param entrenador El entrenador máquina cuyo turno es.
      */
-    private void turnoMaquina(Entrenador entrenador) {
-        Pokemon activo = juego.getPokemonActivo(entrenador);
-        System.out.println("Pokémon activo: " + activo.getNombre() +
-                          " (PS: " + activo.getPs() + "/" + activo.getPsMaximos() + ")");
-        juego.getBatallaActual().ejecutarTurno(1);
+    /**
+     * Gestiona la lógica del turno para un entrenador máquina.
+     * @param entrenador El entrenador máquina cuyo turno es.
+     */
+private void turnoMaquina(Entrenador entrenador) {
+    Pokemon activo = juego.getPokemonActivo(entrenador);
+    if (activo.getPs() <= 0) {
+        System.out.println("¡" + activo.getNombre() + " está debilitado!");
+        for (Pokemon p : entrenador.getEquipoPokemon()) {
+            if (p.getPs() > 0) {
+                entrenador.setPokemonActivo(p);
+                System.out.println("¡" + entrenador.getNombre() + " ha cambiado a " + p.getNombre() + "!");
+                break;
+            }
+        }
+        return;
+    }
+    
+    Entrenador oponente = juego.getEntrenador1().equals(entrenador) ? juego.getEntrenador2() : juego.getEntrenador1();
+    Pokemon objetivo = oponente.getPokemonActivo();
+    
+    System.out.println("Pokémon activo: " + activo.getNombre() + " (PS: " + activo.getPs() + "/" + activo.getPsMaximos() + ")");
+    System.out.println("Objetivo: " + objetivo.getNombre() + " (PS: " + objetivo.getPs() + "/" + objetivo.getPsMaximos() + ")");
+    
+    List<Movimiento> movimientos = juego.getMovimientosDisponibles(activo);
+    if (!movimientos.isEmpty()) {
+        Movimiento movimiento = movimientos.get(0);
+        System.out.println("¡" + activo.getNombre() + " usa " + movimiento.getNombre() + "!");
+        
+        double efectividad = juego.getBatallaActual().calcularEfectividad(movimiento, objetivo);
+        System.out.printf("[Multiplicador: x%.1f] %s%n", efectividad, 
+                         getMensajeEfectividad(efectividad));
+        
+        int psAntes = objetivo.getPs();
+        boolean exito = movimiento.ejecutar(activo, objetivo, efectividad);
+        
+        if (exito) {
+            int danio = psAntes - objetivo.getPs();
+            if (danio > 0) {
+                System.out.println("¡El ataque hizo " + danio + " de daño!");
+                System.out.println(objetivo.getNombre() + " ahora tiene " + objetivo.getPs() + "/" + 
+                                 objetivo.getPsMaximos() + " PS");
+            } else {
+                System.out.println("¡El ataque no hizo daño directo!");
+            }
+            
+            // Mostrar efectos secundarios
+            if (movimiento.getNombre().equals("Will-O-Wisp") && objetivo.getPs() > 0) {
+                System.out.println(objetivo.getNombre() + " fue quemado.");
+            }
+        } else {
+            System.out.println("¡El ataque falló!");
+        }
+        
+        if (objetivo.estaDebilitado()) {
+            System.out.println("¡" + objetivo.getNombre() + " fue debilitado!");
+        }
+    } else {
+        System.out.println("¡" + activo.getNombre() + " no tiene movimientos disponibles!");
+    }
+}
+
+private String getMensajeEfectividad(double efectividad) {
+    if (efectividad <= 0.0) return "INEFECTIVO";
+    if (efectividad >= 2.0) return "SUPEREFECTIVO";
+    if (efectividad == 0.5) return "POCO EFECTIVO";
+    return "NEUTRAL";
+}
+
+    /**
+     * Obtiene un mensaje de efectividad basado en el multiplicador.
+     * @param efectividad El multiplicador de efectividad.
+     * @return El mensaje descriptivo de la efectividad.
+     */
+    private String obtenerMensajeEfectividad(double efectividad) {
+        String mensaje = String.format("[Multiplicador: x%.1f] ", efectividad);
+        if (efectividad <= 0.0) {
+            mensaje += "INEFECTIVO";
+        } else if (efectividad >= 2.0) {
+            mensaje += "SUPEREFECTIVO";
+        } else if (efectividad == 0.5) {
+            mensaje += "POCO EFECTIVO";
+        } else {
+            mensaje += "NEUTRAL";
+        }
+        return mensaje;
     }
 
     /**

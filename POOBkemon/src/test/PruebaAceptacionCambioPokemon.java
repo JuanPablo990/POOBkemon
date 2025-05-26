@@ -1,4 +1,3 @@
-
 package test;
 
 import domain.POOBkemon;
@@ -8,11 +7,11 @@ import domain.Pokemon;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AcceptanceSwitchPokemonTest {
+public class PruebaAceptacionCambioPokemon {
 
     @Test
-    public void testTrainerSwitchesPokemonDuringBattle() {
-        // Given: Two trainers with random teams
+    public void pruebaEntrenadorCambiaPokemonDuranteBatalla() {
+        // Dado: Dos entrenadores con equipos aleatorios
         POOBkemon juego = new POOBkemon();
         Entrenador ash = juego.crearEntrenadorConEquipoAleatorio("Ash");
         Entrenador gary = juego.crearEntrenadorConEquipoAleatorio("Gary");
@@ -20,27 +19,26 @@ public class AcceptanceSwitchPokemonTest {
         juego.setJugadores(ash, gary);
         juego.iniciarBatalla();
 
-        // Ash tries to switch Pokémon if he has more than one available
+        // Ash intenta cambiar de Pokémon si tiene más de uno disponible
         if (ash.getEquipoPokemon().size() > 1) {
             Pokemon original = ash.getPokemonActivo();
-            // Find another available Pokémon to switch to
-            Pokemon toSwitch = null;
+            // Buscar otro Pokémon disponible para cambiar
+            Pokemon paraCambiar = null;
             for (Pokemon p : ash.getEquipoPokemon()) {
                 if (!p.equals(original) && !p.estaDebilitado()) {
-                    toSwitch = p;
+                    paraCambiar = p;
                     break;
                 }
             }
-            if (toSwitch != null) {
-                ash.setPokemonActivo(toSwitch);
-                Assert.assertNotEquals("Ash should have switched Pokémon. Actual: " + ash.getEquipoPokemon().indexOf(ash.getPokemonActivo()),
+            if (paraCambiar != null) {
+                ash.setPokemonActivo(paraCambiar);
+                Assert.assertNotEquals("Ash debería haber cambiado de Pokémon. Actual: " + ash.getEquipoPokemon().indexOf(ash.getPokemonActivo()),
                         original, ash.getPokemonActivo());
             } else {
-                System.out.println("No other available Pokémon to switch.");
+                System.out.println("No hay otro Pokémon disponible para cambiar.");
             }
         } else {
-            System.out.println("Ash has only one Pokémon, skipping switch test.");
+            System.out.println("Ash solo tiene un Pokémon, se omite la prueba de cambio.");
         }
     }
 }
-
