@@ -4,55 +4,33 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import presentation.VentanaBatalla;
 
-	/**
-	 * Clase que representa una batalla entre dos entrenadores.
-	 * Permite gestionar los turnos, ataques, cambios de Pokémon y el estado de la batalla.
-	 */
+/**
+ * Clase que representa una batalla entre dos entrenadores.
+ * Permite gestionar los turnos, ataques, cambios de Pokémon y el estado de la batalla.
+ */
 public class Batalla implements Serializable {
     private static final long serialVersionUID = 1L;
     private final Entrenador entrenador1;
     private final Entrenador entrenador2;
-    private final VentanaBatalla ventanaBatalla;
     private boolean turnoJugador1;
-    private boolean modoConsola;
 
     /**
-	 * Constructor de la clase Batalla.
-	 *
-	 * @param entrenador1   El primer entrenador.
-	 * @param entrenador2   El segundo entrenador.
-	 * @param ventanaBatalla La ventana de batalla (puede ser null si es modo consola).
-	 */
-    public Batalla(Entrenador entrenador1, Entrenador entrenador2, VentanaBatalla ventanaBatalla) {
+     * Constructor de la clase Batalla.
+     *
+     * @param entrenador1   El primer entrenador.
+     * @param entrenador2   El segundo entrenador.
+     */
+    public Batalla(Entrenador entrenador1, Entrenador entrenador2) {
         this.entrenador1 = entrenador1;
         this.entrenador2 = entrenador2;
-        this.ventanaBatalla = ventanaBatalla;
         this.turnoJugador1 = new Random().nextBoolean();
-        this.modoConsola = (ventanaBatalla == null);
     }
 
     /**
      * Inicia la batalla entre los dos entrenadores.
      */
     public void iniciarBatalla() {
-        if (modoConsola) {
-            iniciarBatallaConsola();
-        } else {
-            ventanaBatalla.mostrarMensaje("¡Comienza la batalla entre " + entrenador1.getNombre() + " y " + entrenador2.getNombre() + "!");
-            ventanaBatalla.mostrarMensaje("El turno inicial es para: " + (turnoJugador1 ? entrenador1.getNombre() : entrenador2.getNombre()));
-            enviarPrimerPokemon(entrenador1);
-            enviarPrimerPokemon(entrenador2);
-            ventanaBatalla.cargarPokemonesIniciales();
-            ventanaBatalla.actualizarVistaJugador();
-        }
-    }
-
-    /**
-	 * Inicia la batalla en modo consola.
-	 */
-    public void iniciarBatallaConsola() {
         mostrarMensaje("¡Comienza la batalla entre " + entrenador1.getNombre() + " y " + entrenador2.getNombre() + "!");
         mostrarMensaje("El turno inicial es para: " + (turnoJugador1 ? entrenador1.getNombre() : entrenador2.getNombre()));
         enviarPrimerPokemon(entrenador1);
@@ -81,9 +59,9 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Ejecuta el turno del jugador actual.
-	 * @param opcion La opción elegida por el jugador (1: Atacar, 2: Usar item, 3: Cambiar Pokémon).
-	 */
+     * Ejecuta el turno del jugador actual.
+     * @param opcion La opción elegida por el jugador (1: Atacar, 2: Usar item, 3: Cambiar Pokémon).
+     */
     public void ejecutarTurno(int opcion) {
         Entrenador atacante = turnoJugador1 ? entrenador1 : entrenador2;
         Entrenador defensor = turnoJugador1 ? entrenador2 : entrenador1;
@@ -136,10 +114,10 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Obtiene un movimiento del Pokémon atacante.
-	 * @param pokemon
-	 * @return
-	 */
+     * Obtiene un movimiento del Pokémon atacante.
+     * @param pokemon
+     * @return
+     */
     private Movimiento obtenerMovimiento(Pokemon pokemon) {
         List<Movimiento> movimientos = pokemon.getMovimientos().stream()
                 .filter(m -> m.getPp() > 0)
@@ -168,20 +146,16 @@ public class Batalla implements Serializable {
         if (exito) {
             int danio = psAntes - objetivo.getPs();
             mostrarMensaje("¡El ataque hizo " + danio + " de daño!");
-            if (!modoConsola) {
-                ventanaBatalla.actualizarVidaPokemon1(entrenador1.getPokemonActivo().getPs());
-                ventanaBatalla.actualizarVidaPokemon2(entrenador2.getPokemonActivo().getPs());
-            }
         } else {
             mostrarMensaje("¡El ataque falló!");
         }
     }
 
     /**
-	 * Obtiene un mensaje de efectividad basado en el multiplicador.
-	 * @param efectividad
-	 * @return
-	 */
+     * Obtiene un mensaje de efectividad basado en el multiplicador.
+     * @param efectividad
+     * @return
+     */
     private String obtenerMensajeEfectividad(double efectividad) {
         String mensaje = String.format("[Multiplicador: x%.1f]%n", efectividad);
         if (efectividad <= 0.0) {
@@ -214,18 +188,13 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Verifica el estado de la batalla y muestra un mensaje si el Pokémon objetivo está debilitado.
-	 * @param defensor
-	 */
+     * Verifica el estado de la batalla y muestra un mensaje si el Pokémon objetivo está debilitado.
+     * @param defensor
+     */
     private void verificarEstadoBatalla(Entrenador defensor) {
         Pokemon objetivo = defensor.getPokemonActivo();
         if (objetivo.estaDebilitado()) {
             mostrarMensaje("¡" + objetivo.getNombre() + " fue debilitado!");
-            if (!equipoDebilitado(defensor)) {
-                if (!modoConsola) {
-                    ventanaBatalla.mostrarVentanaCambioObligatorio(defensor);
-                }
-            }
         }
     }
 
@@ -238,21 +207,7 @@ public class Batalla implements Serializable {
             mostrarMensaje("No tienes items en tu mochila.");
             return;
         }
-        if (!modoConsola) {
-            ventanaBatalla.mostrarVentanaItem();
-        }
-    }
-
-    /**
-	 * Cambia el Pokémon activo del entrenador.
-	 * @param entrenador
-	 * @param pokemon
-	 */
-    public Pokemon getPokemonActivo(Entrenador entrenador) {
-        if (!entrenador.equals(entrenador1) && !entrenador.equals(entrenador2)) {
-            throw new IllegalArgumentException("El entrenador no está en esta batalla.");
-        }
-        return entrenador.getPokemonActivo();
+        mostrarMensaje("Funcionalidad de uso de items no implementada en modo consola.");
     }
 
     /**
@@ -264,19 +219,14 @@ public class Batalla implements Serializable {
             mostrarMensaje("No tienes otros Pokémon disponibles para cambiar.");
             return;
         }
-        if (!modoConsola) {
-            ventanaBatalla.mostrarVentanaCambioPokemon();
-        }
+        mostrarMensaje("Funcionalidad de cambio de Pokémon no implementada en modo consola.");
     }
 
     /**
-	 * Cambia el turno al siguiente jugador.
-	 */
+     * Cambia el turno al siguiente jugador.
+     */
     public void cambiarTurno() {
         turnoJugador1 = !turnoJugador1;
-        if (!modoConsola) {
-            ventanaBatalla.actualizarVistaJugador();
-        }
     }
 
     /**
@@ -292,10 +242,10 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Verifica si el equipo de un entrenador está debilitado.
-	 * @param entrenador
-	 * @return
-	 */
+     * Verifica si el equipo de un entrenador está debilitado.
+     * @param entrenador
+     * @return
+     */
     private boolean equipoDebilitado(Entrenador entrenador) {
         return entrenador.getEquipoPokemon().stream().allMatch(Pokemon::estaDebilitado);
     }
@@ -309,9 +259,9 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Devuelve el entrenador ganador de la batalla.
-	 * @return
-	 */
+     * Devuelve el entrenador ganador de la batalla.
+     * @return
+     */
     public Entrenador getGanador() {
         return this.isBatallaTerminada() ? (this.equipoDebilitado(entrenador1) ? entrenador2 : entrenador1) : null;
     }
@@ -326,10 +276,10 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Devuelve una lista de Pokémon disponibles para cambiar.
-	 * @param entrenador
-	 * @return
-	 */
+     * Devuelve una lista de Pokémon disponibles para cambiar.
+     * @param entrenador
+     * @return
+     */
     public List<Pokemon> getPokemonsDisponiblesParaCambio(Entrenador entrenador) {
         return entrenador.getEquipoPokemon().stream()
                 .filter(p -> !p.equals(entrenador.getPokemonActivo()))
@@ -346,9 +296,9 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Devuelve el Pokémon activo del entrenador.
-	 * @return
-	 */
+     * Devuelve el Pokémon activo del entrenador.
+     * @return
+     */
     public Entrenador getEntrenador2() {
         return entrenador2;
     }
@@ -362,14 +312,10 @@ public class Batalla implements Serializable {
     }
 
     /**
-	 * Devuelve el modo de batalla (consola o ventana).
-	 * @return
-	 */
+     * Muestra un mensaje en consola.
+     * @param mensaje
+     */
     private void mostrarMensaje(String mensaje) {
-        if (modoConsola) {
-            System.out.println(mensaje);
-        } else if (ventanaBatalla != null) {
-            ventanaBatalla.mostrarMensaje(mensaje);
-        }
+        System.out.println(mensaje);
     }
 }
