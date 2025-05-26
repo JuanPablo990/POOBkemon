@@ -51,6 +51,22 @@ public class VentanaBatalla extends Ventana implements Serializable {
         inicializarComponentes();
         cargarPokemonesIniciales();
         actualizarVistaJugador();
+        
+        // Mensajes de bienvenida
+        Entrenador jugador1 = POOBkemonGUI.getJugador1();
+        Entrenador jugador2 = POOBkemonGUI.getJugador2();
+        agregarMensaje("¡Bienvenidos a la batalla POOBkemon!");
+        agregarMensaje("Los entrenadores " + jugador1.getNombre() + " y " + jugador2.getNombre() + " se enfrentarán en una épica batalla.");
+        agregarMensaje("¡Que comience la batalla!");
+        
+        // Mostrar Pokémon iniciales de cada jugador
+        Pokemon pokemonJ1 = jugador1.getPokemonActivo();
+        Pokemon pokemonJ2 = jugador2.getPokemonActivo();
+        agregarMensaje(jugador1.getNombre() + " envía a " + pokemonJ1.getNombre() + " (" + pokemonJ1.getTipoPrincipal() + ")");
+        agregarMensaje(jugador2.getNombre() + " envía a " + pokemonJ2.getNombre() + " (" + pokemonJ2.getTipoPrincipal() + ")");
+        
+        // Mostrar quién tiene el primer turno
+        agregarMensaje("El turno inicial es para: " + (turnoJugador1 ? jugador1.getNombre() : jugador2.getNombre()));
     }
 
     /**
@@ -904,6 +920,8 @@ public class VentanaBatalla extends Ventana implements Serializable {
     public void mostrar() {
         setVisible(true);
     }
+    
+    
 
     @Override
     protected void accionNuevo() {}
